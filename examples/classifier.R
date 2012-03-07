@@ -1,0 +1,18 @@
+library("Biobase")
+library("pROC")
+library("MASS")
+library("subselect")
+source("~/Dropbox/Work/MEATADAR/Dataset.R")
+source("~/Dropbox/Work/METADAR/Classifier.R")
+source("~/Dropbox/Work/METADAR/LogisticRegression.R")
+
+dat <- new("Dataset")
+dat <- readDataset(dat, "~/Dropbox/Work/varp/Sample_DiscTraining_alvs.csv")
+
+lr <- new("LogisticRegression", dat, "Class", dat, "Class") #, selectedVariables=c("6", "7"))
+lr$subselect(method="lasso")
+lr$trainingStatistics()
+lr$printStatistics()
+lr$plotROC()
+lr$testStatistics()
+lr$plotROC()
