@@ -11,7 +11,7 @@ setMethod("readDataset", signature=c("Dataset", "character", "character"),
 	metabolomicsDataFrame <- read.csv(metabolomicsDataFile,check.names=F)
 	dat <- metabolomicsDataFrame[which(!is.na(metabolomicsDataFrame[,"ID"])),
 		as.character(phenoDataFrame[,"SampleName"])]
-	rownames(dat) <- paste(metabolomicsDataFrame[,"ID"],metabolomicsDataFrame[,"Name"],sep="_")
+	rownames(dat) <- metabolomicsDataFrame[,"ID"]
 	phenoData <- new("AnnotatedDataFrame", data=phenoDataFrame)
 	Object@assayData=assayDataNew(exprs=apply(dat,2,as.numeric))
 	featureNames(assayData(Object)) <- rownames(dat)
@@ -49,7 +49,7 @@ setMethod("setDataset", signature=c("Dataset", "data.frame", "data.frame"),
 		phenoDataFrame=data.frame()) {
 	dat <- metabolomicsDataFrame[which(!is.na(metabolomicsDataFrame[,"ID"])),
 		as.character(phenoDataFrame[,"SampleName"])]
-	rownames(dat) <- paste(metabolomicsDataFrame[,"ID"], metabolomicsDataFrame[,"Name"],sep="_")
+	rownames(dat) <- metabolomicsDataFrame[,"ID"]
 	phenoData <- new("AnnotatedDataFrame", data=phenoDataFrame)
 	Object@assayData=assayDataNew(exprs=apply(dat,2,as.numeric))
 	featureNames(assayData(Object)) <- rownames(dat)
