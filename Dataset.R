@@ -133,15 +133,18 @@ valueClass="data.frame", definition=function(Object,
 	return(data.frame(means, res, "BH95 FDR Q value"=qvals))
 })
 
-setGeneric("varSelClassification", function(Object, covariate, method, ...)
-standardGeneric("varSelClassification"))
+setGeneric("varSel", function(Object, covariate, method, ...)
+standardGeneric("varSel"))
 
-setMethod("varSelClassification", signature=c("Dataset", "character",
+setMethod("varSel", signature=c("Dataset", "character",
 "character"), function(Object, covariate, method, family="binomial", ...) {
 	if(method=="glmnet") {
-		y <- factor(pData(Object)[,covariate])
+		y <- pData(Object)[,covariate]
 		names(y) <- pData(Object)[,"SampleName"]
-		return(vsglmnet(y, t(exprs(Object)), family=family, ...))
+    if(family=="binomial") {
+      y = factor(y)
+    }
+		return(vsglmnet2(y=y, x=t(exprs(Object)), family=family, ...))
 	}
 })
 
@@ -203,16 +206,26 @@ setGeneric("oneWayAnova", function(Object, covariate) standardGeneric("oneWayAno
 setMethod("oneWayAnova", signature=c("Dataset", "character"),
 	  function(Object, covariate) {
 		  res <- vector("list", nrow(Object))
+      pvals <- vector("numeric", nrow(Object))
 		  for(i in seq(nrow(Object))) {
 			  x <- exprs(Object)[i,]
 			  fit <- aov(x~f, data=data.frame("x"=x, "f"=factor(pData(Object)[,covariate])))
 			  tuk <- TukeyHSD(fit)
-			  res.i <- c(summary(fit)[[1]]["f","F value"], summary(fit)[[1]]["f","Pr(>F)"], tuk$f[,c(1,4)])
-			  names(res.i) <- c("Anova F-value", "Anova P-value", paste(rownames(tuk$f), colnames(tuk$f)[1]), paste(rownames(tuk$f), colnames(tuk$f)[4]))
+			  res.i <- c(summary(fit)[[1]]["f","F value"],
+                   summary(fit)[[1]]["f","Pr(>F)"],
+                   tuk$f[,c(1,4)])
+			  names(res.i) <- c(paste("One way Anova (", covariate, ") F-value"),
+                          paste("One way Anova (", covariate, ")P-value"),
+                          paste(rownames(tuk$f), colnames(tuk$f)[1]),
+                          paste(rownames(tuk$f), colnames(tuk$f)[4]))
 			  res[[i]] <- res.i
+        pvals[i] <- summary(fit)[[1]]["f","Pr(>F)"]
 		  }
-		  res <- t(data.frame(res))
+		  res <- t(data.frame(res, check.names=F))
 		  rownames(res) <- featureNames(Object)
+      qvals <- p.adjust(pvals, method="BH")
+      res <- data.frame(res, qvals, check.names=F)
+      colnames(res)[ncol(res)] <- paste("One way Anova (", covariate, ") FDR-BH95 Q value")
 		  return(res)
 	  })
 
@@ -285,18 +298,39 @@ setGeneric("boxPlot", function(Object, covariate1, covariate2) standardGeneric("
 setMethod("boxPlot", signature=c("Dataset", "character", "missing"),
 	  function(Object, covariate1) {
 		  for(i in seq(nrow(Object))) {
+        fit <- aov(x~f, data=data.frame("x"=exprs(Object)[i,],
+                                        "f"=factor(pData(Object)[,covariate1])
+                                        ))
 			  boxplot(exprs(Object)[i,]~factor(pData(Object)[,covariate1]),
-				  main=featureNames(Object)[i])
+				  main=paste("Name:", featureNames(Object)[i],
+                     "\nAnova P-value:",
+                     round(summary(fit)[[1]]["f","Pr(>F)"], 5)))
 		  }
 	  })
 
 setMethod("boxPlot", signature=c("Dataset", "character", "character"),
 	  function(Object, covariate1, covariate2) {
+      previous <- par(mai=c(0.5,0.5,1,0.2))
 		  for(i in seq(nrow(Object))) {
-			  boxplot(exprs(Object)[i,]~factor(paste(pData(Object)[,covariate1],
-								 pData(Object)[,covariate2])),
-				  main=featureNames(Object)[i])
+		    fit <- aov(x~f1*f2, data=data.frame("x"=exprs(Object)[i,],
+                                            "f1"=factor(pData(Object)[,covariate1]),
+                                            "f2"=factor(pData(Object)[,covariate2])
+                                            )
+                   )
+        p1 <- round(summary(fit)[[1]][1,"Pr(>F)"],5)
+        p2 <- round(summary(fit)[[1]][2,"Pr(>F)"], 5)
+        p3 <- round(summary(fit)[[1]][3,"Pr(>F)"], 5)
+        if((p1 < 0.05) | (p2 < 0.05) | (p3 < 0.05)) {
+    		  boxplot(exprs(Object)[i,]~factor(paste(pData(Object)[,covariate1],
+  								 pData(Object)[,covariate2])),
+  				  main=paste("Name:", featureNames(Object)[i],
+                       "\n", covariate1, "p-value", p1,
+                       "\n", covariate2, "p-value", p2,
+                       "\n", covariate1, covariate2, "interaction p-value", p3))
+            
+        }
 		  }
+      par(previous)
 	  })
 
 #### the following is an implementation for the generic stats/na.omit
