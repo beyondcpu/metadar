@@ -1,0 +1,5 @@
+#summary One-sentence summary of this page.
+
+= Acknowledgements =
+
+The scripts in this package (not yet a package, but it will be in future) depend on many other R and R/Bioconductor packages. I will add specific citations and references to the packages I use. But until then thanks to the R and R/Bioconductor community and the package developers. Also thanks to vim-r-plugin and R-studio developers.
