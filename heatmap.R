@@ -393,7 +393,7 @@ draw.heat.2 <- function(dat.for.heatmap, pvals.by.time,...) {
 # first running the command:
 final.hm <- function(dataset, pvals.by.time=NULL, xlas=1,
                      clusterColumns = F, clusterRows = F,
-                     wf = 5, hf = 5, mf = 0.55,
+                     wf = 5, hf = 5, mf = 0.55, na.omit = T,
                      device = "X11", file = NULL, ...)
 { ## wf = width factor. hf = height factor. mf = margin factor
   if(clusterColumns && clusterRows) {
@@ -413,14 +413,17 @@ final.hm <- function(dataset, pvals.by.time=NULL, xlas=1,
     Rowv = F
     Colv = F
   }
-  removeRows <- na.action(na.omit(dataset))
-  if(length(removeRows)>0) {
-    dataset <- dataset[-removeRows,]
-    rnames <- rownames(dataset)
-    dataset <- apply(dataset, 2, as.numeric)
-    rownames(dataset) <- rnames
-    if(!is.null(pvals.by.time)) {
-      pvals.by.time <- pvals.by.time[-removeRows,]
+  
+  if(na.omit) {
+    removeRows <- na.action(na.omit(dataset))
+    if(length(removeRows)>0) {
+      dataset <- dataset[-removeRows,]
+      rnames <- rownames(dataset)
+      dataset <- apply(dataset, 2, as.numeric)
+      rownames(dataset) <- rnames
+      if(!is.null(pvals.by.time)) {
+        pvals.by.time <- pvals.by.time[-removeRows,]
+      }
     }
   }
   
@@ -429,7 +432,6 @@ final.hm <- function(dataset, pvals.by.time=NULL, xlas=1,
   rownames(dataset) <- rnames
   
   library(gplots)
-  library(JavaGD)
   
   hahm <- 1
   wd <- 1
