@@ -387,11 +387,7 @@ draw.heat.2 <- function(dat.for.heatmap, pvals.by.time,...) {
 }
 
 
-##### Following lines were written on 16.8.2010
-# to produce heatmaps for a poster.
-# These lines were run after performing anova by
-# first running the command:
-final.hm <- function(dataset, pvals.by.time=NULL, xlas=1,
+final.hm <- function(dataset, pvals.by.time=NULL, xlas=2,
                      clusterColumns = F, clusterRows = F,
                      wf = 5, hf = 5, mf = 0.55, na.omit = T,
                      device = "X11", file = NULL, ...)
