@@ -1,9 +1,15 @@
 #An example of performing t-test
 
 library("Biobase")
+
 source("Dataset.R")
+
 dat <- new("Dataset")
+
 dat <- readDataset(dat, "Lipidomics_Data.csv",               "Lipidomics_pdata2.csv")
+
 tt.res <- univariateTTest(dat.3d, "Phenotype") ## where "Phenotype" is the name of the pData column that contains two levels.
+
 ## See the result!!
+
 View(tt.res)
