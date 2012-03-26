@@ -213,10 +213,10 @@ setMethod("oneWayAnova", signature=c("Dataset", "character"),
 			  tuk <- TukeyHSD(fit)
 			  res.i <- c(summary(fit)[[1]]["f","F value"],
                    summary(fit)[[1]]["f","Pr(>F)"],
-                   tuk$f[,c(1,4)])
+                   tuk$f[,c(5,4)])
 			  names(res.i) <- c(paste("One way Anova (", covariate, ") F-value"),
                           paste("One way Anova (", covariate, ")P-value"),
-                          paste(rownames(tuk$f), colnames(tuk$f)[1]),
+                          paste(rownames(tuk$f), colnames(tuk$f)[5]),
                           paste(rownames(tuk$f), colnames(tuk$f)[4]))
 			  res[[i]] <- res.i
         pvals[i] <- summary(fit)[[1]]["f","Pr(>F)"]
@@ -248,28 +248,28 @@ setMethod("twoWayAnova", signature=c("Dataset", "character", "character"),
 				     summary(fit)[[1]][2,"Pr(>F)"],
 				     summary(fit)[[1]][3,"F value"],
 				     summary(fit)[[1]][3,"Pr(>F)"],
-				     tuk$f1[,c(1,4)],
-				     tuk$f2[,c(1,4)],
-				     tuk$"f1:f2"[,c(1,4)])
+				     tuk$f1[,c(5,4)],
+				     tuk$f2[,c(5,4)],
+				     tuk$"f1:f2"[,c(5,4)])
 			  names(res.i) <- c(paste(covariate1, "F-value"), 
 					    paste(covariate1, "P-value"),
 					    paste(covariate2, "F-value"),
 					    paste(covariate2, "P-value"),
 					    paste(covariate1, ":", covariate2, "F-value"),
 					    paste(covariate1, ":", covariate2, "P-value"),
-					    paste(rownames(tuk$f1), colnames(tuk$f1)[1]),
+					    paste(rownames(tuk$f1), colnames(tuk$f1)[5]),
 					    paste(rownames(tuk$f1), colnames(tuk$f1)[4]),
-					    paste(rownames(tuk$f2), colnames(tuk$f2)[1]),
+					    paste(rownames(tuk$f2), colnames(tuk$f2)[5]),
 					    paste(rownames(tuk$f2), colnames(tuk$f2)[4]),
-					    paste(rownames(tuk$"f1:f2"), colnames(tuk$"f1:f2")[1]),
+					    paste(rownames(tuk$"f1:f2"), colnames(tuk$"f1:f2")[5]),
 					    paste(rownames(tuk$"f1:f2"), colnames(tuk$"f1:f2")[4]))
 
 			  res[[i]] <- res.i 
 
-			  res.diff.i <- c(tuk$f1[,1], tuk$f2[,1], tuk$"f1:f2"[,1])
-			  names(res.diff.i) <- c(paste(rownames(tuk$f1), colnames(tuk$f1)[1]),
-						 paste(rownames(tuk$f2), colnames(tuk$f2)[1]),
-						 paste(rownames(tuk$"f1:f2"), colnames(tuk$"f1:f2")[1]))
+			  res.diff.i <- c(tuk$f1[,5], tuk$f2[,5], tuk$"f1:f2"[,5])
+			  names(res.diff.i) <- c(paste(rownames(tuk$f1), colnames(tuk$f1)[5]),
+						 paste(rownames(tuk$f2), colnames(tuk$f2)[5]),
+						 paste(rownames(tuk$"f1:f2"), colnames(tuk$"f1:f2")[5]))
 			  res.diff[[i]] <- res.diff.i
 
 			  res.p.i <- c(tuk$f1[,4], tuk$f2[,4], tuk$"f1:f2"[,4])
@@ -290,7 +290,7 @@ setMethod("twoWayAnova", signature=c("Dataset", "character", "character"),
       ## ratios of means
       #browser()
       
-		  return(list("BigResultTable"=res, "DifferencesTable"=res.diff, "PvalsTable"=res.p))
+		  return(list("BigResultTable"=res, "RatiosTable"=res.diff, "PvalsTable"=res.p))
 	  })
 
 setGeneric("boxPlot", function(Object, covariate1, covariate2) standardGeneric("boxPlot"))
