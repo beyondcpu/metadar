@@ -389,25 +389,32 @@ draw.heat.2 <- function(dat.for.heatmap, pvals.by.time,...) {
 
 final.hm <- function(dataset, pvals.by.time=NULL, xlas=2,
                      clusterColumns = F, clusterRows = F,
-                     wf = 5, hf = 5, mf = 0.55, na.omit = T,
-                     device = "X11", file = NULL, ...)
+                     na.omit = T, device = "X11", file = NULL, ...)
 { ## wf = width factor. hf = height factor. mf = margin factor
   if(clusterColumns && clusterRows) {
     dendrogram = "both"
     Rowv = T
     Colv = T
+    hahm <- 0.5
+    wd <- 0.5
   } else if(clusterColumns) {
     dendrogram = "column"
     Rowv = F
     Colv = T
+    hahm <- 0.5
+    wd <- 0.01
   } else if(clusterRows) {
     dendrogram = "row"
     Rowv = T
     Colv = F
+    hahm <- 0.01
+    wd <- 0.5
   } else {
     dendrogram = "none"
     Rowv = F
-    Colv = F
+    Colv = F 
+    hahm <- 0.01
+    wd <- 0.01
   }
   
   if(na.omit) {
@@ -429,23 +436,22 @@ final.hm <- function(dataset, pvals.by.time=NULL, xlas=2,
   
   library(gplots)
   
-  hahm <- 1
-  wd <- 1
-  hhm = hf*log(nrow(dataset))
-  whm= wf*log(ncol(dataset))
-  cexR = max(0.3,6*hhm/nrow(dataset))
-  cexC = max(0.3,2*whm/ncol(dataset))
-  noteCex = min(2*cexR, cexC)
-  huhm = min(1, log(nrow(dataset)))+0.02*cexC*max(nchar(colnames(dataset)))
-  rowmargin = 1+cexR*mf*max(nchar(rownames(dataset)))
-  colmargin = 1+cexC*mf*max(nchar(colnames(dataset)))
-
+  hhm = 20*plogis(nrow(dataset), location=20, scale=10)
+  huhm = min(1.3, (2 - plogis(nrow(dataset), location=20, scale=100)))
+  whm= 20*plogis(ncol(dataset), location=20, scale=10)
+  cexR = ifelse(nrow(dataset) < 300, 2, 1) * huhm * (log(hhm) / (1+log(nrow(dataset))))
+  cexC = ifelse(nrow(dataset) < 300, 2, 1) * huhm * (log(whm) / (1+log(ncol(dataset))))
+  noteCex = max(cexR, cexC)
+  rowmargin = 1 + max(nchar(rownames(dataset)))
+  colmargin = 1 + huhm + max(nchar(colnames(dataset)))
+  
   dat <- dataset
   
   switch(device,
-    "pdf"=pdf(file, width=wd+whm+0.1*rowmargin, height=hahm+hhm+huhm+0.1*colmargin),
-    "png"=png(file, width=96*(wd+whm+0.1*rowmargin), height=96*(hahm+hhm+huhm+0.1*colmargin), res=96),
-    X11(width=wd+whm+0.1*rowmargin, height=hahm+hhm+huhm+0.1*colmargin)
+    "pdf"=pdf(file, width=wd+whm+0.2*rowmargin, height=hahm+hhm+huhm+0.2*colmargin),
+    "png"=png(file, width=96*(wd+whm+0.2*rowmargin), height=96*(hahm+hhm+huhm+0.2*colmargin), res=96),
+    "wmf"=win.metafile(file, width=wd+whm+0.2*rowmargin, height=hahm+hhm+huhm+0.2*colmargin)     
+    X11(width=wd+whm+0.2*rowmargin, height=hahm+hhm+huhm+0.2*colmargin)
   )
   
 
@@ -463,7 +469,7 @@ final.hm <- function(dataset, pvals.by.time=NULL, xlas=2,
 	  	  Colv=Colv,
         lmat=rbind( c(0, 3), c(2,1), c(0,4)), lhei=c(hahm, hhm, huhm),
         margins=c(colmargin, rowmargin),
-        lwid=c(wd,whm), cexRow=cexR, cexCol=cexC, notecex=noteCex
+        lwid=c(wd,whm), cexRow=cexR, cexCol=cexC, notecex=noteCex, ...
       )
   } else{
       draw.heat.2(dat,pvals.by.time,
@@ -477,6 +483,7 @@ final.hm <- function(dataset, pvals.by.time=NULL, xlas=2,
   }
   switch(device,
     "pdf"=dev.off(),
-    "png"=dev.off()
+    "png"=dev.off(),
+    "wmf"=dev.off()
   )
 }
