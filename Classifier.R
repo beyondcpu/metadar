@@ -54,8 +54,8 @@ cla$methods(list(
 			 .self$roc[[1]] <- roc(y, predicted.value)
 		 },
      
-     plotROC = function() {
-       plot(getROC(), print.auc=T, print.thres=youdenIndex)
+     plotROC = function(...) {
+       plot(getROC(), print.auc=T, print.thres=youdenIndex, ...)
      },
 
 		 computeAUC = function() {
