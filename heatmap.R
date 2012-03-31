@@ -367,30 +367,43 @@ heat.2 <- function (x, Rowv = TRUE, Colv = if (symm) "Rowv" else TRUE,
     invisible(retval)
 }
 
-draw.heat.2 <- function(dat.for.heatmap, pvals.by.time,...) {
-  stars.by.time <- matrix("",nrow=nrow(pvals.by.time),ncol=ncol(pvals.by.time))
-	for(j in seq(ncol(pvals.by.time)))
+draw.heat.2 <- function(dataset, pvals,...) {
+  stars <- matrix("",nrow=nrow(pvals),ncol=ncol(pvals))
+	for(j in seq(ncol(pvals)))
 	{
-		stars.by.time[which(pvals.by.time[,j]<0.05),j]="*"
-		stars.by.time[which(pvals.by.time[,j]<0.01),j]="**"
-		stars.by.time[which(pvals.by.time[,j]<0.001),j]="***"
+		stars[which(pvals[,j]<0.05),j]="*"
+		stars[which(pvals[,j]<0.01),j]="**"
+		stars[which(pvals[,j]<0.001),j]="***"
 	}
-	br <- c(seq(from=min(dat.for.heatmap,na.rm=T),to=0,length.out=256),
-			seq(from=0,to=max(dat.for.heatmap,na.rm=T),length.out=256))
-	heat.2(dat.for.heatmap,
+	br <- c(seq(from=min(dataset,na.rm=T),to=0,length.out=256),
+			seq(from=0,to=max(dataset,na.rm=T),length.out=256))
+	heat.2(dataset,
 		trace="none",
 		col=bluered(length(br)-1),
 		breaks=br,
 		density.info="none",
-		cellnote=stars.by.time,
+		cellnote=stars,
 		notecol="black",...)	
 }
 
 
-final.hm <- function(dataset, pvals.by.time=NULL, xlas=2,
+ihm <- function(dataset, pvals=NULL, xlas=2,
                      clusterColumns = F, clusterRows = F,
-                     na.omit = T, device = "X11", file = NULL, ...)
-{ ## wf = width factor. hf = height factor. mf = margin factor
+                     na.omit = T, device = "X11", file = NULL,
+                     rowmarginCorrection = 0,
+                     colmarginCorrection = 0,
+                     keyheightCorrection = 0,
+                     rowclusterheightCorrection = 0,
+                     colclusterheightCorrection = 0,
+                     imagewidthCorrection = 0,
+                     imageheightCorrection = 0,
+                     rowlabelsizeCorrection = 0,
+                     collabelsizeCorrection = 0,
+                     cellnotesizeCorrection = 0,
+                     canvasWidthCorrection = 0,
+                     canvasHeightCorrection = 0,
+                     ...)
+{
   if(clusterColumns && clusterRows) {
     dendrogram = "both"
     Rowv = T
@@ -424,8 +437,8 @@ final.hm <- function(dataset, pvals.by.time=NULL, xlas=2,
       rnames <- rownames(dataset)
       dataset <- apply(dataset, 2, as.numeric)
       rownames(dataset) <- rnames
-      if(!is.null(pvals.by.time)) {
-        pvals.by.time <- pvals.by.time[-removeRows,]
+      if(!is.null(pvals)) {
+        pvals <- pvals[-removeRows,]
       }
     }
   }
@@ -436,29 +449,33 @@ final.hm <- function(dataset, pvals.by.time=NULL, xlas=2,
   
   library(gplots)
   
-  hhm = 20*plogis(nrow(dataset), location=20, scale=10)
-  huhm = min(1.3, (2 - plogis(nrow(dataset), location=20, scale=100)))
-  whm= 20*plogis(ncol(dataset), location=20, scale=10)
-  cexR = ifelse(nrow(dataset) < 300, 2, 1) * huhm * (log(hhm) / (1+log(nrow(dataset))))
-  cexC = ifelse(nrow(dataset) < 300, 2, 1) * huhm * (log(whm) / (1+log(ncol(dataset))))
-  noteCex = max(cexR, cexC)
-  rowmargin = 1 + max(nchar(rownames(dataset)))
-  colmargin = 1 + huhm + max(nchar(colnames(dataset)))
+  hhm = 20*plogis(nrow(dataset), location=20, scale=10) + imageheightCorrection
+  huhm = min(1.3, (2 - plogis(nrow(dataset), location=20, scale=100))) + keyheightCorrection
+  whm= 20*plogis(ncol(dataset), location=20, scale=10) + imagewidthCorrection
+  cexR = ifelse(nrow(dataset) < 300, 2, 1) * huhm * (log(hhm) / (1+log(nrow(dataset)))) + rowlabelsizeCorrection
+  cexC = ifelse(nrow(dataset) < 300, 2, 1) * huhm * (log(whm) / (1+log(ncol(dataset)))) + collabelsizeCorrection
+  noteCex = max(cexR, cexC) + cellnotesizeCorrection
+  rowmargin = 1 + max(nchar(rownames(dataset))) + rowmarginCorrection
+  colmargin = 1 + huhm + max(nchar(colnames(dataset))) + colmarginCorrection
   
-  dat <- dataset
+  hahm <- hahm + colclusterheightCorrection
+  wd <- wd + rowclusterheightCorrection
+  
+  canvasWidth <- wd+whm+0.2*rowmargin + canvasWidthCorrection
+  canvasHeight <- hahm+hhm+huhm+0.2*colmargin + canvasHeightCorrection
   
   switch(device,
-    "pdf"=pdf(file, width=wd+whm+0.2*rowmargin, height=hahm+hhm+huhm+0.2*colmargin),
-    "png"=png(file, width=96*(wd+whm+0.2*rowmargin), height=96*(hahm+hhm+huhm+0.2*colmargin), res=96),
-    "wmf"=win.metafile(file, width=wd+whm+0.2*rowmargin, height=hahm+hhm+huhm+0.2*colmargin)     
-    X11(width=wd+whm+0.2*rowmargin, height=hahm+hhm+huhm+0.2*colmargin)
+    "pdf"=pdf(file, width=canvasWidth, height=canvasHeight),
+    "png"=png(file, width=96*canvasWidth, height=96*canvasHeight, res=96),
+    "wmf"=win.metafile(file, width=canvasWidth, height=canvasHeight),    
+    X11(width=canvasWidth, height=canvasHeight)
   )
   
 
-  if(is.null(pvals.by.time)){    
-      br <- c(seq(from=min(dat,na.rm=T),to=0,length.out=256),
-  		seq(from=0,to=max(dat,na.rm=T),length.out=256))
-    	heatmap.2(dat,
+  if(is.null(pvals)){    
+      br <- c(seq(from=min(dataset,na.rm=T),to=0,length.out=256),
+  		seq(from=0,to=max(dataset,na.rm=T),length.out=256))
+    	heat.2(dataset,
 		    trace="none",
 	    	col=bluered(length(br)-1),
 	    	breaks=br,
@@ -467,12 +484,12 @@ final.hm <- function(dataset, pvals.by.time=NULL, xlas=2,
   	    dendrogram=dendrogram,
         Rowv = Rowv,
 	  	  Colv=Colv,
-        lmat=rbind( c(0, 3), c(2,1), c(0,4)), lhei=c(hahm, hhm, huhm),
+        lmat=rbind(c(0, 3), c(2,1), c(0,4)), lhei=c(hahm, hhm, huhm),
         margins=c(colmargin, rowmargin),
-        lwid=c(wd,whm), cexRow=cexR, cexCol=cexC, notecex=noteCex, ...
+        lwid=c(wd,whm), cexRow=cexR, cexCol=cexC, notecex=noteCex, xlas=xlas, ...
       )
   } else{
-      draw.heat.2(dat,pvals.by.time,
+      draw.heat.2(dataset,pvals,
 		    dendrogram=dendrogram,
         Rowv = Rowv,
 	  	  Colv = Colv,
