@@ -6,8 +6,7 @@
 
 library("Biobase")
 source("Dataset.R")
-dat <- new("Dataset")
-dat <- readDataset(dat, "Lipidomics_normalized.csv",
+dat <- new("Dataset", "Lipidomics_normalized.csv",
                    "Lipidomics_pdata2.csv")
 ### take a subset of the data (in this case we want to analyze each time point separately)
 library("simpleaffy")

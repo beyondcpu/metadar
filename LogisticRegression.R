@@ -30,7 +30,6 @@ lr$methods(list(
     },
     
     reduce.lasso = function() {
-      browser()
       lognet.model <- glmnet(t(.self$x), .self$y, family="binomial", alpha=1)
     },
 
