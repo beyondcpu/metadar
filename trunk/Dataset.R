@@ -1,5 +1,10 @@
 setClass("Dataset", contains="ExpressionSet")
 
+setMethod("initialize", signature=c("Dataset"),
+  function(.Object, ...) {
+    readDataset(.Object, ...)
+  })
+
 setGeneric("readDataset",  def=function(Object, metabolomicsDataFile,
 phenoDataFile) standardGeneric("readDataset"))
 
@@ -147,6 +152,48 @@ setMethod("varSel", signature=c("Dataset", "character",
 		return(vsglmnet2(y=y, x=t(exprs(Object)), family=family, ...))
 	}
 })
+
+setGeneric("pca", function(Object, annotation, color) standardGeneric("pca"))
+
+setMethod("pca", signature=c("Dataset", "character", "character"),
+    function(Object, annotation, color) {
+      pr <- prcomp(exprs(Object))
+      prop.var <- signif((pr$sdev^2 / sum(pr$sdev^2)) * 100, 2)
+      plot(pr$rotation[,c(1,2)], xlab=paste("PC1:", prop.var[1], "% variance"),
+           ylab=paste("PC2:", prop.var[2], "% variance"),
+           type="n", main="Principal component analysis")
+      annotation.colors <- as.factor(pData(Object)[,color])
+      levels(annotation.colors) <- 1:length(levels(annotation.colors))
+      text(pr$rotation[,c(1,2)], as.character(pData(Object)[,annotation]),
+           col=as.character(annotation.colors))
+      pr
+    })
+
+setGeneric("colhclust", function(Object, color) standardGeneric("colhclust"))
+
+setMethod("colhclust", signature=c("Dataset", "character"),
+    function(Object, color) {
+      
+      ##### this is not correct yet
+      dd <- hclust(dist(t(exprs(Object))))
+      local({
+        colLab <<- function(n) {
+          if(is.leaf(n)) {
+            a <- attributes(n)
+            i <<- i+1
+            attr(n, "nodePar") <-
+              c(a$nodePar, list(lab.col = mycols[i]))
+          }
+          n
+        }
+        mycols <- as.factor(pData(Object)[dd$order,color])
+        levels(mycols) <- 1:length(levels(mycols))
+        mycols <- as.character(mycols)
+        i <- 0
+      })
+      dL <- dendrapply(as.dendrogram(dd), colLab)
+      dL
+    })
 
 setGeneric("zeroImputation", function(Object, method, covariate) standardGeneric("zeroImputation"))
 ### something is wrong
