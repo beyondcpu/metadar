@@ -10,7 +10,7 @@ lr$methods(list(
 		buildClassifier = function() {
 			yx <- data.frame("y"=factor(.self$y), t(.self$x))
 			colnames(yx)[2:ncol(yx)] <- rownames(.self$x)
-			.self$model <- glm(y~., family=binomial, data=yx)
+			.self$model <- glm(y~., family=binomial, data=yx, maxit=50)
 		},
     
     subselect = function(method="stepAIC") {
