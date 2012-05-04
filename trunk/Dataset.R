@@ -8,6 +8,11 @@ setMethod("initialize", signature=c("Dataset"),
 setGeneric("readDataset",  def=function(Object, metabolomicsDataFile,
 phenoDataFile) standardGeneric("readDataset"))
 
+setMethod("readDataset", signature=c("Dataset", "missing", "missing"),
+  function(Object) {
+    Object
+})
+
 setMethod("readDataset", signature=c("Dataset", "character", "character"),
 	function(Object, metabolomicsDataFile="exprs.csv",
 		phenoDataFile="phenoDataFramea.csv") {
@@ -47,20 +52,36 @@ setMethod("readDataset", signature=c("Dataset", "character", "missing"),
 	Object
 })
 
-setGeneric("setDataset",  def=function(Object, metabolomicsDataFrame, phenoDataFrame) standardGeneric("setDataset"))
+##setGeneric("setDataset",  def=function(Object, metabolomicsDataFrame, phenoDataFrame) standardGeneric("setDataset"))
 
-setMethod("setDataset", signature=c("Dataset", "data.frame", "data.frame"),
-	function(Object, metabolomicsDataFrame=data.frame(),
-		phenoDataFrame=data.frame()) {
-	dat <- metabolomicsDataFrame[which(!is.na(metabolomicsDataFrame[,"ID"])),
-		as.character(phenoDataFrame[,"SampleName"])]
-	rownames(dat) <- metabolomicsDataFrame[,"ID"]
-	phenoData <- new("AnnotatedDataFrame", data=phenoDataFrame)
+setMethod("readDataset", signature=c("Dataset", "data.frame", "data.frame"),
+	function(Object, metabolomicsDataFile,
+		phenoDataFile) {
+  rownames(phenoDataFile) <- as.character(phenoDataFile[,"SampleName"])
+	dat <- metabolomicsDataFile[which(!is.na(metabolomicsDataFile[,"ID"])),
+		as.character(phenoDataFile[,"SampleName"])]
+	rownames(dat) <- metabolomicsDataFile[,"ID"]
+	phenoData <- new("AnnotatedDataFrame", data=phenoDataFile)
 	Object@assayData=assayDataNew(exprs=apply(dat,2,as.numeric))
 	featureNames(assayData(Object)) <- rownames(dat)
 	Object@phenoData=phenoData
 	Object
 })
+
+setMethod("readDataset", signature=c("Dataset", "data.frame", "missing"),
+  function(Object, metabolomicsDataFile) {
+    dat <- metabolomicsDataFile[-1, -1]
+    rownames(dat) <- metabolomicsDataFile[-1,"ID"]
+    phenoDataFrame <- data.frame("SampleName"=colnames(metabolomicsDataFile)[2:ncol(metabolomicsDataFile)],
+                                 "Class"=unlist(metabolomicsDataFile[1,2:ncol(metabolomicsDataFile)]))
+    rownames(phenoDataFrame) <- colnames(metabolomicsDataFile)[2:ncol(metabolomicsDataFile)]
+    phenoData <- new("AnnotatedDataFrame", data=phenoDataFrame)
+    Object@assayData=assayDataNew(exprs=apply(dat,2,as.numeric))
+    featureNames(assayData(Object)) <- rownames(dat)
+    Object@phenoData=phenoData
+    Object
+})
+
 
 setGeneric("setExprs", def=function(Object, exprs) standardGeneric("setExprs"))
 
@@ -114,6 +135,49 @@ covariate="numeric"), valueClass="data.frame", definition=function(Object,
 			"Pearson correlation"=cors, "P value"=pvals, "BH95 FDR Q value"=qvals))
 })
 
+setGeneric("pairwiseCorrelation", def=function(Object1, Object2) standardGeneric("pairwiseCorrelation"))
+
+setMethod("pairwiseCorrelation", signature=c("Dataset", "missing"),
+  function(Object1) {
+    r <- matrix(0, nrow=nrow(Object1), ncol=nrow(Object1))
+    p <- matrix(0, nrow=nrow(Object1), ncol=nrow(Object1))
+    rownames(r) <- featureNames(Object1)
+    rownames(p) <- featureNames(Object1)
+    colnames(r) <- featureNames(Object1)
+    colnames(p) <- featureNames(Object1)
+    for(j in seq(nrow(Object1))) {
+      for(i in seq(nrow(Object1))) {
+        ct <- cor.test(exprs(Object1)[i,], exprs(Object1)[j,], alternative="t", method="pearson")
+        r[i,j] <- ct$estimate
+        p[i,j] <- ct$p.value
+      } 
+    }
+    list("r"=r, "p"=p)
+  })
+
+setMethod("pairwiseCorrelation", signature=c("Dataset", "Dataset"),
+  function(Object1, Object2) {
+    if(!identical(sampleNames(Object1), sampleNames(Object1))) {
+      stop("Sample names of Object1 and Object2 are not identical")
+    }
+    r <- matrix(0, nrow=nrow(Object1), ncol=nrow(Object2))
+    p <- matrix(0, nrow=nrow(Object1), ncol=nrow(Object2))
+    rownames(r) <- featureNames(Object1)
+    rownames(p) <- featureNames(Object1)
+    colnames(r) <- featureNames(Object2)
+    colnames(p) <- featureNames(Object2)
+
+    for(j in seq(nrow(Object2))) {
+      for(i in seq(nrow(Object1))) {
+        ct <- cor.test(exprs(Object1)[i,], exprs(Object2)[j,], alternative="t", method="pearson")
+        r[i,j] <- ct$estimate
+        p[i,j] <- ct$p.value
+      }
+    }
+    list("r"=r, "p"=p)
+  })
+
+
 setGeneric("univariateAUC", def=function(Object, covariate) standardGeneric("univariateAUC"))
 
 setMethod("univariateAUC",  signature=c(Object="Dataset", covariate="character"),
@@ -138,17 +202,33 @@ valueClass="data.frame", definition=function(Object,
 	return(data.frame(means, res, "BH95 FDR Q value"=qvals))
 })
 
+setGeneric("concatenate", function(Object1, Object2) standardGeneric("concatenate"))
+
+setMethod("concatenate", signature=c("Dataset", "Dataset"),
+  function(Object1, Object2) {
+  #### Right now it is assumed that
+    ## pData(Object1) is identical to pData(Object2)
+    ## TODO: improve the method to the case where
+    ## sampleNames(Object1) and sampleNames(Object2) are identical as sets
+    ## (but not necessarily in the same order)... i.e. phenoData objects may
+    ## be complementary.
+    cobj <- Object1
+    cobj <- setExprs(cobj, rbind(exprs(Object1), exprs(Object2)))
+    cobj <- setExprs(cobj, t(scale(t(exprs(cobj)))))
+    cobj
+})
+
 setGeneric("varSel", function(Object, covariate, method, ...)
 standardGeneric("varSel"))
 
 setMethod("varSel", signature=c("Dataset", "character",
-"character"), function(Object, covariate, method, family="binomial", ...) {
+"character"), function(Object, covariate, method="glmnet", family="binomial", ...) {
 	if(method=="glmnet") {
 		y <- pData(Object)[,covariate]
 		names(y) <- pData(Object)[,"SampleName"]
-    if(family=="binomial") {
-      y = factor(y)
-    }
+		if(family=="binomial") {
+		  y = factor(y)
+		}
 		return(vsglmnet2(y=y, x=t(exprs(Object)), family=family, ...))
 	}
 })
