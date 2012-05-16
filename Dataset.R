@@ -202,6 +202,14 @@ valueClass="data.frame", definition=function(Object,
 	return(data.frame(means, res, "BH95 FDR Q value"=qvals))
 })
 
+setGeneric("rankNormalization", function(Object) standardGeneric("rankNormalization"))
+
+setMethod("rankNormalization", signature="Dataset",
+  function(Object) {
+    exprs(Object) <- apply(exprs(Object), 2, rank)
+    Object
+  })
+
 setGeneric("concatenate", function(Object1, Object2) standardGeneric("concatenate"))
 
 setMethod("concatenate", signature=c("Dataset", "Dataset"),
