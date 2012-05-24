@@ -3,7 +3,7 @@ lrm <- setRefClass("RandomForestModelValidationCV",
 
 lrm$methods(list(
 	initialize = function(...) {
-		createMe(.self, ...)
+		callSuper(...)
 	},
 
 	buildCV = function() { # public
@@ -41,28 +41,28 @@ lrm$methods(list(
 	}
 ))
 
-setGeneric("createMe", def=function(object, x, y, x.test, y.test, cv)
-    standardGeneric("createMe"))
+#setGeneric("createMe", def=function(object, x, y, x.test, y.test, cv)
+#    standardGeneric("createMe"))
     
-setMethod("createMe", signature=c("RandomForestModelValidationCV", "missing", "missing", "missing", "missing", "missing"),
-    function(object) {
-      object
-    })
+#setMethod("createMe", signature=c("RandomForestModelValidationCV", "missing", "missing", "missing", "missing", "missing"),
+#    function(object) {
+#      object
+#    })
   
-setMethod("createMe", signature=c("RandomForestModelValidationCV", "data.frame", "factor", "missing", "missing", "numeric"),
-    function(object, x, y, cv) {
-      object$x <- x
-      object$y <- y
-      object$cv <- cv
-      object
-    })
+#setMethod("createMe", signature=c("RandomForestModelValidationCV", "data.frame", "factor", "missing", "missing", "numeric"),
+#    function(object, x, y, cv) {
+#      object$x <- x
+#      object$y <- y
+#      object$cv <- cv
+#      object
+#    })
 
-setMethod("createMe", signature=c("RandomForestModelValidationCV", "data.frame", "factor", "data.frame", "factor", "numeric"),
-    function(object, x, y, x.test, y.test, cv) {
-      object$x <- x
-      object$y <- y
-      object$x.test <- x.test
-      object$y.test <- y.test
-      object$cv <- cv
-      object
-    })
+#setMethod("createMe", signature=c("RandomForestModelValidationCV", "data.frame", "factor", "data.frame", "factor", "numeric"),
+#    function(object, x, y, x.test, y.test, cv) {
+#      object$x <- x
+#      object$y <- y
+#      object$x.test <- x.test
+#      object$y.test <- y.test
+#      object$cv <- cv
+#      object
+#    })
