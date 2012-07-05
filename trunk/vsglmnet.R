@@ -81,3 +81,8 @@ vsglmnet2 <- function(y, x, clus=NULL, k=1, cv=10, nvars=4, alphas=seq(0.1,1,by=
 	}
 	return(list("alphas"=alphas, "mseByAlpha"=mseByAlpha, "varsByAlpha"=varsByAlpha, "cv.modelByAlpha"=cv.model))
 }
+
+vsglmnet3 <- function(y, x)
+{
+  
+}
