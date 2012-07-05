@@ -82,6 +82,13 @@ setMethod("readDataset", signature=c("Dataset", "data.frame", "missing"),
     Object
 })
 
+setMethod("readDataset", signature=c("Dataset", "ExpressionSet", "missing"),
+          function(Object, metabolomicsDataFile) {
+            Object@assayData=assayData(metabolomicsDataFile)
+            Object@phenoData=phenoData(metabolomicsDataFile)
+            Object
+          })
+
 
 setGeneric("setExprs", def=function(Object, exprs) standardGeneric("setExprs"))
 
@@ -134,49 +141,6 @@ covariate="numeric"), valueClass="data.frame", definition=function(Object,
 		return(data.frame(row.names=featureNames(assayData(Object)),
 			"Pearson correlation"=cors, "P value"=pvals, "BH95 FDR Q value"=qvals))
 })
-
-setGeneric("pairwiseCorrelation", def=function(Object1, Object2) standardGeneric("pairwiseCorrelation"))
-
-setMethod("pairwiseCorrelation", signature=c("Dataset", "missing"),
-  function(Object1) {
-    r <- matrix(0, nrow=nrow(Object1), ncol=nrow(Object1))
-    p <- matrix(0, nrow=nrow(Object1), ncol=nrow(Object1))
-    rownames(r) <- featureNames(Object1)
-    rownames(p) <- featureNames(Object1)
-    colnames(r) <- featureNames(Object1)
-    colnames(p) <- featureNames(Object1)
-    for(j in seq(nrow(Object1))) {
-      for(i in seq(nrow(Object1))) {
-        ct <- cor.test(exprs(Object1)[i,], exprs(Object1)[j,], alternative="t", method="pearson")
-        r[i,j] <- ct$estimate
-        p[i,j] <- ct$p.value
-      } 
-    }
-    list("r"=r, "p"=p)
-  })
-
-setMethod("pairwiseCorrelation", signature=c("Dataset", "Dataset"),
-  function(Object1, Object2) {
-    if(!identical(sampleNames(Object1), sampleNames(Object1))) {
-      stop("Sample names of Object1 and Object2 are not identical")
-    }
-    r <- matrix(0, nrow=nrow(Object1), ncol=nrow(Object2))
-    p <- matrix(0, nrow=nrow(Object1), ncol=nrow(Object2))
-    rownames(r) <- featureNames(Object1)
-    rownames(p) <- featureNames(Object1)
-    colnames(r) <- featureNames(Object2)
-    colnames(p) <- featureNames(Object2)
-
-    for(j in seq(nrow(Object2))) {
-      for(i in seq(nrow(Object1))) {
-        ct <- cor.test(exprs(Object1)[i,], exprs(Object2)[j,], alternative="t", method="pearson")
-        r[i,j] <- ct$estimate
-        p[i,j] <- ct$p.value
-      }
-    }
-    list("r"=r, "p"=p)
-  })
-
 
 setGeneric("univariateAUC", def=function(Object, covariate) standardGeneric("univariateAUC"))
 
@@ -241,232 +205,21 @@ setMethod("varSel", signature=c("Dataset", "character",
 	}
 })
 
-setGeneric("pca", function(Object, annotation, color) standardGeneric("pca"))
+setGeneric("printDataset", function(Object, filename) standardGeneric("printDataset"))
 
-setMethod("pca", signature=c("Dataset", "character", "character"),
-    function(Object, annotation, color) {
-      pr <- prcomp(exprs(Object))
-      prop.var <- signif((pr$sdev^2 / sum(pr$sdev^2)) * 100, 2)
-      plot(pr$rotation[,c(1,2)], xlab=paste("PC1:", prop.var[1], "% variance"),
-           ylab=paste("PC2:", prop.var[2], "% variance"),
-           type="n", main="Principal component analysis")
-      annotation.colors <- as.factor(pData(Object)[,color])
-      levels(annotation.colors) <- 1:length(levels(annotation.colors))
-      text(pr$rotation[,c(1,2)], as.character(pData(Object)[,annotation]),
-           col=as.character(annotation.colors))
-      pr
-    })
-
-setGeneric("colhclust", function(Object, color) standardGeneric("colhclust"))
-
-setMethod("colhclust", signature=c("Dataset", "character"),
-    function(Object, color) {
-      
-      ##### this is not correct yet
-      dd <- hclust(dist(t(exprs(Object))))
-      local({
-        colLab <<- function(n) {
-          if(is.leaf(n)) {
-            a <- attributes(n)
-            i <<- i+1
-            attr(n, "nodePar") <-
-              c(a$nodePar, list(lab.col = mycols[i]))
-          }
-          n
-        }
-        mycols <- as.factor(pData(Object)[dd$order,color])
-        levels(mycols) <- 1:length(levels(mycols))
-        mycols <- as.character(mycols)
-        i <- 0
-      })
-      dL <- dendrapply(as.dendrogram(dd), colLab)
-      dL
-    })
-
-setGeneric("zeroImputation", function(Object, method, covariate) standardGeneric("zeroImputation"))
-### something is wrong
-setMethod("zeroImputation", signature=c("Dataset", "character", "missing"),
-	  function(Object, method="HalfMin") {
-		  dat <- exprs(Object)
-		  dat[is.na(dat)] <- 0
-		  if(method=="HalfMin") {
-			  for(i in seq(nrow(dat))) {
-				  if(!all(dat[i,]!=0) && (sum(dat[i,]) !=0)) {
-					  dat[i,which(dat[i,]==0)] <- min(dat[i,which(dat[i,]!=0)])/2
-				  }
-			  }
-		  }
-
-		  exprs(Object) <- dat
-		  Object
-})
-
-setMethod("zeroImputation", signature=c("Dataset", "character", "character"),
-	  function(Object, method="HalfMin", covariate) {
-		  groups <- levels(factor(pData(Object)[,covariate]))
-		  for(j in seq(length(groups))) {
-			  datg <- get.array.subset(Object, covariate, groups[j])
-			  dat <- exprs(datg)
-			  dat[is.na(dat)] <- 0
-
-			  if(method=="HalfMin") {
-
-				  for(i in seq(nrow(dat))) {
-					  if(!all(dat[i,]!=0) && (sum(dat[i,]) !=0)) {
-						  dat[i,which(dat[i,]==0)] <- min(dat[i,which(dat[i,]!=0)])/2
-					  }
-				  }
-			  }
-
-			  exprs(datg) <- dat
-			  if(j==1) {
-				  ret.Obj <- datg
-			  } else {
-				  ret.Obj <- combine(ret.Obj, datg)
-			  }
-		  }
-		  ret.Obj
-	  })
-
-setGeneric("printDataset", function(Object) standardGeneric("printDataset"))
-
-setMethod("printDataset", signature=c("Dataset"),
+setMethod("printDataset", signature=c("Dataset", "missing"),
 	  function(Object) {
 		  dat <- rbind(t(pData(Object)), exprs(Object))
 		  write.csv(dat, file=paste("Dataset", Sys.time(), ".csv", sep=""))
 	  })
 
-setGeneric("oneWayAnova", function(Object, covariate) standardGeneric("oneWayAnova"))
-
-setMethod("oneWayAnova", signature=c("Dataset", "character"),
-	  function(Object, covariate) {
-		  res <- vector("list", nrow(Object))
-      pvals <- vector("numeric", nrow(Object))
-		  for(i in seq(nrow(Object))) {
-			  x <- exprs(Object)[i,]
-			  fit <- aov(x~f, data=data.frame("x"=x, "f"=factor(pData(Object)[,covariate])))
-			  tuk <- TukeyHSD(fit)
-			  res.i <- c(summary(fit)[[1]]["f","F value"],
-                   summary(fit)[[1]]["f","Pr(>F)"],
-                   tuk$f[,c(5,4)])
-			  names(res.i) <- c(paste("One way Anova (", covariate, ") F-value"),
-                          paste("One way Anova (", covariate, ")P-value"),
-                          paste(rownames(tuk$f), colnames(tuk$f)[5]),
-                          paste(rownames(tuk$f), colnames(tuk$f)[4]))
-			  res[[i]] <- res.i
-        pvals[i] <- summary(fit)[[1]]["f","Pr(>F)"]
-		  }
-		  res <- t(data.frame(res, check.names=F))
-		  rownames(res) <- featureNames(Object)
-      qvals <- p.adjust(pvals, method="BH")
-      res <- data.frame(res, qvals, check.names=F)
-      colnames(res)[ncol(res)] <- paste("One way Anova (", covariate, ") FDR-BH95 Q value")
-		  return(res)
+setMethod("printDataset", signature=c("Dataset", "character"),
+	  function(Object, filename) {
+		  dat <- rbind(t(pData(Object)), exprs(Object))
+		  write.csv(dat, file=filename)
 	  })
 
 
-setGeneric("twoWayAnova", function(Object, covariate1, covariate2) standardGeneric("twoWayAnova"))
-
-setMethod("twoWayAnova", signature=c("Dataset", "character", "character"),
-	  function(Object, covariate1, covariate2) {
-		  res <- vector("list", nrow(Object))
-		  res.diff <- vector("list", nrow(Object))
-		  res.p <- vector("list", nrow(Object))
-		  for(i in seq(nrow(Object))) {
-			  x <- exprs(Object)[i,]
-			  fit <- aov(x~f1*f2, data=data.frame("x"=x, "f1"=factor(pData(Object)[,covariate1]), "f2"=factor(pData(Object)[,covariate2])))
-			  tuk <- TukeyHSD(fit)
-
-			  res.i <- c(summary(fit)[[1]][1,"F value"],
-				     summary(fit)[[1]][1,"Pr(>F)"],
-				     summary(fit)[[1]][2,"F value"],
-				     summary(fit)[[1]][2,"Pr(>F)"],
-				     summary(fit)[[1]][3,"F value"],
-				     summary(fit)[[1]][3,"Pr(>F)"],
-				     tuk$f1[,c(5,4)],
-				     tuk$f2[,c(5,4)],
-				     tuk$"f1:f2"[,c(5,4)])
-			  names(res.i) <- c(paste(covariate1, "F-value"), 
-					    paste(covariate1, "P-value"),
-					    paste(covariate2, "F-value"),
-					    paste(covariate2, "P-value"),
-					    paste(covariate1, ":", covariate2, "F-value"),
-					    paste(covariate1, ":", covariate2, "P-value"),
-					    paste(rownames(tuk$f1), colnames(tuk$f1)[5]),
-					    paste(rownames(tuk$f1), colnames(tuk$f1)[4]),
-					    paste(rownames(tuk$f2), colnames(tuk$f2)[5]),
-					    paste(rownames(tuk$f2), colnames(tuk$f2)[4]),
-					    paste(rownames(tuk$"f1:f2"), colnames(tuk$"f1:f2")[5]),
-					    paste(rownames(tuk$"f1:f2"), colnames(tuk$"f1:f2")[4]))
-
-			  res[[i]] <- res.i 
-
-			  res.diff.i <- c(tuk$f1[,5], tuk$f2[,5], tuk$"f1:f2"[,5])
-			  names(res.diff.i) <- c(paste(rownames(tuk$f1), colnames(tuk$f1)[5]),
-						 paste(rownames(tuk$f2), colnames(tuk$f2)[5]),
-						 paste(rownames(tuk$"f1:f2"), colnames(tuk$"f1:f2")[5]))
-			  res.diff[[i]] <- res.diff.i
-
-			  res.p.i <- c(tuk$f1[,4], tuk$f2[,4], tuk$"f1:f2"[,4])
-			  names(res.p.i) <- c(paste(rownames(tuk$f1), colnames(tuk$f1)[4]),
-					      paste(rownames(tuk$f2), colnames(tuk$f2)[4]),
-					      paste(rownames(tuk$"f1:f2"), colnames(tuk$"f1:f2")[4]))
-			  res.p[[i]] <- res.p.i
-		  }
-		  res <- t(data.frame(res))
-		  rownames(res) <- featureNames(Object)
-      
-      ## differences of means
-		  res.diff <- t(data.frame(res.diff))
-		  rownames(res.diff) <- featureNames(Object)
-      ## p values
-		  res.p <- t(data.frame(res.p))
-		  rownames(res.p) <- featureNames(Object)
-      ## ratios of means
-      #browser()
-      
-		  return(list("BigResultTable"=res, "RatiosTable"=res.diff, "PvalsTable"=res.p))
-	  })
-
-setGeneric("boxPlot", function(Object, covariate1, covariate2) standardGeneric("boxPlot"))
-
-setMethod("boxPlot", signature=c("Dataset", "character", "missing"),
-	  function(Object, covariate1) {
-		  for(i in seq(nrow(Object))) {
-        fit <- aov(x~f, data=data.frame("x"=exprs(Object)[i,],
-                                        "f"=factor(pData(Object)[,covariate1])
-                                        ))
-			  boxplot(exprs(Object)[i,]~factor(pData(Object)[,covariate1]),
-				  main=paste("Name:", featureNames(Object)[i],
-                     "\nAnova P-value:",
-                     round(summary(fit)[[1]]["f","Pr(>F)"], 5)))
-		  }
-	  })
-
-setMethod("boxPlot", signature=c("Dataset", "character", "character"),
-	  function(Object, covariate1, covariate2) {
-      previous <- par(mai=c(0.5,0.5,1,0.2))
-		  for(i in seq(nrow(Object))) {
-		    fit <- aov(x~f1*f2, data=data.frame("x"=exprs(Object)[i,],
-                                            "f1"=factor(pData(Object)[,covariate1]),
-                                            "f2"=factor(pData(Object)[,covariate2])
-                                            )
-                   )
-        p1 <- round(summary(fit)[[1]][1,"Pr(>F)"],5)
-        p2 <- round(summary(fit)[[1]][2,"Pr(>F)"], 5)
-        p3 <- round(summary(fit)[[1]][3,"Pr(>F)"], 5)
-        if((p1 < 0.05) | (p2 < 0.05) | (p3 < 0.05)) {
-    		  boxplot(exprs(Object)[i,]~factor(paste(pData(Object)[,covariate1],
-  								 pData(Object)[,covariate2])),
-  				  main=paste("Name:", featureNames(Object)[i],
-                       "\n", covariate1, "p-value", p1,
-                       "\n", covariate2, "p-value", p2,
-                       "\n", covariate1, covariate2, "interaction p-value", p3))
-            
-        }
-		  }
-      par(previous)
-	  })
 
 #### the following is an implementation for the generic stats/na.omit
 setMethod("na.omit", signature=c("Dataset"),
