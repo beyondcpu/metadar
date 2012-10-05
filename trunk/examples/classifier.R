@@ -13,7 +13,4 @@ dat <- new("Dataset", "~/Dropbox/Work/varp/Sample_DiscTraining_alvs.csv")
 lr <- new("LogisticRegression", dat, "Class", dat, "Class", selectedVariables=c("6", "7"))
 lr$subselect(method="lasso")
 lr$trainingStatistics()
-lr$printStatistics()
-lr$plotROC()
-lr$testStatistics()
-lr$plotROC()
+?

@@ -26,11 +26,11 @@ lr$methods(list(
     
     reduce.anneal = function() {
       matr <- glmHmat(.self$model)
-      simanneal <- anneal(matr$mat, kmin=3, H=matr$H)
+      $self$model <- anneal(matr$mat, kmin=3, H=matr$H, r=matr$r)
     },
     
     reduce.lasso = function() {
-      lognet.model <- glmnet(t(.self$x), .self$y, family="binomial", alpha=1)
+      .self$model <- glmnet(t(.self$x), .self$y, family="binomial", alpha=1)
     },
 
 		trainingPrediction = function() {
