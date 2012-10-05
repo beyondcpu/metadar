@@ -166,6 +166,23 @@ valueClass="data.frame", definition=function(Object,
 	return(data.frame(means, res, "BH95 FDR Q value"=qvals))
 })
 
+setGeneric("univariateWilcox", def=function(Object, covariate) standardGeneric("univariateWilcox"))
+
+setMethod("univariateWilcox",  signature=c(Object="Dataset", covariate="character"),
+          valueClass="data.frame", definition=function(Object,
+                                                       covariate) {
+            pvals <- apply(exprs(Object), 1, function(x) {
+              wil <- wilcox.test(x ~ factor(pData(Object)[,covariate]), alternative="two.sided")
+              wil$p.value
+            })
+            qvals <- p.adjust(pvals, method="BH")
+            means <- t(apply(exprs(Object), 1, function(x) {
+              unlist(lapply(split(x, factor(pData(Object)[,covariate])), mean))
+            }))
+            colnames(means) <- paste("Mean",colnames(means))
+            return(data.frame(means, "p.value"=pvals, "BH95.FDR.Q.value"=qvals))
+          })
+
 setGeneric("rankNormalization", function(Object) standardGeneric("rankNormalization"))
 
 setMethod("rankNormalization", signature="Dataset",
