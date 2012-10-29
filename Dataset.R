@@ -6,7 +6,7 @@ setMethod("initialize", signature=c("Dataset"),
           })
 
 setGeneric("readDataset",  def=function(Object, metabolomicsDataFile,
-                                        phenoDataFile) standardGeneric("readDataset"))
+                                        phenoDataFile, ...) standardGeneric("readDataset"))
 
 setMethod("readDataset", signature=c("Dataset", "missing", "missing"),
           function(Object) {
