@@ -5,7 +5,7 @@ cla <- setRefClass("Classifier", fields=list(
 					     y.test = "factor",
 					     predicted.class = "factor",
 					     predicted.value = "numeric",
-					     youdenIndex = "numeric",
+					     optimalCutoff = "numeric",
 					     sens = "numeric",#based on youden index
 					     spec = "numeric",#based on youden index
 					     rr = "numeric",
@@ -55,7 +55,7 @@ cla$methods(list(
 		 },
      
      plotROC = function(...) {
-       plot(getROC(), print.auc=T, print.thres=youdenIndex, ...)
+       plot(getROC(), print.auc=T, print.thres=optimalCutoff, ...)
      },
 
 		 computeAUC = function() {
@@ -65,23 +65,23 @@ cla$methods(list(
 			 .self$auc.u <- CI[[3]]
 		 },
 
-		 computeYoudenIndex = function() {
-			 .self$youdenIndex <- .self$getROC()$thresholds[which.max(.self$getROC()$sensitivities + .self$getROC()$specificities - 1)]
+		 computeoptimalCutoff = function() {
+			 .self$optimalCutoff <- .self$getROC()$thresholds[which.max((.self$getROC()$sensitivities * .self$getROC()$specificities)/(.self$getROC()$sensitivities + .self$getROC()$specificities))]
 		 },
 
 		 computeSensitivity = function() {
 			 ## Sensitivity at the Youden's Index
-			 .self$sens <-  .self$getROC()$sensitivities[which.max(.self$getROC()$sensitivities + .self$getROC()$specificities - 1)]
+			 .self$sens <-  .self$getROC()$sensitivities[which.max((.self$getROC()$sensitivities * .self$getROC()$specificities)/(.self$getROC()$sensitivities + .self$getROC()$specificities))]
 		 },
 
 		 computeSpecificity = function() {
 			 ## Specificity at the Youden's Index
-			 .self$spec <- .self$getROC()$specificities[which.max(.self$getROC()$sensitivities + .self$getROC()$specificities - 1)]
+			 .self$spec <- .self$getROC()$specificities[which.max((.self$getROC()$sensitivities * .self$getROC()$specificities)/(.self$getROC()$sensitivities + .self$getROC()$specificities))]
 		 },
      
      printStatistics = function() {
        print(data.frame("AUC CIL"=auc.l, "AUC"=auc, "AUC CIU"=auc.u,
-                        "Optimal cutoff"=youdenIndex,
+                        "Optimal cutoff"=optimalCutoff,
                         "Sensitivity"=sens, "Specificity"=spec))
      }
 		 ))

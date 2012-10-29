@@ -21,6 +21,8 @@ lrm$methods(list(
 		.self$computeCVacc()
 		.self$computeCVauc()
 		.self$computeCVor()
+		.self$computeCVsens()
+		.self$computeCVspec()
 	},
 
 	buildCV2 = function() { # public
@@ -38,6 +40,8 @@ lrm$methods(list(
 		.self$computeCVacc()
 		.self$computeCVauc()
 		.self$computeCVor()
+		.self$computeCVsens()
+		.self$computeCVspec()
 	}
 ))
 

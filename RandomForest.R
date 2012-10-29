@@ -37,8 +37,8 @@ rf$methods(list(
 			.self$predicted.value <- predict(.self$model, newdata=data.frame(t(.self$x),check.names=F), type="prob")
 			levels(.self$predicted.class) <- levels(.self$y)
 
-			if(!is.null(.self$youdenIndex)) {
-				.self$predicted.class[.self$predicted.value > .self$youdenIndex] <- levels(.self$y)[2]
+			if(!is.null(.self$optimalCutoff)) {
+				.self$predicted.class[.self$predicted.value > .self$optimalCutoff] <- levels(.self$y)[2]
 			} else {
 				.self$predicted.class[.self$predicted.value > 0.5] <- levels(.self$y)[2]
 			}
@@ -48,8 +48,8 @@ rf$methods(list(
 			.self$predicted.value <- predict.glm(.self$model, newdata=data.frame(t(.self$x.test),check.names=F), type="response")
 			levels(.self$predicted.class) <- levels(.self$y.test)
 
-			if(!is.null(.self$youdenIndex)) {
-				.self$predicted.class[.self$predicted.value > .self$youdenIndex] <- levels(.self$y.test)[2]
+			if(!is.null(.self$optimalCutoff)) {
+				.self$predicted.class[.self$predicted.value > .self$optimalCutoff] <- levels(.self$y.test)[2]
 			} else {
 				.self$predicted.class[.self$predicted.value > 0.5] <- levels(.self$y)[2]
 			}
@@ -60,7 +60,7 @@ rf$methods(list(
 			.self$trainingPrediction()
 			.self$computeROC()
 			.self$computeAUC()
-			.self$computeYoudenIndex()
+			.self$computeoptimalCutoff()
 			.self$computeSensitivity()
 			.self$computeSpecificity()
 		},
@@ -69,7 +69,7 @@ rf$methods(list(
 		  .self$testPrediction()
 		  .self$computeROC()
 		  .self$computeAUC()
-		  .self$computeYoudenIndex()
+		  .self$computeoptimalCutoff()
 		  .self$computeSensitivity()
 		  .self$computeSpecificity()
 		}

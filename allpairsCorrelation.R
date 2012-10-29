@@ -10,7 +10,7 @@ setMethod("allpairsCorrelation", signature=c("Dataset", "missing", "character"),
     colnames(p) <- featureNames(Object1)
     for(j in seq(nrow(Object1))) {
       for(i in seq(nrow(Object1))) {
-        ct <- cor.test(exprs(Object1)[i,], exprs(Object1)[j,], alternative="t", method=method)
+        ct <- cor.test(exprs(Object1)[i,], exprs(Object1)[j,], alternative="t", method=method, na.action=rm)
         r[i,j] <- ct$estimate
         p[i,j] <- ct$p.value
       } 
@@ -32,7 +32,7 @@ setMethod("allpairsCorrelation", signature=c("Dataset", "Dataset", "character"),
 
     for(j in seq(nrow(Object2))) {
       for(i in seq(nrow(Object1))) {
-        ct <- cor.test(exprs(Object1)[i,], exprs(Object2)[j,], alternative="t", method=method)
+        ct <- cor.test(exprs(Object1)[i,], exprs(Object2)[j,], alternative="t", method=method, na.action=rm)
         r[i,j] <- ct$estimate
         p[i,j] <- ct$p.value
       }
@@ -50,7 +50,7 @@ setMethod("allpairsCorrelation", signature=c("matrix", "missing", "character"),
             colnames(p) <- rownames(Object1)
             for(j in seq(nrow(Object1))) {
               for(i in seq(nrow(Object1))) {
-                ct <- cor.test(Object1[i,], Object1[j,], alternative="t", method=method)
+                ct <- cor.test(Object1[i,], Object1[j,], alternative="t", method=method, na.action=rm)
                 r[i,j] <- ct$estimate
                 p[i,j] <- ct$p.value
               } 
@@ -72,7 +72,7 @@ setMethod("allpairsCorrelation", signature=c("matrix", "matrix", "character"),
             
             for(j in seq(nrow(Object2))) {
               for(i in seq(nrow(Object1))) {
-                ct <- cor.test(Object1[i,], Object2[j,], alternative="t", method=method)
+                ct <- cor.test(Object1[i,], Object2[j,], alternative="t", method=method, na.action=rm)
                 r[i,j] <- ct$estimate
                 p[i,j] <- ct$p.value
               }
