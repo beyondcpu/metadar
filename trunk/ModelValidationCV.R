@@ -25,7 +25,6 @@ lrm <- setRefClass("ModelValidationCV", fields=list(
 		spec.mean = "numeric"))
 lrm$methods(list(
 	initialize = function(...) {
-		#.self
 		createMe(.self, ...)
 	},
 
@@ -62,7 +61,7 @@ lrm$methods(list(
 		
 		.self$cv.cutoff <- rep(0,.self$cv)
 		for(i in seq(.self$cv)) {
-			.self$cv.cutoff[i] <- perf.test@alpha.values[[i]][which.max(perf.test@x.values[[i]]+perf.test@y.values[[i]])]
+			.self$cv.cutoff[i] <- perf.test@alpha.values[[i]][which.max((perf.test@x.values[[i]]*perf.test@y.values[[i]])/(perf.test@x.values[[i]]+perf.test@y.values[[i]]))]
 		}
 		.self$cv.cutoff <- .self$cv.cutoff[.self$cv.cutoff!=Inf]
 		.self$cv.cutoff <- .self$cv.cutoff[!is.na(.self$cv.cutoff)]
@@ -130,13 +129,15 @@ lrm$methods(list(
 		.self$spec.quantiles <- quantile(.self$cv.spec, c(0.05, 0.25, 0.5, 0.75, 0.95))
 	},
 
-	plotROC = function(title, leg.pos.x=0.3, leg.pos.y=0.25, legend.cex=1.5) {
+	plotROC = function(title, leg.pos.x=0.3, leg.pos.y=0.25, legend.cex=1.5, showlegend=TRUE) {
 		perf.test <- performance(.self$pred.test, measure="tpr", x.measure="fpr")
 		plot(perf.test, avg="vertical", spread.estimate="boxplot", main=title)
 		abline(a=0, b=1)
-		legend(leg.pos.x,leg.pos.y, legend=c(paste("AUC = ", round(.self$auc.mean, 3), " (", round(.self$auc.quantiles[1],3), ", ", round(.self$auc.quantiles[5],3), ")", sep=""),
+		if(showlegend) {
+			legend("bottomright", legend=c(paste("AUC = ", round(.self$auc.mean, 3), " (", round(.self$auc.quantiles[1],3), ", ", round(.self$auc.quantiles[5],3), ")", sep=""),
 					  paste("ACC = ", round(.self$acc.mean,3), " (", round(.self$acc.quantiles[1],3), ", ", round(.self$acc.quantiles[5],3), ")", sep=""),
 					  paste("OR = ", round(.self$or.mean,3), " (", round(.self$or.quantiles[1],3), ", ", round(.self$or.quantiles[5],3), ")", sep="")), box.lwd=0, cex=legend.cex)
+		}
 	},
 
 	printStats = function(file.name) {
@@ -156,19 +157,29 @@ setMethod("createMe", signature=c("ModelValidationCV", "missing", "missing", "mi
   
 setMethod("createMe", signature=c("ModelValidationCV", "data.frame", "factor", "missing", "missing", "numeric", "character"),
     function(object, x, y, cv, selectedVariables) {
-      object$x <- x[,selectedVariables]
+      object$x <- data.frame(x[,selectedVariables],check.names=F)
       object$y <- y
       object$cv <- cv
+	  if(length(selectedVariables) == 1) {
+		object$x <- data.frame(t(object$x), check.names=F)
+		rownames(object$x) <- selectedVariables
+	  }
       object
     })
 
 setMethod("createMe", signature=c("ModelValidationCV", "data.frame", "factor", "data.frame", "factor", "numeric", "character"),
     function(object, x, y, x.test, y.test, cv, selectedVariables) {
-      object$x <- x[,selectedVariables]
+      object$x <- data.frame(x[,selectedVariables],check.names=F)
       object$y <- y
-      object$x.test <- x.test[,selectedVariables]
+      object$x.test <- data.frame(x.test[,selectedVariables],check.names=F)
       object$y.test <- y.test
       object$cv <- cv
+	  if(length(selectedVariables) == 1) {
+		object$x <- data.frame(t(object$x),check.names=F)
+		rownames(object$x) <- selectedVariables
+		object$x.test <- data.frame(t(object$x.test), check.names=F)
+		rownames(object$x.test) <- selectedVariables
+	  }
       object
     })
 
@@ -178,6 +189,10 @@ setMethod("createMe", signature=c("ModelValidationCV", "Dataset", "character", "
       object$y <- factor(pData(x)[,y])
       names(object$y) <- sampleNames(x)
       object$cv <- cv
+	  if(length(selectedVariables) == 1) {
+		object$x <- data.frame(t(object$x), check.names=F)
+		rownames(object$x) <- selectedVariables
+	  }
       object
     })
 
@@ -190,5 +205,11 @@ setMethod("createMe", signature=c("ModelValidationCV", "Dataset", "character", "
       object$x.test <- data.frame(exprs(x.test)[selectedVariables,], check.names=F)
       object$y.test <- factor(pData(x.test)[,y.test])
       names(object$y.test) <- sampleNames(x.test)
+	  if(length(selectedVariables) == 1) {
+		object$x <- data.frame(t(object$x), check.names=F)
+		rownames(object$x) <- selectedVariables
+		object$x.test <- data.frame(t(object$x.test), check.names=F)
+		rownames(object$x.test) <- selectedVariables
+	  }
       object
     })
