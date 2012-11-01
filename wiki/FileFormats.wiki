@@ -1,13 +1,34 @@
-Input file formats for creating Dataset objects from CSV files or data.frame objects
+#Input file formats for creating Dataset objects from CSV files or data.frame objects
 
 = Introduction =
 
-This document introduces how the input data should be provided to [ReadingInputData create a Dataset object].
+This document introduces how the input data should be provided to [ReadingTheData create a Dataset object]. A Dataset object can be created from a single input (i.e. a data file or a data.frame object) or two inputs (one for data and the other for meta data as files or data.frame objects).
 
+= Format of the data file =
 
-= Details =
+== The delimiter and decimal symbol etc. ==
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+The input data file should be a delimited text file. By default the delimiter is assumed to be a comma (,). That is, the default file format is a comma separated value (CSV). But the delimiter can be a semicolon (;) or a tab (\t) or alike. When the delimiter is not the default comma (,), then an argument {{{sep}}} must be used when [ReadingTheData creating the Dataset]. Another related aspect is the decimal symbol. By default, the decimal symbol is assumed to be a period (.). If it is different (e.g. a comma), then an argument {{{dec}}} must be used when [ReadingTheData creating the Dataset]. Please check the help document of the R function {{{read.table}}} for more details.
+
+== The content of the data file ==
+
+The data file must contain a column titled {{{ID}}}. The {{{ID}}} column is not allowed to have duplicate values. The remaining columns of the data file correspond to biological samples. Each row corresponds to one feature (i.e. one metabolite). The entry that corresponds to a feature _i_ and a sample _j_ represents the measured level of the feature in that sample, and it must be a number. The first row of the data file must always contain the titles that include the {{{ID}}} and the sample names. The sample names should not have duplicates. Note, however, that the data input will be successful even if the sample names have duplicates and R simply appends .1, .2 etc at the end of any duplicated names to make them unique. But care must be taken so that sample names do not have any duplicates, especially if the meta data is provided in a separate file, to make sure that the corresponding sample names match correctly.
+
+== Format of the data file when no meta data file is present ==
+
+When the Dataset is created from a single input file, the input file must contain in its second row, one single meta data variable. If the data is a case control study, it is typically the class variable that designates each sample as a case or control. If the data contains samples from several groups (e.g. healthy controls and several sub types of a disease), then this second row typically indicates the group of the samples (i.e. designates each column to be a control, or disease type1, disease type2 and so on). This single meta data variable can also be a real number (e.g. fasting glucose level).
+
+This data file is not allowed to have any other columns than {{{ID}}} and the sample columns. Also, the {{{ID}}} column must be the first column in the data file.
+
+Note that when the [ReadingTheData Dataset object is created] from the single input file, the single meta data variable provided in the file goes into the meta data field of the Dataset object, and the variable will always be called "Class" irrespective of whether it actually is a class variable (i.e. categorical variable) or a real number.
+
+== Format of the data file in the presence of a separate meta data file ==
+
+When the Dataset is created from two input files (i.e. one corresponding to the data and the other corresponding to the meta data), then all the rows of the data file (except the first row that has the column headers) must correspond to the features of the data set. The {{{ID}}} column can be anywhere. If there are any columns other than the {{{ID}}} and the samples that are described in the accompanying meta data file, they will be ignored.
+
+= Format of the meta data file =
+
+The purpose of the meta data file is to provide description of each biological sample in the data set. It must contain a column titled {{{SampleName}}}, and the entries of this column must be the sample names of the data set (i.e. they should match the sample names of the data file). If the {{{SampleName}}} column has any duplicate entries, the data input will fail. Typically the meta data file provides clinical variables including information such as disease group. Note that the meta data file is not allowed to include any samples that are not in the accompanying data file. If it does, the data input will fail with an {{{index out of bounds error}}}. But, if the data file has samples that are not in the meta data file, they will be simply ignored.
+
+= Notes =
+A Dataset object can hold any data, not necessarily only metabolomics or lipidomics data. The only condition is that the data values are numbers. For example, a factor variable such as the gender can be a feature in a Dataset as long as it is represented in numerical codes. The gender for instance can be coded as 0 for female and 1 for male (or vice versa).
