@@ -1,8 +1,10 @@
-#summary One-sentence summary of this page.
+#Create a Dataset object from files containing the data and optionally metadata.
 
 = Introduction =
 
-Add your content here.
+The Dataset class is the main data type of this package. Many functions of the package are operations on a Dataset object. A Dataset object can be created by calling the "new" function in one of the following possible ways.
+
+new("Dataset", metabolomicsDataFile, phenoDataFile, ...)
 
 
 = Details =
