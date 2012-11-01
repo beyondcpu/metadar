@@ -1,8 +1,8 @@
-Input file / data for creating Dataset objects from CSV files or data.frame objects
+Input file formats for creating Dataset objects from CSV files or data.frame objects
 
 = Introduction =
 
-Add your content here.
+This document introduces how the input data should be provided to [ReadingInputData create a Dataset object].
 
 
 = Details =
