@@ -21,7 +21,8 @@ new(Object, metabolomicsDataFile, phenoDataFile, ...)
   # {{{dat <- new("Dataset")}}} # Just to create an empty data set. Perhaps not practically useful
   # {{{dat <- new("Dataset", "/home/xyz/data.csv")}}}
   # {{{dat <- new("Dataset", data.object)}}} # where data.object is a data.frame
-  # {{{
+  #
+{{{
 dat <- new("Dataset", ExpressionSet.Object)
 }}}
   # {{{dat <- new("Dataset", "/home/xyz/data.csv", "/home/xyz/metadata.csv")}}}
