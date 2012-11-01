@@ -1,4 +1,4 @@
-#Input file formats for creating Dataset objects from CSV files or data.frame objects
+#summary Input file formats for creating Dataset objects from CSV files or data.frame objects.
 
 = Introduction =
 
@@ -34,3 +34,5 @@ The information provided in a preceding section about the delimiters and/or deci
 
 = Notes =
 A Dataset object can hold any data, not necessarily only metabolomics or lipidomics data. The only condition is that the data values are numbers. For example, a factor variable such as the gender can be a feature in a Dataset as long as it is represented in numerical codes. The gender for instance can be coded as 0 for female and 1 for male (or vice versa).
+
+Everything that is said about data files in the preceding sections applies also to the input data frames except the issues with delimiters and decimal separators.
