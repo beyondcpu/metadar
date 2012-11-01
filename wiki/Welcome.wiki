@@ -7,7 +7,7 @@ Welcome! This is a package under construction. So, it is not yet formally define
 The way to use this package is therefore to just download the sources, source the scripts that you need and use the functions there in. The best place to start getting familiar with the package is the 'examples' folder. I will keep adding more and more examples whenever I get some free time. I will soon update this page to list all the functions of this package.
 
 ==What can you do with this package (to be updated still)==
-  * Input of metabolomics data sets (well, any data set in principle) and their meta data in Bioconductor ExpressionSet format.
+  * [ReadingTheData Input of metabolomics data sets] (well, any data set in principle) and their meta data in Bioconductor ExpressionSet format.
   * One-way anova and post-hoc test (Tukey Honestly Significant Differences).
   * Two-way anova and post-hoc test (Tukey Honestly Significant Differences).
   * T-test for each variable in the data set.
