@@ -1,4 +1,4 @@
-#Create a Dataset object from files (or data.frame objects).
+#summary Create a Dataset object from files (or data.frame objects) that contain the data and meta data.
 
 = Introduction =
 
