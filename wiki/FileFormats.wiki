@@ -30,5 +30,7 @@ When the Dataset is created from two input files (i.e. one corresponding to the 
 
 The purpose of the meta data file is to provide description of each biological sample in the data set. It must contain a column titled {{{SampleName}}}, and the entries of this column must be the sample names of the data set (i.e. they should match the sample names of the data file). If the {{{SampleName}}} column has any duplicate entries, the data input will fail. Typically the meta data file provides clinical variables including information such as disease group. Note that the meta data file is not allowed to include any samples that are not in the accompanying data file. If it does, the data input will fail with an {{{index out of bounds error}}}. But, if the data file has samples that are not in the meta data file, they will be simply ignored.
 
+The information provided in a preceding section about the delimiters and/or decimal separators also applies to the meta data file.
+
 = Notes =
 A Dataset object can hold any data, not necessarily only metabolomics or lipidomics data. The only condition is that the data values are numbers. For example, a factor variable such as the gender can be a feature in a Dataset as long as it is represented in numerical codes. The gender for instance can be coded as 0 for female and 1 for male (or vice versa).
