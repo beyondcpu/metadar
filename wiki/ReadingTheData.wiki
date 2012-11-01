@@ -20,8 +20,16 @@ new(Object, metabolomicsDataFile, phenoDataFile, ...)
 = Examples of usage =
   # {{{dat <- new("Dataset")}}} # Just to create an empty data set. Perhaps not practically useful
   # {{{dat <- new("Dataset", "/home/xyz/data.csv")}}}
-   * Note: if the CSV file has semicolon (;) as the field separator (delimiter) and comma (,) as the decimal symbol, please use soemthing like {{{dat <- new("Dataset", "/home/xyz/data.csv", sep=";", dec=",")}}}. This is useful for the CSV files in the European format.
   # {{{dat <- new("Dataset", data.object)}}} # where data.object is a data.frame
   # {{{dat <- new("Dataset", ExpressionSet.Object}}}
   # {{{dat <- new("Dataset", "/home/xyz/data.csv", "/home/xyz/metadata.csv")}}}
   # {{{dat <- new("Dataset", data.object, metadata.object}}} # where data.object and metadata.object are data.frame objects
+
+= Notes =
+By default, the CSV files are assumed to have comma (,) as the delimiter and period (.) as the decimal symbol. If the CSV file has semicolon (;) as the field separator (delimiter) and comma (,) as the decimal symbol, please use something like:
+
+{{{
+dat <- new("Dataset", "/home/xyz/data.csv", sep=";", dec=",")
+}}}
+
+This is useful for the CSV files in the European format.
