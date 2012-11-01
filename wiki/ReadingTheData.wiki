@@ -11,8 +11,14 @@ new(Object, metabolomicsDataFile, phenoDataFile, ...)
 = Available signatures =
 
   # {{{new("Dataset", "missing", "missing")}}}: both input arguments can be missing
-  # {{{new("Dataset", "character", "missing")}}}: metabolomicsDataFile can be a character string giving the path to a CSV file that has the data. The path can be provided as a full path or relative to the current working directory. If the file is in the working directory, the name of the file alone is sufficient. The phenoDataFile can be missing. Please check the [FileFormats file / data formats page] for instructions on expected formats of input data.
-  # {{{new("Dataset", "data.frame", "missing")}}}: metabolomicsDataFile can be a data.frame. phenoDataFile can be missing. Please check the [FileFormats file / data formats page] for instructions on expected formats of input data.
+  # {{{new("Dataset", "character", "missing")}}}: metabolomicsDataFile can be a character string giving the path to a CSV file that has the data. The path can be provided as a full path or relative to the current working directory. If the file is in the working directory, the name of the file alone is sufficient. The phenoDataFile can be missing. Please check the [FileFormats file and data formats] page for instructions on expected formats of input data.
+  # {{{new("Dataset", "data.frame", "missing")}}}: metabolomicsDataFile can be a data.frame. phenoDataFile can be missing. Please check the [FileFormats file and data formats] page for instructions on expected formats of input data.
   # {{{new("Dataset", "ExpressionSet", "missing")}}}: metabolomicsDataFile can be an {{{ExpressionSet}}} object and phenoDataFile missing.
-  # {{{new("Dataset", "character", "character")}}}: both metabolomicsDataFile and phenoDataFile can be character strings, giving the path to two CSV files (data file and meta data file respectively. Please check the [FileFormats file / data formats page] for instructions on expected formats of input data.
-  # {{{new("Dataset", "data.frame", "data.frame")}}}: both metabolomicsDataFile and phenoDataFile can be data.frame objects containing data and meta data respectively. Please check the [FileFormats file / data formats page] for instructions on expected formats of input data.
+  # {{{new("Dataset", "character", "character")}}}: both metabolomicsDataFile and phenoDataFile can be character strings, giving the path to two CSV files (data file and meta data file respectively. Please check the [FileFormats file and data formats] page for instructions on expected formats of input data.
+  # {{{new("Dataset", "data.frame", "data.frame")}}}: both metabolomicsDataFile and phenoDataFile can be data.frame objects containing data and meta data respectively. Please check the [FileFormats file and data formats] page for instructions on expected formats of input data.
+
+= Examples of usage =
+  # dat <- new("Dataset")
+  # dat <- new("Dataset", "/home/xyz/data.csv")
+    # dat <- new("Dataset", "/home/xyz/data.csv", sep=";", dec=",")
+  # dat <- new("Dataset", data)
