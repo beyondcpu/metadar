@@ -2,6 +2,7 @@ setGeneric("colhclust", function(Object, labels, color) standardGeneric("colhclu
 
 setMethod("colhclust", signature=c("Dataset", "character", "character"),
     function(Object, labels, color) {
+      
       expr <- t(exprs(Object))
       rownames(expr) <- pData(Object)[,labels]
       
@@ -16,9 +17,14 @@ setMethod("colhclust", signature=c("Dataset", "character", "character"),
           }
           n
         }
-        mycols <- as.factor(pData(Object)[dd$order,color])
-        levels(mycols) <- 1:length(levels(mycols))
-        mycols <- as.character(mycols)
+        
+        if(length(color)==1) {
+          mycols <- as.factor(pData(Object)[dd$order,color])
+          levels(mycols) <- 1:length(levels(mycols))
+          mycols <- as.character(mycols)
+        } else {
+          mycols <- color[dd$order]
+        }
         i <- 0
       })
       dL <- dendrapply(as.dendrogram(dd), colLab)
@@ -39,9 +45,13 @@ setMethod("colhclust", signature=c("Dataset", "missing", "character"),
                 }
                 n
               }
-              mycols <- as.factor(pData(Object)[dd$order,color])
-              levels(mycols) <- 1:length(levels(mycols))
-              mycols <- as.character(mycols)
+              if(length(color)==1) {
+                mycols <- as.factor(pData(Object)[dd$order,color])
+                levels(mycols) <- 1:length(levels(mycols))
+                mycols <- as.character(mycols)
+              } else {
+                mycols <- color[dd$order]
+              }
               i <- 0
             })
             dL <- dendrapply(as.dendrogram(dd), colLab)

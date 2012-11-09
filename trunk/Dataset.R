@@ -105,10 +105,10 @@ setMethod("setExprs", signature=c("Dataset", "matrix"),
             Object
           })
 
-setGeneric("univariateCorrelation", def=function(Object, covariate)
+setGeneric("univariateCorrelation", def=function(Object, covariate, method)
   standardGeneric("univariateCorrelation"))
 
-setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="character"),
+setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="character", method="missing"),
           valueClass="data.frame",
           definition=function(Object,covariate) {
             expr <- exprs(Object)
@@ -122,10 +122,10 @@ setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="cha
             }
             qvals <- p.adjust(pvals, method="BH")
             return(data.frame(row.names=featureNames(assayData(Object)),
-                              "Pearson correlation"=cors, "P value"=pvals, "BH95 FDR Q value"=qvals))
+                              "Correlation coefficient (Pearson)"=cors, "P value"=pvals, "BH95 FDR Q value"=qvals))
           })
 
-setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="numeric"),
+setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="numeric", method="missing"),
           valueClass="data.frame",
           definition=function(Object, covariate) {
             expr <- exprs(Object)
@@ -139,7 +139,43 @@ setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="num
             }
             qvals <- p.adjust(pvals, method="BH")
             return(data.frame(row.names=featureNames(assayData(Object)),
-                              "Pearson correlation"=cors, "P value"=pvals, "BH95 FDR Q value"=qvals))
+                              "Correlation coefficient (Pearson)"=cors, "P value"=pvals, "BH95 FDR Q value"=qvals))
+          })
+
+setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="character", method="character"),
+          valueClass="data.frame",
+          definition=function(Object,covariate, method) {
+            expr <- exprs(Object)
+            output <- pData(Object)[,covariate]
+            cors <- vector("numeric",nrow(expr))
+            pvals <- vector("numeric",nrow(expr))
+            for(i in seq(nrow(expr))) {
+              ct <- cor.test(expr[i,], output, alternative="t", method=method)
+              cors[i] <- ct$estimate
+              pvals[i] <- ct$p.value
+            }
+            qvals <- p.adjust(pvals, method="BH")
+	    ret <- data.frame(row.names=featureNames(assayData(Object)), cors, pvals, qvals)
+	    colnames(ret) <- c(paste("Correlation coefficient (", method, ")", sep=""), "P value", "BH95 FDR Q value")
+            return(ret)
+          })
+
+setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="numeric", method="character"),
+          valueClass="data.frame",
+          definition=function(Object, covariate, method) {
+            expr <- exprs(Object)
+            output <- covariate
+            cors <- vector("numeric",nrow(expr))
+            pvals <- vector("numeric",nrow(expr))
+            for(i in seq(nrow(expr))) {
+              ct <- cor.test(expr[i,], output, alternative="t", method=method)
+              cors[i] <- ct$estimate
+              pvals[i] <- ct$p.value
+            }
+            qvals <- p.adjust(pvals, method="BH")
+	    ret <- data.frame(row.names=featureNames(assayData(Object)), cors, pvals, qvals)
+	    colnames(ret) <- c(paste("Correlation coefficient (", method, ")", sep=""), "P value", "BH95 FDR Q value")
+            return(ret)
           })
 
 setGeneric("univariateAUC", def=function(Object, covariate) standardGeneric("univariateAUC"))
@@ -263,14 +299,120 @@ setMethod("foldChange", signature=c(Object="Dataset", covariate="character", pai
             fcs
           })
 
-setGeneric("univariateOddsRatio", def=function(Object, covariate) standardGeneric("univariateOddsRatio"))
+setMethod("foldChange", signature=c(Object="Dataset", covariate="character",
+                                    paired="logical", is.logged="missing", log.base="missing"),
+          valueClass="data.frame", definition=function(Object, covariate, paired) {
+            ### at the moment, it is written to handle binary covariate
+            ### improve it for (1) (TODO) multinomial covariate (one-way anova design)
+            ### (2) (TODO) two covariates (two-way anova design)
+            if(length(levels(factor(pData(Object)[,covariate]))) != 2) {
+              stop("Right now this only works with binary covariate\n
+                   Consider taking the subset of the data before calling fold change function")
+            }
+            fcs <- matrix(0, nrow=nrow(Object), ncol=4)
+            colnames(fcs) <- c("FC", "FC 95CI.LL", "FC 95CI.UL", "FC 95% CI")
+            
+            warning("If your data is not normal, please consider log transformation")
+            if(paired) {
+              for(i in seq(nrow(Object))) {
+                y <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
+                pd <- y[[1]] / y[[2]]
+                pdm <- mean(pd)
+                pdse <- sd(pd)/sqrt(length(pd))
+                fcs[i, 1] <- pdm
+                fcs[i, c(2,3)] <- pdm + (c(-1,1)*qnorm(0.975)*pdse)
+              }
+            } else {
+              for(i in seq(nrow(Object))) {
+                y <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
+                pdm <- mean(y[[1]]) / mean(y[[2]])
+                pd1se <- sd(y[[1]])/sqrt(length(y[[1]]))
+                pd2se <- sd(y[[2]])/sqrt(length(y[[2]]))
+                pdse <- 0.5*(pd1se + pd2se)
+                fcs[i, 1] <- pdm
+                fcs[i, c(2,3)] <- pdm + (c(-1,1)*qnorm(0.975)*pdse)
+              }
+            }
+            fcs[,4] <- paste("(", round(fcs[,2],2), ", ", round(fcs[,3],2),")", sep="")
+            fcs
+          })
 
-setMethod("univariateOddsRatio", signature=c(Object="Dataset", covariate="character"),
+setMethod("foldChange", signature=c(Object="Dataset", covariate="character",
+                                    paired="missing", is.logged="logical", log.base="numeric"),
+          valueClass="data.frame", definition=function(Object, covariate, is.logged, log.base=2) {
+            ### at the moment, it is written to handle binary covariate
+            ### improve it for (1) (TODO) multinomial covariate (one-way anova design)
+            ### (2) (TODO) two covariates (two-way anova design)
+            if(length(levels(factor(pData(Object)[,covariate]))) != 2) {
+              stop("Right now this only works with binary covariate\n
+                   Consider taking the subset of the data before calling fold change function")
+            }
+            fcs <- matrix(0, nrow=nrow(Object), ncol=4)
+            colnames(fcs) <- c("FC", "FC 95CI.LL", "FC 95CI.UL", "FC 95% CI")
+            
+            if(is.logged) {
+              for(i in seq(nrow(Object))) {
+                y <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
+                pdm <- mean(y[[1]]) - mean(y[[2]])
+                pd1se <- sd(y[[1]])/sqrt(length(y[[1]]))
+                pd2se <- sd(y[[2]])/sqrt(length(y[[2]]))
+                pdse <- 0.5*(pd1se + pd2se)
+                fcs[i, 1] <- log.base^pdm
+                fcs[i, c(2,3)] <- log.base^(pdm + (c(-1,1)*qnorm(0.975)*pdse))
+              }
+            } else {
+              warning("If your data is not normal, please consider log transformation")
+              for(i in seq(nrow(Object))) {
+                y <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
+                pdm <- mean(y[[1]]) / mean(y[[2]])
+                pd1se <- sd(y[[1]])/sqrt(length(y[[1]]))
+                pd2se <- sd(y[[2]])/sqrt(length(y[[2]]))
+                pdse <- 0.5*(pd1se + pd2se)
+                fcs[i, 1] <- pdm
+                fcs[i, c(2,3)] <- pdm + (c(-1,1)*qnorm(0.975)*pdse)
+              }
+            }
+            fcs[,4] <- paste("(", round(fcs[,2],2), ", ", round(fcs[,3],2),")", sep="")
+            fcs
+          })
+
+setMethod("foldChange", signature=c(Object="Dataset", covariate="character",
+                                    paired="missing", is.logged="missing", log.base="missing"),
+          valueClass="data.frame", definition=function(Object, covariate) {
+            ### at the moment, it is written to handle binary covariate
+            ### improve it for (1) (TODO) multinomial covariate (one-way anova design)
+            ### (2) (TODO) two covariates (two-way anova design)
+            if(length(levels(factor(pData(Object)[,covariate]))) != 2) {
+              stop("Right now this only works with binary covariate\n
+                   Consider taking the subset of the data before calling fold change function")
+            }
+            fcs <- matrix(0, nrow=nrow(Object), ncol=4)
+            colnames(fcs) <- c("FC", "FC 95CI.LL", "FC 95CI.UL", "FC 95% CI")
+            
+            warning("If your data is not normal, please consider log transformation")
+            for(i in seq(nrow(Object))) {
+              y <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
+              pdm <- mean(y[[1]]) / mean(y[[2]])
+              pd1se <- sd(y[[1]])/sqrt(length(y[[1]]))
+              pd2se <- sd(y[[2]])/sqrt(length(y[[2]]))
+              pdse <- 0.5*(pd1se + pd2se)
+              fcs[i, 1] <- pdm
+              fcs[i, c(2,3)] <- pdm + (c(-1,1)*qnorm(0.975)*pdse)
+            }
+            
+            fcs[,4] <- paste("(", round(fcs[,2],2), ", ", round(fcs[,3],2),")", sep="")
+            fcs
+          })
+
+setGeneric("univariateOddsRatio",
+           def=function(Object, covariate, given) standardGeneric("univariateOddsRatio"))
+
+setMethod("univariateOddsRatio", signature=c(Object="Dataset", covariate="character", given="missing"),
           valueClass="data.frame", definition=function(Object, covariate) {
 
-            ors <- matrix(0, nrow=nrow(Object), ncol=5)
+            ors <- matrix(0, nrow=nrow(Object), ncol=6)
             rownames(ors) <- featureNames(Object)
-            colnames(ors) <- c("OR", "OR 95CI.LL", "OR 95CI.UL", "OR 95% CI", "P value (H0: OR=1)")
+            colnames(ors) <- c("OR", "OR 95CI.LL", "OR 95CI.UL", "OR 95% CI", "P value (H0: OR=1)", "FDR Q-value")
             
             for(j in seq(nrow(Object))) {
                 glm1 <- glm(y ~ .,
@@ -278,14 +420,64 @@ setMethod("univariateOddsRatio", signature=c(Object="Dataset", covariate="charac
                                             "y" = factor(pData(Object)[,covariate])),
                             family="binomial")
                 
-                ors[j, 1] <- exp(summary(glm1)[["coefficients"]]["x", "Estimate"])
-                ors[j, 5] <- summary(glm1)[["coefficients"]]["x", "Pr(>|z|)"]
-                ors[j, c(2,3)] <- exp(summary(glm1)[["coefficients"]]["x", "Estimate"] +
-                  c(-1,1) * qnorm(0.975) * summary(glm1)[["coefficients"]]["x", "Std. Error"])
+                ors[j, 1] <- signif(exp(summary(glm1)[["coefficients"]]["x", "Estimate"]),4)
+                ors[j, 5] <- signif(summary(glm1)[["coefficients"]]["x", "Pr(>|z|)"],4)
+                ors[j, c(2,3)] <- signif(exp(summary(glm1)[["coefficients"]]["x", "Estimate"] +
+                  c(-1,1) * qnorm(0.975) * summary(glm1)[["coefficients"]]["x", "Std. Error"]),4)
               }
             ors[,4] <- paste("(", round(ors[,2],2), ", ", round(ors[,3],2),")", sep="")
+            ors[,6] <- p.adjust(ors[,5], method="BH")
             ors
           })        
+
+setMethod("univariateOddsRatio",
+          signature=c(Object="Dataset", covariate="character", given="character"),
+          valueClass="data.frame", definition=function(Object, covariate, given) {
+
+            ors <- matrix(0, nrow=nrow(Object), ncol=5)
+            rownames(ors) <- featureNames(Object)
+            colnames(ors) <- c("OR", "OR 95CI.LL", "OR 95CI.UL", "OR 95% CI", "P value (H0: OR=1)")
+            
+            given <- given[given %in% varLabels(phenoData(Object))]
+            if(length(given) <= 0) {
+              stop(paste("Argument `given` did not match any of the feature names of the dataset."))
+            } else {
+              given.ors <- matrix(0, nrow=nrow(Object), ncol=length(given)*2)
+              rownames(given.ors) <- featureNames(Object)
+              colnames(given.ors) <- paste(rep(given, each=2),
+                                           rep(c("OR", "P val"), times=length(given)))
+            }
+            
+            for(j in seq(nrow(Object))) {
+              if(length(given) == 1) {
+                dat <- data.frame(exprs(Object)[j,],
+                                  as.numeric(pData(Object)[,given]),
+                                  factor(pData(Object)[,covariate]))
+                colnames(dat) <- c("x", given, "y")
+              } else if(length(given) > 1) {
+                dat <- data.frame(exprs(Object)[j,],
+                                  apply(pData(Object)[,given], 2, as.numeric),
+                                  factor(pData(Object)[,covariate]))
+                colnames(dat) <- c("x", given, "y")
+              }
+              
+              glm1 <- glm(y ~ ., data=dat, family="binomial")
+              
+              coefs <- summary(glm1)[["coefficients"]]
+              rownames(coefs) <- gsub("`","",rownames(coefs))
+              ors[j, 1] <- signif(exp(coefs["x", "Estimate"]),4)
+              ors[j, 5] <- signif(coefs["x", "Pr(>|z|)"],4)
+              ors[j, c(2,3)] <- signif(exp(coefs["x", "Estimate"] +
+                c(-1,1) * qnorm(0.975) * coefs["x", "Std. Error"]),4)
+              
+              # c(rbind(x,y)) is a trick to interlace elements of x and y
+              given.ors[j,] <- signif(c(rbind(exp(coefs[given, "Estimate"]),
+                                       coefs[given, "Pr(>|z|)"])),4)
+            }
+            ors[,4] <- paste("(", round(ors[,2],2), ", ", round(ors[,3],2),")", sep="")
+            ors[,6] <- p.adjust(ors[,5], method="BH")
+            data.frame(ors, given.ors, check.names=F)
+          })
             
 setGeneric("rankNormalization", function(Object) standardGeneric("rankNormalization"))
 
