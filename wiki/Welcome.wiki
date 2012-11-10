@@ -1,4 +1,4 @@
-#summary Introduction and pointers.
+#summary Introduction to the package and table of contents.
 
 = Introduction =
 
