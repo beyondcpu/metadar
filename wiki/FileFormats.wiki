@@ -16,7 +16,7 @@ The data file must contain a column titled {{{ID}}}. The {{{ID}}} column is not 
 
 == Format of the data file when no meta data file is present ==
 
-When the Dataset is created from a single input file, the input file must contain in its second row, one single meta data variable. If the data is a case control study, it is typically the class variable that designates each sample as a case or control. If the data contains samples from several groups (e.g. healthy controls and several sub types of a disease), then this second row typically indicates the group of the samples (i.e. designates each column to be a control, or disease type1, disease type2 and so on). This single meta data variable can also be a real number (e.g. fasting glucose level).
+When the Dataset is created from a single input file, the input file must contain in its second row, one single meta data variable. If the data is from a case control study, it is typically the class variable that designates each sample as a case or control. If the data contains samples from several groups (e.g. healthy controls and several sub types of a disease), then this second row typically indicates the group of the samples (i.e. designates each column to be a control, or disease type1, disease type2 and so on). This single meta data variable can also be a real number (e.g. fasting glucose level).
 
 This data file is not allowed to have any other columns than {{{ID}}} and the sample columns. Also, the {{{ID}}} column must be the first column in the data file.
 
