@@ -2,7 +2,7 @@
 
 = Introduction =
 
-This document introduces how the input data should be provided to [ReadingTheData create a Dataset object]. A Dataset object can be created from a single input (i.e. a data file or a data.frame object) or two inputs (one for data and the other for meta data as files or data.frame objects).
+This document introduces how the input data should be provided to [ReadingTheData create a Dataset object]. A Dataset object can be created from a [FileFormats#Format_of_the_data_file_when_no_meta_data_file_is_present single input] (i.e. a data file or a data.frame object) or two inputs (one for [FileFormats#Format_of_the_data_file_in_the presence_of_a_separate_meta_data_file data] and the other for [FileFormats#Format_of_the_meta_data_file meta data] as files or data.frame objects).
 
 = Format of the data file =
 
