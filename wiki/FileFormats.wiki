@@ -2,7 +2,7 @@
 
 =Introduction=
 
-This document introduces how the input data should be provided to [ReadingTheData create a Dataset object]. A Dataset object can be created from a [FileFormats#Format_of_the_data_file_when_no_meta_data_file_is_present single input] (i.e. a data file or a data.frame object) or two inputs (one for [FileFormats#Format_of_the_data_file_when_a_separate_meta_data_file_is_present data] and the other for [FileFormats#Format_of_the_meta_data_file meta data] as files or data.frame objects).
+This document introduces how the input data should be provided to [ReadingTheData create a Dataset object]. A Dataset object can be created from a [FileFormats#Format_of_the_data_file_when_no_meta_data_file_is_present single input] (i.e. a data file or a data.frame object) or two inputs (one for [FileFormats#Format_of_the_data_file_when_a_meta_data_file_is_present data] and the other for [FileFormats#Format_of_the_meta_data_file meta data] as files or data.frame objects).
 
 =Format of the data file=
 
@@ -22,7 +22,7 @@ This data file is not allowed to have any other columns than {{{ID}}} and the sa
 
 Note that when the [ReadingTheData Dataset object is created] from the single input file, the single meta data variable provided in the file goes into the meta data field of the Dataset object, and the variable will always be called "Class" irrespective of whether it actually is a class variable (i.e. categorical variable) or a real number.
 
-==Format of the data file when a separate meta data file is present==
+==Format of the data file when a meta data file is present==
 
 When the Dataset is created from two input files (i.e. one corresponding to the data and the other corresponding to the meta data), then all the rows of the data file (except the first row that has the column headers) must correspond to the features of the data set. The {{{ID}}} column can be anywhere. If there are any columns other than the {{{ID}}} and the samples that are described in the accompanying meta data file, they will be ignored.
 
