@@ -434,9 +434,9 @@ setMethod("univariateOddsRatio",
           signature=c(Object="Dataset", covariate="character", given="character"),
           valueClass="data.frame", definition=function(Object, covariate, given) {
 
-            ors <- matrix(0, nrow=nrow(Object), ncol=5)
+            ors <- matrix(0, nrow=nrow(Object), ncol=6)
             rownames(ors) <- featureNames(Object)
-            colnames(ors) <- c("OR", "OR 95CI.LL", "OR 95CI.UL", "OR 95% CI", "P value (H0: OR=1)")
+            colnames(ors) <- c("OR", "OR 95CI.LL", "OR 95CI.UL", "OR 95% CI", "P value (H0: OR=1)", "FDR Q-value")
             
             given <- given[given %in% varLabels(phenoData(Object))]
             if(length(given) <= 0) {
