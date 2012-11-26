@@ -1,5 +1,3 @@
-
-
 setGeneric("twoWayAnova", function(Object, covariate1, covariate2) standardGeneric("twoWayAnova"))
 
 setMethod("twoWayAnova", signature=c("Dataset", "character", "character"),

@@ -12,6 +12,10 @@ lrmv$buildCV()
 lrmv$plotROC("example")
 
 library("randomForest")
-rfmv <- new("RandomForestModelValidationCV", dat, "Class", dat, "Class", cv=100)
-rfmv$buildCV2()
+rfmv <- new("RandomForestModelValidationCV",
+            dat, "Class",
+            dat, "Class", cv=100,
+            selectedVariables=featureNames(dat))
+rfmv$buildCV() ### needs only training data
+rfmv$buildCV2() ### needs training and test
 rfmv$plotROC("example")
