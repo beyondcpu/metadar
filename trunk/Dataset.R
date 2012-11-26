@@ -16,9 +16,9 @@ setMethod("readDataset", signature=c("Dataset", "missing", "missing"),
 setMethod("readDataset", signature=c("Dataset", "character", "character"),
           function(Object, metabolomicsDataFile="exprs.csv",
                    phenoDataFile="phenoDataFramea.csv", ...) {
-            phenoDataFrame <- read.csv(phenoDataFile, ...)
+            phenoDataFrame <- read.csv(phenoDataFile, check.names=FALSE, ...)
             rownames(phenoDataFrame) <- as.character(phenoDataFrame[,"SampleName"])
-            metabolomicsDataFrame <- read.csv(metabolomicsDataFile,check.names=F,...)
+            metabolomicsDataFrame <- read.csv(metabolomicsDataFile,check.names=FALSE,...)
             dat <- metabolomicsDataFrame[which(!is.na(metabolomicsDataFrame[,"ID"])),
                                          as.character(phenoDataFrame[,"SampleName"])]
             rownames(dat) <- metabolomicsDataFrame[,"ID"]
@@ -39,7 +39,7 @@ setMethod("readDataset", signature=c("Dataset", "character", "missing"),
             ### The first column contains Id
             #phenoDataFrame <- read.csv(phenoDataFile)
             #rownames(phenoDataFrame) <- as.character(phenoDataFrame[,"SampleName"])
-            inputData <- read.csv(metabolomicsDataFile,check.names=F, ...)
+            inputData <- read.csv(metabolomicsDataFile,check.names=FALSE, ...)
             dat <- inputData[-1, -1]
             rownames(dat) <- inputData[-1,"ID"]
             phenoDataFrame <- data.frame("SampleName"=colnames(inputData)[2:ncol(inputData)],
@@ -103,6 +103,44 @@ setMethod("setExprs", signature=c("Dataset", "matrix"),
                    or readDataset(Object, metabolomicsDataFile, phoneDataFile) instead")
 	}
             Object
+          })
+
+setGeneric("selectVariables", def=function(Object, selection) standardGeneric("selectVariables"))
+
+setMethod("selectVariables", signature=c("Dataset", "numeric"), valueClass="Dataset",
+          definition=function(Object, selection) {
+            newObj <- Object
+            if(length(selection)==1) {
+              exprs(newObj) <- matrix(exprs(Object)[selection,], nrow=1)
+              rownames(exprs(newObj)) <- featureNames(Object)[selection]
+            } else {
+              exprs(newObj) <- exprs(Object)[selection,]              
+            }
+            newObj
+          })
+
+setMethod("selectVariables", signature=c("Dataset", "character"), valueClass="Dataset",
+          definition=function(Object, selection) {
+            newObj <- Object            
+            if(length(selection)==1) {
+              exprs(newObj) <- matrix(exprs(Object)[selection,], nrow=1)
+              rownames(exprs(newObj)) <- selection
+            } else {
+              exprs(newObj) <- exprs(Object)[selection,]              
+            }
+            newObj
+          })
+
+setGeneric("selectSamples", def=function(Object, selection) standardGeneric("selectSamples"))
+
+setMethod("selectSamples", signature=c("Dataset", "numeric"), valueClass="Dataset",
+          definition=function(Object, selection) {
+            newObj <- Object[,selection]
+          })
+
+setMethod("selectSamples", signature=c("Dataset", "character"), valueClass="Dataset",
+          definition=function(Object, selection) {
+            newObj <- Object[,selection]
           })
 
 setGeneric("univariateCorrelation", def=function(Object, covariate, method)
@@ -417,7 +455,7 @@ setMethod("univariateOddsRatio", signature=c(Object="Dataset", covariate="charac
             for(j in seq(nrow(Object))) {
                 glm1 <- glm(y ~ .,
                             data=data.frame("x" = exprs(Object)[j,],
-                                            "y" = factor(pData(Object)[,covariate])),
+                                            "y" = factor(as.character(pData(Object)[,covariate]))),
                             family="binomial")
                 
                 ors[j, 1] <- signif(exp(summary(glm1)[["coefficients"]]["x", "Estimate"]),4)
@@ -433,7 +471,6 @@ setMethod("univariateOddsRatio", signature=c(Object="Dataset", covariate="charac
 setMethod("univariateOddsRatio",
           signature=c(Object="Dataset", covariate="character", given="character"),
           valueClass="data.frame", definition=function(Object, covariate, given) {
-
             ors <- matrix(0, nrow=nrow(Object), ncol=6)
             rownames(ors) <- featureNames(Object)
             colnames(ors) <- c("OR", "OR 95CI.LL", "OR 95CI.UL", "OR 95% CI", "P value (H0: OR=1)", "FDR Q-value")
@@ -451,13 +488,13 @@ setMethod("univariateOddsRatio",
             for(j in seq(nrow(Object))) {
               if(length(given) == 1) {
                 dat <- data.frame(exprs(Object)[j,],
-                                  as.numeric(pData(Object)[,given]),
-                                  factor(pData(Object)[,covariate]))
+                                  as.numeric(as.character(pData(Object)[,given])),
+                                  factor(as.character(pData(Object)[,covariate])))
                 colnames(dat) <- c("x", given, "y")
               } else if(length(given) > 1) {
                 dat <- data.frame(exprs(Object)[j,],
                                   apply(pData(Object)[,given], 2, as.numeric),
-                                  factor(pData(Object)[,covariate]))
+                                  factor(as.character(pData(Object)[,covariate])))
                 colnames(dat) <- c("x", given, "y")
               }
               
@@ -558,7 +595,8 @@ setMethod("printDataset", signature=c("Dataset", "character"),
 #### the following is an implementation for the generic stats/na.omit
 setMethod("na.omit", signature=c("Dataset"),
           function(object) {
-            object <- object[-na.action(na.omit(exprs(object))),]
+            exprs(object) <- exprs(object)[-na.action(na.omit(exprs(object))),]
+            object
           })
 
 ### This is for taking an intersection of samples between two data sets

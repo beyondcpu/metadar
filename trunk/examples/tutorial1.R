@@ -18,9 +18,9 @@ dat <- zeroFiltering(dat, minNfound=5)
 # OR
 dat <- zeroFiltering(dat, minNfound=5, covariate="Phenotype")
 # OR
-dat <- zeroFiltering(dat, pctFound=70)
+dat <- zeroFiltering(dat, pctNfound=70)
 # OR
-dat <- zeroFiltering(dat, pctFound=70, covariate="Phenotype")
+dat <- zeroFiltering(dat, pctNfound=70, covariate="Phenotype")
 
 ### zero imputation
 source("zeroImputation.R")
