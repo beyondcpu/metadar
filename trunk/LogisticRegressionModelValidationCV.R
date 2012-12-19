@@ -17,7 +17,7 @@ lrm$methods(list(
   	yx <- data.frame("y"=factor(y), x)
   	if(!is.null(dim(x)))
   		colnames(yx)[2:ncol(yx)] <- colnames(x)
-  	yx.glm <- glm(y~., family=multinomial, data=yx, ...)
+  	yx.glm <- glm(y~., family="binomial", data=yx, ...)
   	return(yx.glm)
   },
 

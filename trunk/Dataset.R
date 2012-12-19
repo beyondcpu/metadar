@@ -5,20 +5,46 @@ setMethod("initialize", signature=c("Dataset"),
             readDataset(.Object, ...)
           })
 
-setGeneric("readDataset",  def=function(Object, metabolomicsDataFile,
-                                        phenoDataFile, ...) standardGeneric("readDataset"))
+setGeneric("readDataset",  def=function(Object, metabolomicsDataSource,
+                                        sampleMetaDataSource, variableMetaDataSource, ...)
+  standardGeneric("readDataset"))
 
-setMethod("readDataset", signature=c("Dataset", "missing", "missing"),
+setMethod("readDataset", signature=c("Dataset", "missing", "missing", "missing"),
           function(Object) {
             Object
           })
 
-setMethod("readDataset", signature=c("Dataset", "character", "character"),
-          function(Object, metabolomicsDataFile="exprs.csv",
-                   phenoDataFile="phenoDataFramea.csv", ...) {
-            phenoDataFrame <- read.csv(phenoDataFile, check.names=FALSE, ...)
+setMethod("readDataset", signature=c("Dataset", "character", "character", "missing"),
+          function(Object, metabolomicsDataSource="exprs.csv",
+                   sampleMetaDataSource="pdata.csv", ...) {
+            phenoDataFrame <- read.csv(sampleMetaDataSource, check.names=FALSE, ...)
             rownames(phenoDataFrame) <- as.character(phenoDataFrame[,"SampleName"])
-            metabolomicsDataFrame <- read.csv(metabolomicsDataFile,check.names=FALSE,...)
+            metabolomicsDataFrame <- read.csv(metabolomicsDataSource,check.names=FALSE,...)
+            dat <- metabolomicsDataFrame[which(!is.na(metabolomicsDataFrame[,"ID"])),
+                                         as.character(phenoDataFrame[,"SampleName"])]
+            rownames(dat) <- metabolomicsDataFrame[,"ID"]
+            phenoData <- new("AnnotatedDataFrame", data=phenoDataFrame)
+            Object@assayData <- assayDataNew(exprs=apply(dat,2,as.numeric))
+            featureNames(assayData(Object)) <- rownames(dat)
+            Object@phenoData=phenoData
+            vdatCols <- setdiff(colnames(metabolomicsDataFrame), rownames(phenoDataFrame))
+            vdatCols <- vdatCols[which(vdatCols != "")]
+            if(length(vdatCols) > 1) {
+              vdat <- metabolomicsDataFrame[which(!is.na(metabolomicsDataFrame[,"ID"])), vdatCols]
+              rownames(vdat) <- as.character(vdat[,"ID"])
+              vdat <- vdat[rownames(dat),]
+              Object@featureData <- new("AnnotatedDataFrame", data=vdat)
+            }            
+            Object
+          })
+
+setMethod("readDataset", signature=c("Dataset", "character", "character", "character"),
+          function(Object, metabolomicsDataSource="exprs.csv",
+                   sampleMetaDataSource="pdata.csv",
+                   variableMetaDataSource="vdata.csv", ...) {
+            phenoDataFrame <- read.csv(sampleMetaDataSource, check.names=FALSE, ...)
+            rownames(phenoDataFrame) <- as.character(phenoDataFrame[,"SampleName"])
+            metabolomicsDataFrame <- read.csv(metabolomicsDataSource,check.names=FALSE,...)
             dat <- metabolomicsDataFrame[which(!is.na(metabolomicsDataFrame[,"ID"])),
                                          as.character(phenoDataFrame[,"SampleName"])]
             rownames(dat) <- metabolomicsDataFrame[,"ID"]
@@ -26,22 +52,27 @@ setMethod("readDataset", signature=c("Dataset", "character", "character"),
             Object@assayData=assayDataNew(exprs=apply(dat,2,as.numeric))
             featureNames(assayData(Object)) <- rownames(dat)
             Object@phenoData=phenoData
+            vdat <- read.csv(variableMetaDataSource, check.names=FALSE, ...)
+            rownames(vdat) <- as.character(vdat[,"ID"])
+            vdat <- vdat[rownames(dat),]
+            Object@featureData <- new("AnnotatedDataFrame", data=vdat)
             Object
           })
 
-setMethod("readDataset", signature=c("Dataset", "character", "missing"),
-          function(Object, metabolomicsDataFile="exprs.csv", ...) {
+setMethod("readDataset", signature=c("Dataset", "character", "missing", "missing"),
+          function(Object, metabolomicsDataSource="exprs.csv", ...) {
             ### The input is expected in a SimpleClassificationDataset format
             ### i.e. Along the rows are compounds,
             ### along the columns are samples
             ### The first row contains sample names
             ### The second row contains the class labels
             ### The first column contains Id
-            #phenoDataFrame <- read.csv(phenoDataFile)
+            #phenoDataFrame <- read.csv(sampleMetaDataSource)
             #rownames(phenoDataFrame) <- as.character(phenoDataFrame[,"SampleName"])
-            inputData <- read.csv(metabolomicsDataFile,check.names=FALSE, ...)
+            inputData <- read.csv(metabolomicsDataSource,check.names=FALSE, ...)
             dat <- inputData[-1, -1]
             rownames(dat) <- inputData[-1,"ID"]
+            #browser()
             phenoDataFrame <- data.frame("SampleName"=colnames(inputData)[2:ncol(inputData)],
                                          "Class"=unlist(inputData[1,2:ncol(inputData)]))
             rownames(phenoDataFrame) <- colnames(inputData)[2:ncol(inputData)]
@@ -52,29 +83,53 @@ setMethod("readDataset", signature=c("Dataset", "character", "missing"),
             Object
           })
 
-##setGeneric("setDataset",  def=function(Object, metabolomicsDataFrame, phenoDataFrame) standardGeneric("setDataset"))
-
-setMethod("readDataset", signature=c("Dataset", "data.frame", "data.frame"),
-          function(Object, metabolomicsDataFile,
-                   phenoDataFile) {
-            rownames(phenoDataFile) <- as.character(phenoDataFile[,"SampleName"])
-            dat <- metabolomicsDataFile[which(!is.na(metabolomicsDataFile[,"ID"])),
-                                        as.character(phenoDataFile[,"SampleName"])]
-            rownames(dat) <- metabolomicsDataFile[,"ID"]
-            phenoData <- new("AnnotatedDataFrame", data=phenoDataFile)
+setMethod("readDataset", signature=c("Dataset", "data.frame", "data.frame", "missing"),
+          function(Object, metabolomicsDataSource,
+                   sampleMetaDataSource) {
+            #browser()
+            rownames(sampleMetaDataSource) <- as.character(sampleMetaDataSource[,"SampleName"])
+            dat <- metabolomicsDataSource[which(!is.na(metabolomicsDataSource[,"ID"])),
+                                        as.character(sampleMetaDataSource[,"SampleName"])]
+            rownames(dat) <- metabolomicsDataSource[which(!is.na(metabolomicsDataSource[,"ID"])),"ID"]
+            phenoData <- new("AnnotatedDataFrame", data=sampleMetaDataSource)
             Object@assayData=assayDataNew(exprs=apply(dat,2,as.numeric))
             featureNames(assayData(Object)) <- rownames(dat)
-            Object@phenoData=phenoData
+            Object@phenoData <- phenoData
+            vdatCols <- setdiff(colnames(metabolomicsDataSource), rownames(sampleMetaDataSource))
+            vdatCols <- vdatCols[which(vdatCols != "")]
+            if(length(vdatCols) > 1) {
+              vdat <- metabolomicsDataSource[which(!is.na(metabolomicsDataSource[,"ID"])), vdatCols]
+              rownames(vdat) <- as.character(vdat[,"ID"])
+              vdat <- vdat[rownames(dat),]
+              Object@featureData <- new("AnnotatedDataFrame", data=vdat)  
+            }            
             Object
           })
 
-setMethod("readDataset", signature=c("Dataset", "data.frame", "missing"),
-          function(Object, metabolomicsDataFile) {
-            dat <- metabolomicsDataFile[-1, -1]
-            rownames(dat) <- metabolomicsDataFile[-1,"ID"]
-            phenoDataFrame <- data.frame("SampleName"=colnames(metabolomicsDataFile)[2:ncol(metabolomicsDataFile)],
-                                         "Class"=unlist(metabolomicsDataFile[1,2:ncol(metabolomicsDataFile)]))
-            rownames(phenoDataFrame) <- colnames(metabolomicsDataFile)[2:ncol(metabolomicsDataFile)]
+setMethod("readDataset", signature=c("Dataset", "data.frame", "data.frame", "data.frame"),
+          function(Object, metabolomicsDataSource,
+                   sampleMetaDataSource, variableMetaDataSource) {
+            rownames(sampleMetaDataSource) <- as.character(sampleMetaDataSource[,"SampleName"])
+            dat <- metabolomicsDataSource[which(!is.na(metabolomicsDataSource[,"ID"])),
+                                          as.character(sampleMetaDataSource[,"SampleName"])]
+            rownames(dat) <- metabolomicsDataSource[which(!is.na(metabolomicsDataSource[,"ID"])),"ID"]
+            phenoData <- new("AnnotatedDataFrame", data=sampleMetaDataSource)
+            Object@assayData=assayDataNew(exprs=apply(dat,2,as.numeric))
+            featureNames(assayData(Object)) <- rownames(dat)
+            Object@phenoData=phenoData
+            rownames(variableMetaDataSource) <- variableMetaDataSource[,"ID"]
+            variableMetaDataSource <- variableMetaDataSource[rownames(dat),]
+            Object@featureData = new("AnnotatedDataFrame", data=variableMetaDataSource)
+            Object
+          })
+
+setMethod("readDataset", signature=c("Dataset", "data.frame", "missing", "missing"),
+          function(Object, metabolomicsDataSource) {
+            dat <- metabolomicsDataSource[-1, -1]
+            rownames(dat) <- metabolomicsDataSource[-1,"ID"]
+            phenoDataFrame <- data.frame("SampleName"=colnames(metabolomicsDataSource)[2:ncol(metabolomicsDataSource)],
+                                         "Class"=unlist(metabolomicsDataSource[1,2:ncol(metabolomicsDataSource)]))
+            rownames(phenoDataFrame) <- colnames(metabolomicsDataSource)[2:ncol(metabolomicsDataSource)]
             phenoData <- new("AnnotatedDataFrame", data=phenoDataFrame)
             Object@assayData=assayDataNew(exprs=apply(dat,2,as.numeric))
             featureNames(assayData(Object)) <- rownames(dat)
@@ -82,13 +137,13 @@ setMethod("readDataset", signature=c("Dataset", "data.frame", "missing"),
             Object
           })
 
-setMethod("readDataset", signature=c("Dataset", "ExpressionSet", "missing"),
-          function(Object, metabolomicsDataFile) {
-            Object@assayData=assayData(metabolomicsDataFile)
-            Object@phenoData=phenoData(metabolomicsDataFile)
+setMethod("readDataset", signature=c("Dataset", "ExpressionSet", "missing", "missing"),
+          function(Object, metabolomicsDataSource) {
+            Object@assayData=assayData(metabolomicsDataSource)
+            Object@phenoData=phenoData(metabolomicsDataSource)
+            Object@featureData=featureData(metabolomicsDataSource)
             Object
           })
-
 
 setGeneric("setExprs", def=function(Object, exprs) standardGeneric("setExprs"))
 
@@ -98,49 +153,126 @@ setMethod("setExprs", signature=c("Dataset", "matrix"),
             {
               exprs(Object) <- exprs[, as.character(pData(Object)[,"SampleName"])]
             } else {
-              stop("pData(Object) is null, use the method
-			setDataset(Object, metabolomicsDataFrame, phenoDataFrame)
-                   or readDataset(Object, metabolomicsDataFile, phoneDataFile) instead")
-	}
+              warning(paste("Now have a data set with NO sample meta data. It is OK if you say so!",
+                      "But, majority of the analysis also require sample meta data.",
+                      "If you need meta data, create the dataset using 'new'"))
+              exprs(Object) <- exprs
+            }
             Object
+          })
+
+setGeneric("getVariableMetaData", def=function(Object, metaDataColumns, selectedFeatures)
+  standardGeneric("getVariableMetaData"))
+
+setMethod("getVariableMetaData", signature=c("Dataset", "missing", "missing"),
+          definition=function(Object) {
+            pData(featureData(Object))
+          })
+
+setMethod("getVariableMetaData", signature=c("Dataset", "character", "missing"),
+          definition=function(Object, metaDataColumns) {
+            #browser()
+            metaDataColumns <- metaDataColumns[metaDataColumns %in% varLabels(featureData(Object))]
+            if(length(metaDataColumns) == 0) {
+              stop("The provided column name(s) were not found among variable meta data")
+            }
+            retval <- if(length(metaDataColumns)==1) {
+              as.character(pData(featureData(Object))[, metaDataColumns])
+            } else {
+              pData(featureData(Object))[, metaDataColumns]
+            }             
+            retval
+          })
+
+setMethod("getVariableMetaData", signature=c("Dataset", "character", "character"),
+          definition=function(Object, metaDataColumns, selectedFeatures) {
+            metaDataColumns <- metaDataColumns[metaDataColumns %in% varLabels(featureData(Object))]
+            if(length(metaDataColumns) == 0) {
+              stop("The provided column name(s) were not found among variable meta data")
+            }
+            retval <- if(length(metaDataColumns)==1) {
+              as.character(pData(featureData(Object))[selectedFeatures, metaDataColumns])
+            } else {
+              pData(featureData(Object))[selectedFeatures, metaDataColumns]
+            }
+            retval
+          })
+
+setGeneric("getSampleMetaData", def=function(Object, metaDataColumns, selectedSamples)
+  standardGeneric("getSampleMetaData"))
+
+setMethod("getSampleMetaData", signature=c("Dataset", "character", "missing"),
+          definition=function(Object, metaDataColumns) {
+            metaDataColumns <- metaDataColumns[metaDataColumns %in% varLabels(phenoData(Object))]
+            if(length(metaDataColumns) == 0) {
+              stop("The provided column name(s) were not found among variable meta data")
+            }
+            retval <- if(length(metaDataColumns)==1) {
+              as.character(pData(phenoData(Object))[, metaDataColumns])
+            } else {
+              pData(phenoData(Object))[, metaDataColumns]
+            }
+            retval
+          })
+
+setMethod("getSampleMetaData", signature=c("Dataset", "missing", "missing"),
+          definition=function(Object) {
+            pData(phenoData(Object))
+          })
+
+setMethod("getSampleMetaData", signature=c("Dataset", "character", "character"),
+          definition=function(Object, metaDataColumns, selectedSamples) {
+            metaDataColumns <- metaDataColumns[metaDataColumns %in% varLabels(phenoData(Object))]
+            if(length(metaDataColumns) == 0) {
+              stop("The provided column name(s) were not found among variable meta data")
+            }
+            
+            retval <- if(length(metaDataColumns)==1) {
+              as.character(pData(phenoData(Object))[selectedSamples, metaDataColumns])
+            } else {
+              pData(phenoData(Object))[selectedSamples, metaDataColumns]
+            }
+            retval
           })
 
 setGeneric("selectVariables", def=function(Object, selection) standardGeneric("selectVariables"))
 
 setMethod("selectVariables", signature=c("Dataset", "numeric"), valueClass="Dataset",
           definition=function(Object, selection) {
-            newObj <- Object
-            if(length(selection)==1) {
-              exprs(newObj) <- matrix(exprs(Object)[selection,], nrow=1)
-              rownames(exprs(newObj)) <- featureNames(Object)[selection]
-            } else {
-              exprs(newObj) <- exprs(Object)[selection,]              
-            }
-            newObj
+            Object[selection,]
+#             newObj <- Object
+#             if(length(selection)==1) {
+#               exprs(newObj) <- matrix(exprs(Object)[selection,], nrow=1)
+#               rownames(exprs(newObj)) <- featureNames(Object)[selection]
+#             } else {
+#               exprs(newObj) <- exprs(Object)[selection,]              
+#             }
+#             newObj
           })
 
 setMethod("selectVariables", signature=c("Dataset", "character"), valueClass="Dataset",
           definition=function(Object, selection) {
-            newObj <- Object            
-            if(length(selection)==1) {
-              exprs(newObj) <- matrix(exprs(Object)[selection,], nrow=1)
-              rownames(exprs(newObj)) <- selection
-            } else {
-              exprs(newObj) <- exprs(Object)[selection,]              
-            }
-            newObj
+            Object[selection,]
+#             newObj <- Object            
+#             if(length(selection)==1) {
+#               exprs(newObj) <- matrix(exprs(Object)[selection,], nrow=1)
+#               rownames(exprs(newObj)) <- selection
+#             } else {
+#               exprs(newObj) <- exprs(Object)[selection,]              
+#             }
+#             newObj
           })
 
 setGeneric("selectSamples", def=function(Object, selection) standardGeneric("selectSamples"))
 
 setMethod("selectSamples", signature=c("Dataset", "numeric"), valueClass="Dataset",
           definition=function(Object, selection) {
-            newObj <- Object[,selection]
+            Object[,selection]
           })
 
 setMethod("selectSamples", signature=c("Dataset", "character"), valueClass="Dataset",
           definition=function(Object, selection) {
-            newObj <- Object[,selection]
+            Object[,selection]
           })
 
 setGeneric("univariateCorrelation", def=function(Object, covariate, method)

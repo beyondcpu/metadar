@@ -101,20 +101,40 @@ mc$methods(list(
           device="pdf", file=filenames[3])
     },
   
-  ListCluster = function()
+  ListCluster = function(...)
   {
-    clust <- lapply(split(getVariableNames(), getPartition()),
-                    function(x) { paste(x, collapse="; ") })
-    data.frame("Cluster"=names(clust), "Info"=unlist(clust))
+    getClusterInfo(...)
   },
   
-  getClusterInfo = function()
-  {
-    clust <- lapply(split(getVariableNames(), getPartition()),
-                    function(x) { paste(x, collapse="; ") })
-    data.frame("Cluster"=names(clust), "Info"=unlist(clust))
+  getClusterMembers = function(variableNames=NULL, clusters=NULL) {
+    if(is.null(variableNames)) {
+      variableNames <- getVariableNames()
+    }
+    clusterMembers <- split(variableNames, getPartition())
+    if(!is.null(clusters)) {
+      if(length(clusters) == 1) {
+        return(clusterMembers[[clusters]])
+      } else {
+        return(clusterMembers[clusters])
+      }
+    } else {
+      return(clusterMembers)
+    }
   },
   
+  getClusterInfo = function(variableNames=NULL)
+  {
+    if(is.null(variableNames)) {
+      variableNames <- getVariableNames()
+    }
+    clusterMembers <- split(variableNames, getPartition())
+    clusterSize <- unlist(lapply(clusterMembers, length))
+    clusterMembersForDisplay <- as.character(unlist(lapply(clusterMembers,
+                                                           function(x) { paste(x, collapse="; ") })))
+    data.frame("Cluster"=names(clusterMembers),
+               "Size"=clusterSize,
+               "Members"=clusterMembersForDisplay)
+  },
   
   PlotGaussian = function(cust_order = NA)
   {

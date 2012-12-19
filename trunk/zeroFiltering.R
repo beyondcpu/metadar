@@ -13,8 +13,7 @@ setMethod("zeroFiltering", signature=c("Dataset", "numeric", "missing", "missing
               }
             }
             
-            exprs(Object) <- exprs(Object)[which(include),]
-            Object
+            Object[which(include),]
           })
 
 setMethod("zeroFiltering", signature=c("Dataset", "missing", "numeric", "missing"),
@@ -28,8 +27,7 @@ setMethod("zeroFiltering", signature=c("Dataset", "missing", "numeric", "missing
               }
             }
             
-            exprs(Object) <- exprs(Object)[which(include),]
-            Object            
+            Object[which(include),]
           })
 
 #setMethod("zeroFiltering", signature=c("Dataset", "numeric", "missing", "character", "missing"),
@@ -82,8 +80,7 @@ setMethod("zeroFiltering", signature=c("Dataset", "numeric", "missing", "charact
               include[i] <- all(unlist(yorn))
             }
             
-            exprs(Object) <- exprs(Object)[which(include),]
-            Object
+            Object[which(include),]
           })
 
 setMethod("zeroFiltering", signature=c("Dataset", "missing", "numeric", "character"),
@@ -100,6 +97,5 @@ setMethod("zeroFiltering", signature=c("Dataset", "missing", "numeric", "charact
               include[i] <- all(unlist(yorn))
             }
             
-            exprs(Object) <- exprs(Object)[which(include),]
-            Object
+            Object[which(include),]
           })

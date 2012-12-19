@@ -2,6 +2,7 @@ setGeneric("oneWayAnova", function(Object, covariate) standardGeneric("oneWayAno
 
 setMethod("oneWayAnova", signature=c("Dataset", "character"),
 	  function(Object, covariate) {
+
 		  res <- vector("list", nrow(Object))
       pvals <- vector("numeric", nrow(Object))
 		  for(i in seq(nrow(Object))) {
@@ -10,9 +11,11 @@ setMethod("oneWayAnova", signature=c("Dataset", "character"),
 			  tuk <- TukeyHSD(fit)
 			  res.i <- c(summary(fit)[[1]]["f","F value"],
                    summary(fit)[[1]]["f","Pr(>F)"],
+                   tuk$means,
                    tuk$f[,c(5,4)])
 			  names(res.i) <- c(paste("One way Anova (", covariate, ") F-value"),
                           paste("One way Anova (", covariate, ")P-value"),
+                          names(tuk$means),
                           paste(rownames(tuk$f), colnames(tuk$f)[5]),
                           paste(rownames(tuk$f), colnames(tuk$f)[4]))
 			  res[[i]] <- res.i

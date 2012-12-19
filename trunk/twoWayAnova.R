@@ -16,6 +16,7 @@ setMethod("twoWayAnova", signature=c("Dataset", "character", "character"),
 				     summary(fit)[[1]][2,"Pr(>F)"],
 				     summary(fit)[[1]][3,"F value"],
 				     summary(fit)[[1]][3,"Pr(>F)"],
+             tuk$means,
 				     tuk$f1[,c(5,4)],
 				     tuk$f2[,c(5,4)],
 				     tuk$"f1:f2"[,c(5,4)])
@@ -25,6 +26,7 @@ setMethod("twoWayAnova", signature=c("Dataset", "character", "character"),
 					    paste(covariate2, "P-value"),
 					    paste(covariate1, ":", covariate2, "F-value"),
 					    paste(covariate1, ":", covariate2, "P-value"),
+              names(tuk$means),
 					    paste(rownames(tuk$f1), colnames(tuk$f1)[5]),
 					    paste(rownames(tuk$f1), colnames(tuk$f1)[4]),
 					    paste(rownames(tuk$f2), colnames(tuk$f2)[5]),
@@ -34,8 +36,8 @@ setMethod("twoWayAnova", signature=c("Dataset", "character", "character"),
 
 			  res[[i]] <- res.i 
 
-			  res.diff.i <- c(tuk$f1[,5], tuk$f2[,5], tuk$"f1:f2"[,5])
-			  names(res.diff.i) <- c(paste(rownames(tuk$f1), colnames(tuk$f1)[5]),
+			  res.diff.i <- c(tuk$means, tuk$f1[,5], tuk$f2[,5], tuk$"f1:f2"[,5])
+			  names(res.diff.i) <- c(names(tuk$means), paste(rownames(tuk$f1), colnames(tuk$f1)[5]),
 						 paste(rownames(tuk$f2), colnames(tuk$f2)[5]),
 						 paste(rownames(tuk$"f1:f2"), colnames(tuk$"f1:f2")[5]))
 			  res.diff[[i]] <- res.diff.i
@@ -46,17 +48,16 @@ setMethod("twoWayAnova", signature=c("Dataset", "character", "character"),
 					      paste(rownames(tuk$"f1:f2"), colnames(tuk$"f1:f2")[4]))
 			  res.p[[i]] <- res.p.i
 		  }
-		  res <- t(data.frame(res))
+
+      res <- do.call("rbind", res)
 		  rownames(res) <- featureNames(Object)
       
-      ## differences of means
-		  res.diff <- t(data.frame(res.diff))
+      ## differences/ratios of means
+		  res.diff <- do.call("rbind", res.diff)
 		  rownames(res.diff) <- featureNames(Object)
       ## p values
-		  res.p <- t(data.frame(res.p))
+		  res.p <- do.call("rbind", res.p)
 		  rownames(res.p) <- featureNames(Object)
-      ## ratios of means
-      #browser()
       
 		  return(list("BigResultTable"=res, "RatiosTable"=res.diff, "PvalsTable"=res.p))
 	  })
