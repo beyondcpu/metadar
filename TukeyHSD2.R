@@ -47,9 +47,12 @@ TukeyHSD.aov <-
       est <- center/(sqrt((MSE/2) * outer(1/n, 1/n, "+"))[keep])
       pvals <- ptukey(abs(est),length(means),x$df.residual,lower.tail=FALSE)
       dnames <- list(NULL, c("diff", "lwr", "upr","p adj", "ratio"))
-      if (!is.null(nms)) dnames[[1L]] <- outer(nms, nms, paste, sep = "/")[keep]
-      out[[nm]] <- array(c(center, center - width, center + width,pvals, ratios),
+
+      if (!is.null(nms)) dnames[[1L]] <- c(outer(nms, nms, paste, sep = "/")[keep])
+      out[[nm]] <- array(c(center, center - width, center + width, pvals, ratios),
                          c(length(width), 5), dnames)
+      names(means) <- paste("mean (", nms, ")", sep="")
+      out[["means"]] <- means
     }
     class(out) <- c("multicomp", "TukeyHSD")
     attr(out, "orig.call") <- x$call
