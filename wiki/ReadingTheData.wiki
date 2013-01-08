@@ -6,16 +6,18 @@ The Dataset class is the main data type of this package. Many functions of the p
 
 = Function interface =
 
-new(Object, metabolomicsDataFile, phenoDataFile, ...)
+new(Object, metabolomicsDataSource, sampleMetaDataSource, variableMetaDataSource, ...)
 
 = Available signatures =
 
-  # {{{new("Dataset", "missing", "missing")}}}: both input arguments can be missing
-  # {{{new("Dataset", "character", "missing")}}}: metabolomicsDataFile can be a character string giving the path to a CSV file that has the data. The path can be provided as a full path or relative to the current working directory. If the file is in the working directory, the name of the file alone is sufficient. The phenoDataFile can be missing. Please check the [FileFormats file and data formats] page for instructions on expected formats of input data.
-  # {{{new("Dataset", "data.frame", "missing")}}}: metabolomicsDataFile can be a data.frame. phenoDataFile can be missing. Please check the [FileFormats file and data formats] page for instructions on expected formats of input data.
-  # {{{new("Dataset", "ExpressionSet", "missing")}}}: metabolomicsDataFile can be an {{{ExpressionSet}}} object and phenoDataFile missing.
-  # {{{new("Dataset", "character", "character")}}}: both metabolomicsDataFile and phenoDataFile can be character strings, giving the path to two CSV files (data file and meta data file respectively. Please check the [FileFormats file and data formats] page for instructions on expected formats of input data.
-  # {{{new("Dataset", "data.frame", "data.frame")}}}: both metabolomicsDataFile and phenoDataFile can be data.frame objects containing data and meta data respectively. Please check the [FileFormats file and data formats] page for instructions on expected formats of input data.
+  # {{{new("Dataset", "missing", "missing", "missing")}}}: all three input arguments can be missing
+  # {{{new("Dataset", "character", "missing", "missing")}}}: metabolomicsDataSource can be a character string giving the path to a CSV file that has the data. The path can be provided as a full path or relative to the current working directory. If the file is in the working directory, the name of the file alone is sufficient. The sampleMetaDataSource and variableMetaDataSource can be missing. Please check the [FileFormats file and data formats] page for instructions on expected formats of input data.
+  # {{{new("Dataset", "data.frame", "missing", "missing")}}}: metabolomicsDataSource can be a data.frame. The sampleMetaDataSource and variableMetaDataSource can be missing. Please check the [FileFormats file and data formats] page for instructions on expected formats of input data.
+  # {{{new("Dataset", "ExpressionSet", "missing", "missing")}}}: metabolomicsDataSource can be an {{{ExpressionSet}}} object, and sampleMetaDataSource and variableMetaDataSource missing.
+  # {{{new("Dataset", "character", "character", "missing")}}}: both metabolomicsDataSource and sampleMetaDataSource can be character strings, giving the path to two CSV files (data file and sample meta data file respectively). The variableMetaDataSource can be missing. Please check the [FileFormats file and data formats] page for instructions on expected formats of input data.
+  # {{{new("Dataset", "data.frame", "data.frame", "missing")}}}: both metabolomicsDataSource and sampleMetaDataSource can be data.frame objects containing data and meta data respectively and variableMetaDataSource missing. Please check the [FileFormats file and data formats] page for instructions on expected formats of input data.
+  # {{{new("Dataset", "character", "character", "character")}}}: metabolomicsDataSource, sampleMetaDataSource, and variableMetaDataSource can be character strings, giving the path to three CSV files (data file, sample meta data file, and variable meta data file respectively). Please check the [FileFormats file and data formats] page for instructions on expected formats of input data.
+  # {{{new("Dataset", "data.frame", "data.frame", "data.frame")}}}: metabolomicsDataSource, sampleMetaDataSource, and variableMetaDataSource can be data.frame objects containing data and sample meta data, and variable meta data respectively. Please check the [FileFormats file and data formats] page for instructions on expected formats of input data.
 
 = Examples of usage =
   # To create an empty Dataset. Perhaps not practically useful
