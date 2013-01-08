@@ -36,13 +36,21 @@ dat <- new("Dataset", data.object)
 {{{
 dat <- new("Dataset", ExpressionSet.Object)
 }}}
-  # Creation of a Dataset object using two input files (data and metadata files)
+  # Creation of a Dataset object using two input files (data and sample meta data files)
 {{{
-dat <- new("Dataset", "/home/xyz/data.csv", "/home/xyz/metadata.csv")
+dat <- new("Dataset", "/home/xyz/data.csv", "/home/xyz/smetadata.csv")
 }}}
-  # Creation of a Dataset object using two data.frame objects (data and metadata objects)
+  # Creation of a Dataset object using two data.frame objects (data and sample meta data objects)
 {{{
-dat <- new("Dataset", data.object, metadata.object
+dat <- new("Dataset", data.object, smetadata.object
+}}}
+  # Creation of a Dataset object using three input files (data, sample meta data, and variable meta data files)
+{{{
+dat <- new("Dataset", "/home/xyz/data.csv", "/home/xyz/smetadata.csv", "/home/xyz/vmetadata.csv")
+}}}
+  # Creation of a Dataset object using three data.frame objects (data, sample meta data, and variable meta data objects)
+{{{
+dat <- new("Dataset", data.object, smetadata.object, vmetadata.object)
 }}}
 
 = Notes =
