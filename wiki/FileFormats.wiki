@@ -4,7 +4,7 @@
 
 This document introduces how the input data should be provided to [ReadingTheData create a Dataset object]. In this document, the arguments _metabolomicsDataSource_, _sampleMetaDataSource_, and _variableMetaDataSource_ are referred to as _data_, _sample metadata_ and _variable metadata_ respectively. A Dataset object can be created from a [FileFormats#Content_of_the_data_when_no_meta_data_is_present single input], two inputs (one for [FileFormats#Content_of_the_data_when_meta_data_is_present data] and the other for [FileFormats#Content_of_the_sample_meta_data sample meta data]), or three inputs (one for [FileFormats#Content_of_the_data_when_meta_data_is_present data], other for [FileFormats#Content_of_the_sample_meta_data sample meta data], and still another for [FileFormats#Content_of_the_variable_meta_data variable meta data]. The sources providing the data or meta data can be either all files or all data.frame objects. If the data is provided via files, then comma separated values (CSV) file format should be used. When the data is provided as a CSV file, the first row of the CSV file contains the names (i.e. titles) of the columns. In contrast, when the data is provided as a data.frame object, it has them as its column names. Other than this, the rules of the data content and titles are identical for CSV files and data.frame objects.
 
-==Example CSV files (or the long story cut short)==
+==Example CSV files (OR the long story cut short)==
 
 The quickest way to learn the data file format is to take a look at the example files. So, before giving long explanation about the data files, I point you to some example files.
 
@@ -15,9 +15,11 @@ The quickest way to learn the data file format is to take a look at the example 
 
 Note that all entries in these example files are fictional! I just created some random entries to demonstrate how the data should look like.
 
+Having given the examples for a quick start, I will move on to giving the details more formally below.
+
 ==CSV file delimiter and decimal symbol==
 
-The input data file should be a delimited text file. By default the delimiter is assumed to be a comma (,). That is, the default file format is a comma separated value (CSV). But the delimiter can be a semicolon (;) or a tab (\t) or alike. When the delimiter is not the default comma (,), then an argument {{{sep}}} must be used when [ReadingTheData creating the Dataset]. Another related aspect is the decimal symbol. By default, the decimal symbol is assumed to be a period (.). If it is different (e.g. a comma), then an argument {{{dec}}} must be used when [ReadingTheData creating the Dataset]. Please check the help document of the R function {{{read.table}}} for more details.
+The input data file should be a delimited text file. By default the delimiter is assumed to be a comma (,). But the delimiter can be a semicolon (;) or a tab (\t) etc. When the delimiter is not the default comma (,), then an argument {{{sep}}} must be used when [ReadingTheData creating the Dataset]. Another related aspect is the decimal symbol. By default, the decimal symbol is assumed to be a period (.). If it is different (e.g. a comma), then an argument {{{dec}}} must be used when [ReadingTheData creating the Dataset]. Please check the help document of the R function {{{read.table}}} for more details.
 
 =The content of the data source=
 
