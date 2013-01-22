@@ -25,7 +25,7 @@ The input data file should be a delimited text file. By default the delimiter is
 
 The data source must contain a column titled {{{ID}}}. The {{{ID}}} column is not allowed to have duplicate entries. Each row corresponds to one feature (i.e. one metabolite). The {{{ID}}} entry in each row is the unique ID for that feature. The remaining columns of the data source usually correspond to biological samples. The entry that corresponds to a feature _i_ and a sample _j_ represents the measured level of the feature in that sample, and it must be a number. The data source must always contain {{{ID}}} column and a non-empty set of samples, and the sample columns should have the sample names as their titles. The sample names should not have duplicates. Note, however, that the data input will be successful even if the sample names have duplicates and R simply appends .1, .2 etc at the end of any duplicated names to make them unique. But it is recommended that care is taken so that sample names do not have any duplicates. Especially, if the sample meta data is provided in a separate input care must be taken so that the corresponding sample names match between the data source and sample meta data source.
 
-[FileFormats#Content_of_the_data_when_no_meta_data_is_present When creating the Dataset object from a single input], there can be additional columns in the data source providing variable (i.e. feature) meta data.
+When the _Dataset_ object is created from two inputs the _data_ source may have additional columns (i.e. columns other than {{{ID}}} and samples) providing variable (i.e. feature) meta data.
 
 ==Content of the data when no meta data is present==
 
