@@ -23,7 +23,7 @@ The input data file should be a delimited text file. By default the delimiter is
 
 =The content of the data source=
 
-The data source must contain a column titled {{{ID}}}. The {{{ID}}} column is not allowed to have duplicate entries. Each row corresponds to one feature (typically one metabolite). The {{{ID}}} entry in each row is the unique ID for that feature. The remaining columns of the data source usually correspond to biological samples. The entry that corresponds to a feature _i_ and a sample _j_ represents the measured level of the feature in that sample, and it must be a number. The data source must always contain {{{ID}}} column and a non-empty set of samples, and the sample columns should have the sample names as their titles. The sample names should not have duplicates. Note, however, that the data input will be successful even if the sample names have duplicates and R simply appends .1, .2 etc at the end of any duplicated names to make them unique. But it is recommended that care is taken so that sample names do not have any duplicates. Especially, when the _sample metadata_ is provided in a separate input, the sample names must all be distinct for a successful input of _sample metadata_.
+The data source must contain a column titled {{{ID}}}. The {{{ID}}} column is not allowed to have duplicate entries. Each row corresponds to one feature (typically one metabolite). The {{{ID}}} entry in each row is the unique ID for that feature. It can be any string (i.e. it is composed of [http://en.wikipedia.org/wiki/Alphanumeric alphanumeric] characters). The remaining columns of the data source usually correspond to biological samples. The entry that corresponds to a feature _i_ and a sample _j_ represents the measured level of the feature in that sample, and it must be a number. The data source must always contain {{{ID}}} column and a non-empty set of samples, and the sample columns should have the sample names as their titles. The sample names should not have duplicates. Note, however, that the data input will be successful even if the sample names have duplicates and R simply appends .1, .2 etc at the end of any duplicated names to make them unique. But it is recommended that care is taken so that sample names do not have any duplicates. Especially, when the _sample metadata_ is provided in a separate input, the sample names must all be distinct for a successful input of _sample metadata_.
 
 When the _Dataset_ object is created from two inputs the _data_ source may have additional columns (i.e. columns other than {{{ID}}} and samples) providing variable (i.e. feature) meta data. No additional columns are allowed when the _Dataset_ is created from a single input.
 
@@ -39,14 +39,16 @@ Note that when the [ReadingTheData Dataset object is created] from the single in
 
 When the _Dataset_ is created from two input sources (i.e. one corresponding to the data and the other corresponding to the sample metadata), then all the rows of the data source (except the column headers) must correspond to the features of the data set. The {{{ID}}} column can be anywhere (even though most commonly it is in the first column). If there are any columns other than the {{{ID}}} and the samples that are described in the accompanying _sample metadata_ file, they will be considered as _variable metadata_ columns unless _variable metadata_ is provided from a separate source. If _variable metadata_ is provided via a separate input source, these additional columns will be ignored.
 
-=Content of the sample metadata=
+==Content of the sample metadata==
 
 The purpose of the _sample metadata_ source is to provide description of each biological sample in the data set. It must contain a column titled {{{SampleName}}}, and the entries of this column must be the sample names of the data set (i.e. they should match the sample names of the _data_ source). If the {{{SampleName}}} column has any duplicate entries, the data input will fail. Typically the _sample metadata_ provides clinical variables including information such as disease group. Note that the _sample metadata_ is not allowed to include any samples that are not in the accompanying _data_. If it does, the data input will fail with an {{{index out of bounds error}}}. But, if the _data_ source has samples that are not in the _sample metadata_ source, they will be simply ignored (or interpreted as _variable metadata_).
 
-=Content of the variable metadata=
+==Content of the variable metadata==
 
+When given in a separate input source, the _variable metadata_ source should consist of an {{{ID}}} identical to that of _data_ and any number of other columns providing metadata of variables (i.e. features).
 
 =Notes=
+
 A Dataset object can hold any data, not necessarily only metabolomics or lipidomics data. The only condition is that the data values are numbers. For example, a factor variable such as the gender can be a feature in a Dataset as long as it is represented in numerical codes. The gender for instance can be coded as 0 for female and 1 for male (or vice versa).
 
-Everything that is said about data files in the preceding sections applies also to the input data frames except the issues with delimiters and decimal separators.
+Everything that is said about data files in the preceding sections applies also to the input data frames except the issues with delimiters, decimal separators and the column headers. That is, (i) the section corresponding to delimiters and decimal separators only concerns the file input and not the data.frame input, and (ii) when a data source is a file, the first row of the file contains the column headers and when a data source is a data.frame, the column headers are in the column names of the data.frame object.
