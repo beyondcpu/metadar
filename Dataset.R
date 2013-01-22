@@ -149,7 +149,7 @@ setGeneric("setExprs", def=function(Object, exprs) standardGeneric("setExprs"))
 
 setMethod("setExprs", signature=c("Dataset", "matrix"),
           function(Object, exprs=matrix()) {
-            if(!is.null(pData(Object)))
+            if(nrow(pData(Object))!=0)
             {
               exprs(Object) <- exprs[, as.character(pData(Object)[,"SampleName"])]
             } else {
@@ -355,9 +355,11 @@ setMethod("univariateAUC",  signature=c(Object="Dataset", covariate="character")
             return(rowpAUCs(Object, fac=pData(Object)[,covariate])@AUC)
           })
 
-setGeneric("univariateTTest", def=function(Object, covariate, paired) standardGeneric("univariateTTest"))
+setGeneric("univariateTTest", def=function(Object, covariate, paired)
+  standardGeneric("univariateTTest"))
 
-setMethod("univariateTTest",  signature=c(Object="Dataset", covariate="character", paired="missing"),
+setMethod("univariateTTest",  signature=c(Object="Dataset", covariate="character",
+                                          paired="missing"),
           valueClass="data.frame", definition=function(Object, covariate) {
             res <- t(apply(exprs(Object), 1, function(x) {
               tt <- t.test(x ~ factor(pData(Object)[,covariate]), alternative="two.sided")
@@ -367,7 +369,8 @@ setMethod("univariateTTest",  signature=c(Object="Dataset", covariate="character
             return(data.frame(res, "BH95 FDR Q value"=qvals))
           })
 
-setMethod("univariateTTest",  signature=c(Object="Dataset", covariate="character", paired="logical"),
+setMethod("univariateTTest",  signature=c(Object="Dataset", covariate="character",
+                                          paired="logical"),
           valueClass="data.frame", definition=function(Object, covariate, paired) {
             res <- t(apply(exprs(Object), 1, function(x) {
               tt <- t.test(x ~ factor(pData(Object)[,covariate]), alternative="two.sided", paired=paired)
@@ -387,7 +390,7 @@ setMethod("univariateWilcox",  signature=c(Object="Dataset", covariate="characte
             })
             qvals <- p.adjust(pvals, method="BH")
             medians <- t(apply(exprs(Object), 1, function(x) {
-              unlist(lapply(split(x, factor(pData(Object)[,covariate])), median))
+              unlist(lapply(split(x, factor(pData(Object)[,covariate])), function(z) median(z, na.rm=TRUE)))
             }))
             colnames(medians) <- paste("Median",colnames(medians))
             return(data.frame(medians, "p.value"=pvals, "BH95.FDR.Q.value"=qvals))
@@ -401,11 +404,68 @@ setMethod("univariateWilcox",  signature=c(Object="Dataset", covariate="characte
             })
             qvals <- p.adjust(pvals, method="BH")
             medians <- t(apply(exprs(Object), 1, function(x) {
-              unlist(lapply(split(x, factor(pData(Object)[,covariate])), median))
+              unlist(lapply(split(x, factor(pData(Object)[,covariate])), function(z) median(z, na.rm=TRUE)))
             }))
             colnames(medians) <- paste("Median",colnames(medians))
             return(data.frame(medians, "p.value"=pvals, "BH95.FDR.Q.value"=qvals))
           })
+
+setGeneric("univariateChisq", def=function(Object, covariate) standardGeneric("univariateChisq"))
+
+setMethod("univariateChisq", signature=c(Object="Dataset", covariate="character"),
+          definition=function(Object, covariate) {
+            covfac <- factor(getSampleMetaData(Object, covariate))
+            res <- vector("list", nrow(Object))
+            for(i in seq(nrow(Object))) {
+              varfac <- factor(exprs(Object)[i,])
+              ftab <- table(covfac, varfac)
+              tmp <- expand.grid(levels(covfac), levels(varfac))
+              fnames <- paste(tmp[,1], "x", tmp[,2])
+              res[[i]] <- c(paste(c(rbind(
+                fnames,
+                rep("=", length(fnames)),
+                paste(c(ftab), rep(".", length(fnames)), sep=""))),
+                                  collapse = " "), signif(chisq.test(ftab)$p.value, 2))
+            }
+            res <- do.call("rbind", res)
+            res <- cbind(res, signif(p.adjust(res[,2], method="BH"),2))
+            colnames(res) <- c(paste("Count (", covariate, " x Variable = n)", sep=""), "P value", "Q value")
+            rownames(res) <- featureNames(Object)
+            res
+          })
+
+setGeneric("meanSem", def=function(Object, covariate) standardGeneric("meanSem"))
+
+setMethod("meanSem", signature=c(Object="Dataset", covariate="character"),
+          definition=function(Object, covariate) {
+            res <- t(apply(exprs(Object), 1, function(x) {
+              valsbygrp <- split(x, factor(as.character(pData(Object)[,covariate])))
+              mns <- unlist(lapply(valsbygrp, function(x) mean(x, na.rm=TRUE)))
+              names(mns) <- paste("Mean", names(valsbygrp))
+              sems <- unlist(lapply(valsbygrp, function(x) {
+                sd(x, na.rm=TRUE)/sqrt(length(which(!is.na(x))))
+              }))                
+              names(sems) <- paste("SEM", names(valsbygrp))
+              c(mns, sems)
+            }))
+            res
+          })
+
+setGeneric("medianQuartile", def=function(Object, covariate) standardGeneric("medianQuartile"))
+
+setMethod("medianQuartile", signature=c(Object="Dataset", covariate="character"),
+          definition=function(Object, covariate) {
+            myfac <- factor(getSampleMetaData(Object,covariate))
+            res <- t(apply(exprs(Object), 1, function(x) {
+              valsbygrp <- split(x, myfac)
+              mns <- do.call("c", lapply(valsbygrp, function(x)
+                quantile(x, probs=c(0.5, 0.25, 0.75), na.rm=TRUE)))
+            }))
+            colnames(res) <- paste(rep(c("Median", "Q1", "Q3"), nlevels(myfac)),
+                                   rep(levels(myfac), each=3))
+            res
+          })
+
 
 setGeneric("foldChange", def=function(Object, covariate, paired, is.logged, log.base) standardGeneric("foldChange"))
 
@@ -689,7 +749,6 @@ setMethod("concatenate", signature=c("Dataset", "Dataset"),
             ## be complementary.
             cobj <- Object1
             cobj <- setExprs(cobj, rbind(exprs(Object1), exprs(Object2)))
-            cobj <- setExprs(cobj, t(scale(t(exprs(cobj)))))
             cobj
           })
 
