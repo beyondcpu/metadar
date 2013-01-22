@@ -49,7 +49,7 @@ mc$methods(list(
       
       ihm(correlation,
           main = "Heatmap original ordering",
-          device="pdf", file=filenames[1])
+          device="pdf", file=filenames[1], ...)
           #add.expr=abline(h=c(0.5, subject_count+0.5),v=c(0.5, subject_count+0.5), lwd=1))
       
       #############################################################
@@ -59,7 +59,7 @@ mc$methods(list(
       ihm(correlation,
           clusterRows=TRUE, clusterColumns=TRUE,
           main = "Heatmap hierachical clustering",
-          device="pdf", file=filenames[2])
+          device="pdf", file=filenames[2], ...)
       
       
       #############################################################  
@@ -98,7 +98,7 @@ mc$methods(list(
           rowsep=partition_border[-length(partition_count)],
           sepcolor="black",
           main = "Heatmap model-based clustering",
-          device="pdf", file=filenames[3])
+          device="pdf", file=filenames[3], ...)
     },
   
   ListCluster = function(...)
@@ -202,8 +202,8 @@ setMethod("calculateClusters", signature=c("Mclust2", "character", "logical", "i
           function(object, what, normalization, G) {
             if(normalization) {
               object$data_mat <- switch(what,
-                                        "variables"=scale(exprs(object$dataset), center=TRUE, scale=TRUE),
-                                        "samples"=scale(t(exprs(object$dataset)), center=TRUE, scale=TRUE))                                        
+                                        "variables"=t(scale(t(exprs(object$dataset)), center=TRUE, scale=TRUE)),
+                                        "samples"=t(scale(exprs(object$dataset), center=TRUE, scale=TRUE)))
             } else {              
               object$data_mat <-  switch(what,
                                          "variables"=exprs(object$dataset),
@@ -238,8 +238,8 @@ setMethod("calculateClusters", signature=c("Mclust2", "logical", "logical", "mis
           function(object, what, normalization) {
             if(normalization) {
               object$data_mat <- switch(what,
-                                        "variables"=scale(exprs(object$dataset), center=TRUE, scale=TRUE),
-                                        "samples"=scale(t(exprs(object$dataset)), center=TRUE, scale=TRUE))                                        
+                                        "variables"=t(scale(t(exprs(object$dataset)), center=TRUE, scale=TRUE)),
+                                        "samples"=t(scale(exprs(object$dataset), center=TRUE, scale=TRUE)))
               
             } else {
               object$data_mat <-  switch(what,
@@ -254,7 +254,7 @@ setMethod("calculateClusters", signature=c("Mclust2", "logical", "logical", "mis
 setMethod("calculateClusters", signature=c("Mclust2", "missing", "logical", "integer"),
           function(object, normalization, G) {
             if(normalization) {
-              object$data_mat <- scale(exprs(object$dataset), center=TRUE, scale=TRUE) 
+              object$data_mat <- t(scale(t(exprs(object$dataset)), center=TRUE, scale=TRUE))
             }
             object$clust_res <- Mclust(object$data_mat, G)
             object
@@ -277,7 +277,7 @@ setMethod("calculateClusters", signature=c("Mclust2", "missing", "missing", "mis
 setMethod("calculateClusters", signature=c("Mclust2", "missing", "logical", "missing"),
           function(object, normalization) {
             if(normalization) {
-              object$data_mat <- scale(exprs(object$dataset), center=TRUE, scale=TRUE)
+              object$data_mat <- t(scale(t(exprs(object$dataset)), center=TRUE, scale=TRUE))
             }
             
             object$clust_res <- Mclust(object$data_mat)

@@ -26,7 +26,7 @@ lr$methods(list(
     
     reduce.anneal = function() {
       matr <- glmHmat(.self$model)
-      $self$model <- anneal(matr$mat, kmin=3, H=matr$H, r=matr$r)
+      .self$model <- anneal(matr$mat, kmin=3, H=matr$H, r=matr$r)
     },
     
     reduce.lasso = function() {
