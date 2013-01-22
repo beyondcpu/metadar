@@ -6,7 +6,11 @@ This document introduces how the input data should be provided to [ReadingTheDat
 
 ==Example CSV files (or the long story cut short)==
 
-The quickest way to learn the data file format is to take a look at the example files. So, before giving long explanation about the data files, I point you to the example files. If you are going to create a _Dataset_ object using one single input file, it should look like [http://code.google.com/p/metadar/source/browse/trunk/examples/egData_standalone.csv this].
+The quickest way to learn the data file format is to take a look at the example files. So, before giving long explanation about the data files, I point you to the example files.
+
+  * If you are going to create a _Dataset_ object using one single input file, it should look like [http://code.google.com/p/metadar/source/browse/trunk/examples/egData_standalone.csv this].
+  * If you are going to create a _Dataset_ object using two input files, then here are example [http://code.google.com/p/metadar/source/browse/trunk/examples/egData2.csv data file] and [http://code.google.com/p/metadar/source/browse/trunk/examples/egMetadata.csv sample metadata file].
+  * When creating a _Dataset_ object using two input files, it is possible to include _variable metadata_ in the data file. Here is an example data file that contains some variable metadata.
 
 ==CSV file delimiter and decimal symbol==
 
