@@ -1,14 +1,13 @@
-lrm <- setRefClass("LogisticRegressionModelValidationCV",
+lrmv <- setRefClass("LogisticRegressionModelValidationCV",
 	contains="ModelValidationCV")
-lrm$methods(list(
+
+lrmv$methods(list(
 	initialize = function(...) {
-		#createMe(.self, ...)
     callSuper(...)
 	},
   
   full.training.model = function(y, x, ...)
   {
-    #browser()
     if(is.null(dim(x))) {
   		if(!identical(names(y), names(x)))
   			stop("Error names(x) must be equal to names(y)")
