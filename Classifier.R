@@ -86,16 +86,17 @@ cla$methods(list(
      }
 		 ))
 
+
 setGeneric("createClassifier", def=function(object, x, y, x.test, y.test, selectedVariables)
-	   standardGeneric("createClassifier"))
+  standardGeneric("createClassifier"))
 
 setMethod("createClassifier", signature=c("Classifier", "missing", "missing", "missing", "missing", "missing"),
-	  function(object) {
-		  object
-	  })
+          function(object) {
+            object
+          })
 
 # setMethod("createClassifier", signature=c("Classifier", "data.frame", "factor", "missing", "missing"),
-# 	  function(object, x, y) {
+#     function(object, x, y) {
 # 		  object$x <- x
 # 		  object$y <- y
 # 		  object
@@ -144,20 +145,20 @@ setMethod("createClassifier", signature=c("Classifier", "missing", "missing", "m
 # 	  })
 
 setMethod("createClassifier", signature=c("Classifier", "Dataset", "character", "missing", "missing", "character"),          
-      function(object, x, y, selectedVariables) {
-        object$x <- data.frame(exprs(x)[selectedVariables,], check.names=F)
-        object$y <- factor(pData(x)[,y])
-        names(object$y) <- sampleNames(x)
-        object
-      })
+          function(object, x, y, selectedVariables) {
+            object$x <- data.frame(exprs(x)[selectedVariables,], check.names=F)
+            object$y <- factor(pData(x)[,y])
+            names(object$y) <- sampleNames(x)
+            object
+          })
 
 setMethod("createClassifier", signature=c("Classifier", "Dataset", "character", "Dataset", "character", "character"),          
-      function(object, x, y, x.test, y.test, selectedVariables) {
-        object$x <- data.frame(exprs(x)[selectedVariables,], check.names=F)
-        object$y <- factor(pData(x)[,y])
-        names(object$y) <- sampleNames(x)
-        object$x.test <- data.frame(exprs(x.test)[selectedVariables,], check.names=F)
-        object$y.test <- factor(pData(x.test)[,y.test])
-        names(object$y.test) <- sampleNames(x.test)
-        object
-      })
+          function(object, x, y, x.test, y.test, selectedVariables) {
+            object$x <- data.frame(exprs(x)[selectedVariables,], check.names=F)
+            object$y <- factor(pData(x)[,y])
+            names(object$y) <- sampleNames(x)
+            object$x.test <- data.frame(exprs(x.test)[selectedVariables,], check.names=F)
+            object$y.test <- factor(pData(x.test)[,y.test])
+            names(object$y.test) <- sampleNames(x.test)
+            object
+          })
