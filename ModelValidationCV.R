@@ -1,10 +1,10 @@
-lrm <- setRefClass("ModelValidationCV", fields=list(
+mv <- setRefClass("ModelValidationCV", fields=list(
 		x = "data.frame",
 		y = "factor",
 		x.test = "data.frame",
 		y.test = "factor",
 		cv = "numeric",
-		pred.test = "prediction",
+		pred.test = "ANY",
 		cv.auc = "numeric",
 		cv.or = "numeric",
 		cv.acc = "numeric",
@@ -23,9 +23,9 @@ lrm <- setRefClass("ModelValidationCV", fields=list(
 		cutoff.mean = "numeric",
 		sens.mean = "numeric",
 		spec.mean = "numeric"))
-lrm$methods(list(
+mv$methods(list(
 	initialize = function(...) {
-		createMe(.self, ...)
+		createMV(.self, ...)
 	},
 
 	setTrainData = function(x, y) {
@@ -43,6 +43,7 @@ lrm$methods(list(
 	},
 
 	buildCV = function() { # abstract
+    callNextMethod()
 	},
 	
 	buildCV2 = function() { # abstract
@@ -54,6 +55,7 @@ lrm$methods(list(
 		# Hint: Under the setting x = x.test, and y = y.test
 		# you get the confidence limits of the full training model
 		# on subsets!!
+    callNextMethod()
 	},
 
 	computeCVcutoff = function() { # private
@@ -147,15 +149,19 @@ lrm$methods(list(
 	}
 ))
 
-setGeneric("createMe", def=function(object, x, y, x.test, y.test, cv, selectedVariables)
-    standardGeneric("createMe"))
+setGeneric("createMV", def=function(object, x, y, x.test, y.test, cv, selectedVariables)
+    standardGeneric("createMV"))
     
-setMethod("createMe", signature=c("ModelValidationCV", "missing", "missing", "missing", "missing", "missing", "missing"),
+setMethod("createMV", signature=c("ModelValidationCV", "missing", "missing",
+                                  "missing", "missing",
+                                  "missing", "missing"),
     function(object) {
       object
     })
   
-setMethod("createMe", signature=c("ModelValidationCV", "data.frame", "factor", "missing", "missing", "numeric", "character"),
+setMethod("createMV", signature=c("ModelValidationCV", "data.frame", "factor",
+                                  "missing", "missing",
+                                  "numeric", "character"),
     function(object, x, y, cv, selectedVariables) {
       object$x <- data.frame(x[,selectedVariables],check.names=F)
       object$y <- y
@@ -167,7 +173,9 @@ setMethod("createMe", signature=c("ModelValidationCV", "data.frame", "factor", "
       object
     })
 
-setMethod("createMe", signature=c("ModelValidationCV", "data.frame", "factor", "data.frame", "factor", "numeric", "character"),
+setMethod("createMV", signature=c("ModelValidationCV", "data.frame", "factor",
+                                  "data.frame", "factor",
+                                  "numeric", "character"),
     function(object, x, y, x.test, y.test, cv, selectedVariables) {
       object$x <- data.frame(x[,selectedVariables],check.names=F)
       object$y <- y
@@ -183,7 +191,9 @@ setMethod("createMe", signature=c("ModelValidationCV", "data.frame", "factor", "
       object
     })
 
-setMethod("createMe", signature=c("ModelValidationCV", "Dataset", "character", "missing", "missing", "numeric", "character"),
+setMethod("createMV", signature=c("ModelValidationCV", "Dataset", "character",
+                                  "missing", "missing",
+                                  "numeric", "character"),
     function(object, x, y, cv, selectedVariables) {
       object$x <- data.frame(exprs(x)[selectedVariables,], check.names=F)
       object$y <- factor(pData(x)[,y])
@@ -196,7 +206,9 @@ setMethod("createMe", signature=c("ModelValidationCV", "Dataset", "character", "
       object
     })
 
-setMethod("createMe", signature=c("ModelValidationCV", "Dataset", "character", "Dataset", "character", "numeric"),
+setMethod("createMV", signature=c("ModelValidationCV", "Dataset", "character",
+                                  "Dataset", "character",
+                                  "numeric", "character"),
     function(object, x, y, x.test, y.test, cv, selectedVariables) {
       object$x <- data.frame(exprs(x)[selectedVariables,], check.names=F)
       object$y <- factor(pData(x)[,y])
