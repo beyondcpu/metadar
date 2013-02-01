@@ -438,16 +438,18 @@ setGeneric("meanSem", def=function(Object, covariate) standardGeneric("meanSem")
 
 setMethod("meanSem", signature=c(Object="Dataset", covariate="character"),
           definition=function(Object, covariate) {
+            covfac <- factor(getSampleMetaData(Object, covariate))
             res <- t(apply(exprs(Object), 1, function(x) {
-              valsbygrp <- split(x, factor(as.character(pData(Object)[,covariate])))
+              valsbygrp <- split(x, covfac)
               mns <- unlist(lapply(valsbygrp, function(x) mean(x, na.rm=TRUE)))
-              names(mns) <- paste("Mean", names(valsbygrp))
               sems <- unlist(lapply(valsbygrp, function(x) {
                 sd(x, na.rm=TRUE)/sqrt(length(which(!is.na(x))))
-              }))                
-              names(sems) <- paste("SEM", names(valsbygrp))
+              }))
               c(mns, sems)
             }))
+            colnames(res) <- c(paste("Mean", levels(covfac)),
+                               paste("SEM", levels(covfac)))
+            #rownames(res) <- featureNames(Object)
             res
           })
 
@@ -485,7 +487,7 @@ setMethod("foldChange", signature=c(Object="Dataset", covariate="character", pai
               if(paired) {
                 for(i in seq(nrow(Object))) {
                   y <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
-                  pd <- y[[1]] - y[[2]]
+                  pd <- y[[2]] - y[[1]]
                   pdm <- mean(pd)
                   pdse <- sd(pd)/sqrt(length(pd))
                   fcs[i, 1] <- log.base^pdm
@@ -494,7 +496,7 @@ setMethod("foldChange", signature=c(Object="Dataset", covariate="character", pai
               } else {
                 for(i in seq(nrow(Object))) {
                   y <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
-                  pdm <- mean(y[[1]]) - mean(y[[2]])
+                  pdm <- mean(y[[2]]) - mean(y[[1]])
                   pd1se <- sd(y[[1]])/sqrt(length(y[[1]]))
                   pd2se <- sd(y[[2]])/sqrt(length(y[[2]]))
                   pdse <- 0.5*(pd1se + pd2se)
@@ -507,7 +509,7 @@ setMethod("foldChange", signature=c(Object="Dataset", covariate="character", pai
               if(paired) {
                 for(i in seq(nrow(Object))) {
                   y <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
-                  pd <- y[[1]] / y[[2]]
+                  pd <- y[[2]] / y[[1]]
                   pdm <- mean(pd)
                   pdse <- sd(pd)/sqrt(length(pd))
                   fcs[i, 1] <- pdm
@@ -516,7 +518,7 @@ setMethod("foldChange", signature=c(Object="Dataset", covariate="character", pai
               } else {
                 for(i in seq(nrow(Object))) {
                   y <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
-                  pdm <- mean(y[[1]]) / mean(y[[2]])
+                  pdm <- mean(y[[2]]) / mean(y[[1]])
                   pd1se <- sd(y[[1]])/sqrt(length(y[[1]]))
                   pd2se <- sd(y[[2]])/sqrt(length(y[[2]]))
                   pdse <- 0.5*(pd1se + pd2se)
@@ -546,7 +548,7 @@ setMethod("foldChange", signature=c(Object="Dataset", covariate="character",
             if(paired) {
               for(i in seq(nrow(Object))) {
                 y <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
-                pd <- y[[1]] / y[[2]]
+                pd <- y[[2]] / y[[1]]
                 pdm <- mean(pd)
                 pdse <- sd(pd)/sqrt(length(pd))
                 fcs[i, 1] <- pdm
@@ -555,7 +557,7 @@ setMethod("foldChange", signature=c(Object="Dataset", covariate="character",
             } else {
               for(i in seq(nrow(Object))) {
                 y <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
-                pdm <- mean(y[[1]]) / mean(y[[2]])
+                pdm <- mean(y[[2]]) / mean(y[[1]])
                 pd1se <- sd(y[[1]])/sqrt(length(y[[1]]))
                 pd2se <- sd(y[[2]])/sqrt(length(y[[2]]))
                 pdse <- 0.5*(pd1se + pd2se)
@@ -583,7 +585,7 @@ setMethod("foldChange", signature=c(Object="Dataset", covariate="character",
             if(is.logged) {
               for(i in seq(nrow(Object))) {
                 y <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
-                pdm <- mean(y[[1]]) - mean(y[[2]])
+                pdm <- mean(y[[2]]) - mean(y[[1]])
                 pd1se <- sd(y[[1]])/sqrt(length(y[[1]]))
                 pd2se <- sd(y[[2]])/sqrt(length(y[[2]]))
                 pdse <- 0.5*(pd1se + pd2se)
@@ -594,7 +596,7 @@ setMethod("foldChange", signature=c(Object="Dataset", covariate="character",
               warning("If your data is not normal, please consider log transformation")
               for(i in seq(nrow(Object))) {
                 y <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
-                pdm <- mean(y[[1]]) / mean(y[[2]])
+                pdm <- mean(y[[2]]) / mean(y[[1]])
                 pd1se <- sd(y[[1]])/sqrt(length(y[[1]]))
                 pd2se <- sd(y[[2]])/sqrt(length(y[[2]]))
                 pdse <- 0.5*(pd1se + pd2se)
@@ -622,7 +624,7 @@ setMethod("foldChange", signature=c(Object="Dataset", covariate="character",
             warning("If your data is not normal, please consider log transformation")
             for(i in seq(nrow(Object))) {
               y <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
-              pdm <- mean(y[[1]]) / mean(y[[2]])
+              pdm <- mean(y[[2]]) / mean(y[[1]])
               pd1se <- sd(y[[1]])/sqrt(length(y[[1]]))
               pd2se <- sd(y[[2]])/sqrt(length(y[[2]]))
               pdse <- 0.5*(pd1se + pd2se)
