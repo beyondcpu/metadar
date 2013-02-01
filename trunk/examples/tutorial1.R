@@ -4,16 +4,31 @@
 #### we are interested in the difference between
 #### the case versus control phenotype at each time point
 
-library("Biobase")
-source("Dataset.R")
-dat <- new("Dataset", "Lipidomics_normalized.csv",
-                   "Lipidomics_pdata2.csv")
+## load metadar library
+library("metadar")
+#### there are different ways to read the data
+## Data consists of three components
+## (1) data
+## (2) sample meta data
+## (3) variable meta data
+#### Data is represented as a Dataset object
 
-dataset <- new("Dataset", dat1, parameters1)
-featureNames(dataset)
+### one input file (CSV file) example
+dat1 <- new("Dataset", "examples/egData_standalone.csv")
+### two input files (CSV files)
+# example 1
+dat <- new("Dataset", "examples/egData1.csv",
+           "examples/egSampleMetaData.csv")
+# example 2
+dat2 <- new("Dataset", "examples/egData2.csv",
+           "examples/egSampleMetaData.csv")
+
+### three files (CSV file) example
+dat3 <- new("Dataset", "examples/egData1.csv",
+            "examples/egSampleMetaData.csv",
+            "examples/egVarMetaData.csv")
 
 ### Filter the data by removing compounds that have too many zero's.
-source("zeroFiltering.R")
 dat <- zeroFiltering(dat, minNfound=5)
 # OR
 dat <- zeroFiltering(dat, minNfound=5, covariate="Phenotype")
@@ -82,6 +97,9 @@ plot(colhclust(dat, labels="SampleName", color="Phenotype"))
 aov1 <- oneWayAnova(dat, covariate="Class")
 
 ### two way anova
-aov2 <- twoWayAnova(dat, covariate1="Class", covariate2="Time")
+source("~/Dropbox/Work/METADAR/TukeyHSD2.R")
+source("~/Dropbox/Work/METADAR/twoWayAnova.R")
+aov2 <- twoWayAnova(dat, covariate1="Drug", covariate2="Time")
+
 library("ihm")
 ihm(aov2[["RatiosTable"]], aov2[["PvalsTable"]])
