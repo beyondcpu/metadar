@@ -18,30 +18,30 @@ dat1 <- new("Dataset", "examples/egData_standalone.csv")
 ### two input files (CSV files)
 # example 1
 dat <- new("Dataset", "examples/egData1.csv",
-           "examples/egSampleMetaData.csv")
+           "examples/egSampleMetadata.csv")
 # example 2
 dat2 <- new("Dataset", "examples/egData2.csv",
-           "examples/egSampleMetaData.csv")
+           "examples/egSampleMetadata.csv")
 
 ### three files (CSV file) example
 dat3 <- new("Dataset", "examples/egData1.csv",
-            "examples/egSampleMetaData.csv",
+            "examples/egSampleMetadata.csv",
             "examples/egVarMetaData.csv")
 
 ### Filter the data by removing compounds that have too many zero's.
+### By minimum number of non-zero values
 dat <- zeroFiltering(dat, minNfound=5)
-# OR
-dat <- zeroFiltering(dat, minNfound=5, covariate="Phenotype")
-# OR
+### By minumim number of non-zero values per group defined by the covariate
+dat <- zeroFiltering(dat, minNfound=5, covariate="Class")
+### By minimum percentage of non-zero values
 dat <- zeroFiltering(dat, pctNfound=70)
-# OR
+### By minumim percentage of non-zero values per group defined by the covariate
 dat <- zeroFiltering(dat, pctNfound=70, covariate="Phenotype")
 
 ### zero imputation
-source("zeroImputation.R")
 dat <- zeroImputation(dat)
 # OR
-dat <- zeroImputation(dat, covariate="Phenotype")
+tmp <- zeroImputation(dat, covariate="DiagnosticGroup")
 
 ### log transform the data
 dat <- log2(dat)
@@ -51,7 +51,6 @@ dat <- log10(dat)
 dat <- log(dat, base=2)
 
 ### take a subset of the data (in this case we want to analyze each time point separately)
-library("simpleaffy")
 dat.3d <- get.array.subset(dat, "Time", "3d")
 dat.24h <- get.array.subset(dat, "Time", "24h")
 
@@ -88,7 +87,6 @@ aucs <- univariateOddsRatio(dat, "Phenotype")
 aucs <- univariateAUC(dat, "Phenotype")
 
 ### Principal components analysis (PCA)
-source("PCA.R")
 pca(dat, annotation="Phenotype", color="Phenotype", scale=TRUE, title="pca")
 ### Hierarchical clustering
 
@@ -97,9 +95,6 @@ plot(colhclust(dat, labels="SampleName", color="Phenotype"))
 aov1 <- oneWayAnova(dat, covariate="Class")
 
 ### two way anova
-source("~/Dropbox/Work/METADAR/TukeyHSD2.R")
-source("~/Dropbox/Work/METADAR/twoWayAnova.R")
 aov2 <- twoWayAnova(dat, covariate1="Drug", covariate2="Time")
-
-library("ihm")
+### draw a heatmap with the anova result
 ihm(aov2[["RatiosTable"]], aov2[["PvalsTable"]])
