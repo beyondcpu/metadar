@@ -70,12 +70,13 @@ setMethod("zeroFiltering", signature=c("Dataset", "numeric", "missing", "charact
           function(Object, minNfound, covariate) {
             include <- rep(TRUE, times=nrow(Object))
             members <- levels(factor(pData(Object)[,covariate]))
+            if(length(minNfound)==1) { minNfound <- rep(minNfound, length(members)) }
             for(i in seq(nrow(Object))) {
-              rowi <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
+              rowi <- split(exprs(Object)[i,], factor(getSampleMetaData(Object,covariate)))
               yorn <- lapply(seq(length(members)),
                              function(x) {
                                nz <- length(which(rowi[[members[x]]] != 0))
-                               ifelse(nz < numNfound[x], FALSE, TRUE)
+                               ifelse(nz < minNfound[x], FALSE, TRUE)
                              })
               include[i] <- all(unlist(yorn))
             }
@@ -87,6 +88,7 @@ setMethod("zeroFiltering", signature=c("Dataset", "missing", "numeric", "charact
           function(Object, pctNfound, covariate) {
             include <- rep(TRUE, times=nrow(Object))
             members <- levels(factor(pData(Object)[,covariate]))
+            if(length(pctNfound)==1) { pctNfound <- rep(pctNfound, length(members)) }
             for(i in seq(nrow(Object))) {
               rowi <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
               yorn <- lapply(seq(length(members)),
