@@ -73,8 +73,9 @@ setMethod("readDataset", signature=c("Dataset", "character", "missing", "missing
             dat <- inputData[-1, -1]
             rownames(dat) <- inputData[-1,"ID"]
             #browser()
-            phenoDataFrame <- data.frame("SampleName"=colnames(inputData)[2:ncol(inputData)],
-                                         "Class"=unlist(inputData[1,2:ncol(inputData)]))
+            phenoDataFrame <- data.frame(colnames(inputData)[2:ncol(inputData)],
+                                         unlist(inputData[1,2:ncol(inputData)]))
+            colnames(phenoDataFrame) <- c("SampleName", as.character(unlist(inputData[1,1])))
             rownames(phenoDataFrame) <- colnames(inputData)[2:ncol(inputData)]
             phenoData <- new("AnnotatedDataFrame", data=phenoDataFrame)
             Object@assayData=assayDataNew(exprs=apply(dat,2,as.numeric))
@@ -127,8 +128,9 @@ setMethod("readDataset", signature=c("Dataset", "data.frame", "missing", "missin
           function(Object, metabolomicsDataSource) {
             dat <- metabolomicsDataSource[-1, -1]
             rownames(dat) <- metabolomicsDataSource[-1,"ID"]
-            phenoDataFrame <- data.frame("SampleName"=colnames(metabolomicsDataSource)[2:ncol(metabolomicsDataSource)],
-                                         "Class"=unlist(metabolomicsDataSource[1,2:ncol(metabolomicsDataSource)]))
+            phenoDataFrame <- data.frame(colnames(metabolomicsDataSource)[2:ncol(metabolomicsDataSource)],
+                                         unlist(metabolomicsDataSource[1,2:ncol(metabolomicsDataSource)]))
+            colnames(phenoDataFrame) <- c("SampleName", as.character(unlist(metabolomicsDataSource[1,1])))
             rownames(phenoDataFrame) <- colnames(metabolomicsDataSource)[2:ncol(metabolomicsDataSource)]
             phenoData <- new("AnnotatedDataFrame", data=phenoDataFrame)
             Object@assayData=assayDataNew(exprs=apply(dat,2,as.numeric))
@@ -275,12 +277,12 @@ setMethod("selectSamples", signature=c("Dataset", "character"), valueClass="Data
             Object[,selection]
           })
 
-setGeneric("univariateCorrelation", def=function(Object, covariate, method)
+setGeneric("univariateCorrelation", def=function(Object, covariate, method, ...)
   standardGeneric("univariateCorrelation"))
 
 setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="character", method="missing"),
           valueClass="data.frame",
-          definition=function(Object,covariate) {
+          definition=function(Object,covariate, ...) {
             expr <- exprs(Object)
             output <- pData(Object)[,covariate]
             cors <- vector("numeric",nrow(expr))
@@ -297,7 +299,7 @@ setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="cha
 
 setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="numeric", method="missing"),
           valueClass="data.frame",
-          definition=function(Object, covariate) {
+          definition=function(Object, covariate, ...) {
             expr <- exprs(Object)
             output <- covariate
             cors <- vector("numeric",nrow(expr))
@@ -314,13 +316,13 @@ setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="num
 
 setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="character", method="character"),
           valueClass="data.frame",
-          definition=function(Object,covariate, method) {
+          definition=function(Object,covariate, method, ...) {
             expr <- exprs(Object)
             output <- pData(Object)[,covariate]
             cors <- vector("numeric",nrow(expr))
             pvals <- vector("numeric",nrow(expr))
             for(i in seq(nrow(expr))) {
-              ct <- cor.test(expr[i,], output, alternative="t", method=method)
+              ct <- cor.test(expr[i,], output, alternative="t", method=method, ...)
               cors[i] <- ct$estimate
               pvals[i] <- ct$p.value
             }
@@ -332,13 +334,13 @@ setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="cha
 
 setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="numeric", method="character"),
           valueClass="data.frame",
-          definition=function(Object, covariate, method) {
+          definition=function(Object, covariate, method, ...) {
             expr <- exprs(Object)
             output <- covariate
             cors <- vector("numeric",nrow(expr))
             pvals <- vector("numeric",nrow(expr))
             for(i in seq(nrow(expr))) {
-              ct <- cor.test(expr[i,], output, alternative="t", method=method)
+              ct <- cor.test(expr[i,], output, alternative="t", method=method, ...)
               cors[i] <- ct$estimate
               pvals[i] <- ct$p.value
             }
