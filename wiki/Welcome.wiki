@@ -28,4 +28,4 @@ Capabilities of this package are listed here.
   * Evaluation of prediction performance of a logistic regression using cross validation
   * Evaluation of prediction performance of a random forest model using CV
 ==Other features==
-  * Model based clustering using *mclust*
+  * [[Mclustering Model based clustering]] using *mclust*
