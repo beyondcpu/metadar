@@ -1,4 +1,4 @@
-#summary Acknowledgements and references
+#summary Acknowledgements and credits
 
 = Acknowledgements =
 
