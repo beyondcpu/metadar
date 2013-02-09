@@ -1,0 +1,23 @@
+#summary Help for performing model based clustering (mclust)
+
+= Introduction =
+
+Class _Mclust2_ of _metadar_ package provides an interface for performing model based clustering^[Mclustering#References 1]^ on a _Dataset_ object.
+
+
+= Usage =
+
+Let _dataset_ be an object of class _Dataset_ that you have created^[Mclustering#References 2^. There are two steps to applying mclust to _dataset_. The first step is to create an Mclust2 object.
+{{{
+mcl <- new("Mclust2", dataset)
+}}}
+The second step is to perform clustering. You can cluster either variables or samples.
+{{{
+mcl <- mcl$mclust2("variables", normalization=TRUE, G=5:15)
+}}}
+<p>In the above call the function argument {{{normalization}}} allows you to specify whether or not to normalize the entities that are being clustered so that their means are set to zero and variances to 1. In the above call we are clustering {{{variables}}} (i.e. features of our dataset). Since we have set normalization to be TRUE, the function will first normalize the variables to have zero mean and unit variance.</p>
+<p>The second argument G is used to specify the number of clusters to try. In the example above, we are trying 5 clusters, 6 clusters, 7 clusters and so on until 15 clusters. The mclust method will then choose the best number of clusters from among these tested number of clusters based on the maximum likelihood. Often, you receive a warning saying that the optimum number of clusters occurred at {{{min}}} or {{{max}}} cluster numbers tried. If the optimum was {{{min}}}, we should try smaller numbers of clusters to check if there is a better model (e.g. by G=2:6 in the example above). If the optimum was at {{{max}}}, we should try larger number of clusters to check if there is a better model (e.g. by G=13:20 in the example above).</p>
+
+=References=
+  # [http://www.stat.washington.edu/mclust/ mclust package]
+  # [ReadingTheData Instructions for creating Dataset objects]
