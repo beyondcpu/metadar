@@ -5,7 +5,7 @@
 Class _Mclust2_ of _metadar_ package provides an interface for performing model based clustering ([Mclustering#References 1]) on a _Dataset_ object.
 
 
-= Usage =
+=Usage=
 
 Let _dataset_ be an object of class _Dataset_ that you have created ([Mclustering#References 2]). There are two steps to applying mclust to _dataset_. The first step is to create an Mclust2 object.
 {{{
@@ -17,6 +17,31 @@ mcl <- mcl$mclust2("variables", normalization=TRUE, G=5:15)
 }}}
 <p>In the above call the function argument {{{normalization}}} allows you to specify whether or not to normalize the entities that are being clustered so that their means are set to zero and variances to 1. In the above call we are clustering {{{variables}}} (i.e. features of our dataset). Since we have set normalization to be TRUE, the function will first normalize the variables to have zero mean and unit variance.</p>
 <p>The second argument G is used to specify the number of clusters to try. In the example above, we are trying 5 clusters, 6 clusters, 7 clusters and so on until 15 clusters. The mclust method will then choose the best number of clusters from among these tested number of clusters based on the maximum likelihood. Often, you receive a warning saying that the optimum number of clusters occurred at {{{min}}} or {{{max}}} cluster numbers tried. If the optimum was {{{min}}}, we should try smaller numbers of clusters to check if there is a better model (e.g. by G=2:6 in the example above). If the optimum was at {{{max}}}, we should try larger number of clusters to check if there is a better model (e.g. by G=13:20 in the example above).</p>
+Similarly as for variables, clustering samples can be performed by for example
+{{{
+mcl <- mcl$mclust2("samples", normalization=TRUE, G=2:10)
+}}}
+
+=Results=
+
+Several methods of _Mclust2_ class allow you to examine the results of clustering. For example, you can get the number of clusters by
+{{{
+mcl$getNumberOfClusters()
+}}}
+You can get the number and list of elements in each cluster by
+{{{
+mcl$getClusterInfo()
+}}}
+You can get the elements of a specific cluster by
+{{{
+mcl$getClusterMembers(clusters=1)
+}}}
+The {{{getClusterMembers}}} function has two arguments, namely, variableNames and clusters. Both are optional. If no argument is issued, then it returns elements of all clusters as a list, with the default variable names. If the argument clusters is provided, it should be the number(s) of cluster(s) whose elements you want listed. The variableNames argument can be used to supply variable names to be shown. This argument has been made available for the following reasons. If the clustering of variables (i.e. features in the dataset) was performed, then _Mclust2_ class takes the featureNames(dataset) as the variable names. They may often be some ID such as just a number, which is not as informative as a name could be. In such case, variableNames argument allows you to provide a list of informative names (of the same length as there are variables). If the clustering was performed on samples of the dataset, then sampleNames(dataset) become the default variableNames. But often, showing the diagnostic class (or the like) of the sample maybe more informative than its name.
+
+You can draw the heatmaps showing clusters by
+{{{
+mcl$DrawCluster()
+}}}
 
 =References=
   # [http://www.stat.washington.edu/mclust/ mclust package]
