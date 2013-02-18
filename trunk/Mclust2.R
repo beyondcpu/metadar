@@ -38,7 +38,7 @@ mc$methods(list(
     colnames(data_mat)
   },
   
-  DrawCluster =
+  drawClusterHeatmaps =
     function(filenames=c("ihm_orig.pdf", "ihm_hclust.pdf", "ihm_mclust.pdf"), ...)
     {
       #if(is.na(cust_order)) { cust_order <- c(1:getNumberOfClusters()) }
@@ -100,6 +100,10 @@ mc$methods(list(
           main = "Heatmap model-based clustering",
           device="pdf", file=filenames[3], ...)
     },
+  
+  DrawCluster = function(...) {
+    drawClusterHeatmaps(...)
+  },
   
   ListCluster = function(...)
   {
