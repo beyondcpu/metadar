@@ -25,12 +25,12 @@ The package builds are [http://code.google.com/p/metadar/downloads/list here]. T
 {{{
 R CMD INSTALL metadar_<version>.tar.gz
 }}}
-where the <version> would be the version of the package you downloaded.
+where the {{{<version>}}} would be the version of the package you downloaded.
   * If you are on Windows: use the R gui menu "install package for local zip" and point to the downloaded zip file. Or issue the following command at the command prompt in a command prompt window (not R):
 {{{
 R CMD INSTALL metadar_<version>.zip
 }}}
-where the <version> would be the version of the package you downloaded.
+where the {{{<version>}}} would be the version of the package you downloaded.
 
 = Note =
 
