@@ -277,10 +277,10 @@ setMethod("selectSamples", signature=c("Dataset", "character"), valueClass="Data
             Object[,selection]
           })
 
-setGeneric("univariateCorrelation", def=function(Object, covariate, method, ...)
+setGeneric("univariateCorrelation", def=function(Object, covariate, ...)
   standardGeneric("univariateCorrelation"))
 
-setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="character", method="missing"),
+setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="character"),
           valueClass="data.frame",
           definition=function(Object,covariate, ...) {
             expr <- exprs(Object)
@@ -288,16 +288,16 @@ setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="cha
             cors <- vector("numeric",nrow(expr))
             pvals <- vector("numeric",nrow(expr))
             for(i in seq(nrow(expr))) {
-              ct <- cor.test(expr[i,], output, alternative="t", method="pearson")
+              ct <- cor.test(expr[i,], output, alternative="two.sided", ...)
               cors[i] <- ct$estimate
               pvals[i] <- ct$p.value
             }
             qvals <- p.adjust(pvals, method="BH")
             return(data.frame(row.names=featureNames(assayData(Object)),
-                              "Correlation coefficient (Pearson)"=cors, "P value"=pvals, "BH95 FDR Q value"=qvals))
+                              "Cor"=cors, "p-value"=pvals, "q-value"=qvals))
           })
 
-setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="numeric", method="missing"),
+setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="numeric"),
           valueClass="data.frame",
           definition=function(Object, covariate, ...) {
             expr <- exprs(Object)
@@ -305,49 +305,13 @@ setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="num
             cors <- vector("numeric",nrow(expr))
             pvals <- vector("numeric",nrow(expr))
             for(i in seq(nrow(expr))) {
-              ct <- cor.test(expr[i,], output, alternative="t", method="pearson")
+              ct <- cor.test(expr[i,], output, alternative="two.sided", ...)
               cors[i] <- ct$estimate
               pvals[i] <- ct$p.value
             }
             qvals <- p.adjust(pvals, method="BH")
             return(data.frame(row.names=featureNames(assayData(Object)),
-                              "Correlation coefficient (Pearson)"=cors, "P value"=pvals, "BH95 FDR Q value"=qvals))
-          })
-
-setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="character", method="character"),
-          valueClass="data.frame",
-          definition=function(Object,covariate, method, ...) {
-            expr <- exprs(Object)
-            output <- pData(Object)[,covariate]
-            cors <- vector("numeric",nrow(expr))
-            pvals <- vector("numeric",nrow(expr))
-            for(i in seq(nrow(expr))) {
-              ct <- cor.test(expr[i,], output, alternative="t", method=method, ...)
-              cors[i] <- ct$estimate
-              pvals[i] <- ct$p.value
-            }
-            qvals <- p.adjust(pvals, method="BH")
-	    ret <- data.frame(row.names=featureNames(assayData(Object)), cors, pvals, qvals)
-	    colnames(ret) <- c(paste("Correlation coefficient (", method, ")", sep=""), "P value", "BH95 FDR Q value")
-            return(ret)
-          })
-
-setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="numeric", method="character"),
-          valueClass="data.frame",
-          definition=function(Object, covariate, method, ...) {
-            expr <- exprs(Object)
-            output <- covariate
-            cors <- vector("numeric",nrow(expr))
-            pvals <- vector("numeric",nrow(expr))
-            for(i in seq(nrow(expr))) {
-              ct <- cor.test(expr[i,], output, alternative="t", method=method, ...)
-              cors[i] <- ct$estimate
-              pvals[i] <- ct$p.value
-            }
-            qvals <- p.adjust(pvals, method="BH")
-	    ret <- data.frame(row.names=featureNames(assayData(Object)), cors, pvals, qvals)
-	    colnames(ret) <- c(paste("Correlation coefficient (", method, ")", sep=""), "P value", "BH95 FDR Q value")
-            return(ret)
+                              "Cor"=cors, "p-value"=pvals, "q-value"=qvals))
           })
 
 setGeneric("univariateAUC", def=function(Object, covariate) standardGeneric("univariateAUC"))
@@ -382,12 +346,12 @@ setMethod("univariateTTest",  signature=c(Object="Dataset", covariate="character
             return(data.frame(res, "BH95 FDR Q value"=qvals))
           })
 
-setGeneric("univariateWilcox", def=function(Object, covariate, paired) standardGeneric("univariateWilcox"))
+setGeneric("univariateWilcox", def=function(Object, covariate, paired, ...) standardGeneric("univariateWilcox"))
 
 setMethod("univariateWilcox",  signature=c(Object="Dataset", covariate="character", paired="missing"),
-          valueClass="data.frame", definition=function(Object, covariate) {
+          valueClass="data.frame", definition=function(Object, covariate, ...) {
             pvals <- apply(exprs(Object), 1, function(x) {
-              wil <- wilcox.test(x ~ factor(pData(Object)[,covariate]), alternative="two.sided")
+              wil <- wilcox.test(x ~ factor(pData(Object)[,covariate]), alternative="two.sided", ...)
               wil$p.value
             })
             qvals <- p.adjust(pvals, method="BH")
@@ -399,9 +363,9 @@ setMethod("univariateWilcox",  signature=c(Object="Dataset", covariate="characte
           })
 
 setMethod("univariateWilcox",  signature=c(Object="Dataset", covariate="character", paired="logical"),
-          valueClass="data.frame", definition=function(Object, covariate, paired) {
+          valueClass="data.frame", definition=function(Object, covariate, paired, ...) {
             pvals <- apply(exprs(Object), 1, function(x) {
-              wil <- wilcox.test(x ~ factor(pData(Object)[,covariate]), alternative="two.sided", paired=paired)
+              wil <- wilcox.test(x ~ factor(pData(Object)[,covariate]), alternative="two.sided", paired=paired, ...)
               wil$p.value
             })
             qvals <- p.adjust(pvals, method="BH")

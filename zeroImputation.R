@@ -1,86 +1,156 @@
-
 setGeneric("zeroImputation", function(Object, method, covariate) standardGeneric("zeroImputation"))
-### something is wrong
+
 setMethod("zeroImputation", signature=c("Dataset", "character", "missing"),
-	  function(Object, method="HalfMin") {
+	  function(Object, method="aroundhalfmin") {
 		  dat <- exprs(Object)
-		  dat[is.na(dat)] <- 0
-		  if(method=="HalfMin") {
-			  for(i in seq(nrow(dat))) {
-				  if(!all(dat[i,]!=0) && (sum(dat[i,]) !=0)) {
-					  dat[i,which(dat[i,]==0)] <- min(dat[i,which(dat[i,]!=0)])/2
-				  }
-			  }
-		  }
+      if(any(is.na(dat))) {
+        message("One or more NAs found. They will be replaced by 0")
+        dat[is.na(dat)] <- 0
+      }
+		  
+      rowhasanonzerovalue <- apply(dat, 1, function(x) any(x != 0))
+      rowhasazerovalue <- apply(dat, 1, function(x) any(x == 0))
+      whichisnonzeroinrow <- apply(dat, 1, function(x) which(x != 0))
+		  whichiszeroinrow <- apply(dat, 1, function(x) which(x == 0))
+      
+      if(!all(rowhasanonzerovalue)) {
+        warning(paste("There are", length(which(!rowhasanonzerovalue)),
+                      "rows with full of zeros.",
+                      "They won't be imputed.",
+                      "But, please consider zeroFiltering before zeroImputation"))
+      }
+      
+		  for(i in seq(nrow(dat))) {
+        if(rowhasazerovalue[i] && rowhasanonzerovalue[i]) {
+          halfmin <- min(dat[i, whichisnonzeroinrow[[i]]])/2
+          if(method=="aroundhalfmin") {
+            errbnd <- min(dat[i, whichisnonzeroinrow[[i]]])/5
+            noise <- runif(length(whichiszeroinrow[[i]]), min=halfmin-errbnd, max=halfmin+errbnd)
+            dat[i, whichiszeroinrow[[i]]] <- halfmin + noise  
+          } else if(method=="halfmin") {
+            dat[i, whichiszeroinrow[[i]]] <- halfmin
+          }
+          
+        }
+		  }        
 
 		  exprs(Object) <- dat
 		  Object
 })
 
 setMethod("zeroImputation", signature=c("Dataset", "character", "character"),
-	  function(Object, method="HalfMin", covariate) {
-		  groups <- levels(factor(pData(Object)[,covariate]))
-		  for(j in seq(length(groups))) {
-			  datg <- get.array.subset(Object, covariate, groups[j])
-			  dat <- exprs(datg)
-			  dat[is.na(dat)] <- 0
-
-			  if(method=="HalfMin") {
-
-				  for(i in seq(nrow(dat))) {
-					  if(!all(dat[i,]!=0) && (sum(dat[i,]) !=0)) {
-						  dat[i,which(dat[i,]==0)] <- min(dat[i,which(dat[i,]!=0)])/2
-					  }
-				  }
+	  function(Object, method="aroundhalfmin", covariate) {
+	    
+      if(any(is.na(exprs(Object)))) {
+	      message("One or more NAs found. They will be replaced by 0")
+	      exprs(Object)[is.na(exprs(Object))] <- 0
+	    }
+      
+		  groups <- levels(factor(getSampleMetaData(Object, covariate)))
+      columnsbygroup <- split(sampleNames(Object), factor(getSampleMetaData(Object, covariate)))
+		  
+      for(j in seq(length(groups))) {
+			  dat <- exprs(Object)[,columnsbygroup[[j]]]
+			 
+			  rowhasanonzerovalue <- apply(dat, 1, function(x) any(x != 0))
+			  rowhasazerovalue <- apply(dat, 1, function(x) any(x == 0))
+			  whichisnonzeroinrow <- apply(dat, 1, function(x) which(x != 0))
+			  whichiszeroinrow <- apply(dat, 1, function(x) which(x == 0))
+			  
+			  if(!all(rowhasanonzerovalue)) {
+			    warning(paste("There are", length(which(!rowhasanonzerovalue)),
+			                  "rows with full of zeros.",
+			                  "They won't be imputed.",
+			                  "But, please consider zeroFiltering before zeroImputation"))
 			  }
-
-			  exprs(datg) <- dat
-			  if(j==1) {
-				  ret.Obj <- datg
-			  } else {
-				  ret.Obj <- combine(ret.Obj, datg)
-			  }
+        
+			  for(i in seq(nrow(dat))) {
+			    if(rowhasazerovalue[i] && rowhasanonzerovalue[i]) {
+			      halfmin <- min(dat[i, whichisnonzeroinrow[[i]]])/2
+			      if(method=="aroundhalfmin") {
+			        errbnd <- min(dat[i, whichisnonzeroinrow[[i]]])/5
+			        noise <- runif(length(whichiszeroinrow[[i]]), min=halfmin-errbnd, max=halfmin+errbnd)
+			        dat[i, whichiszeroinrow[[i]]] <- halfmin + noise  
+			      } else if(method=="halfmin") {
+			        dat[i, whichiszeroinrow[[i]]] <- halfmin
+			      }
+			      
+			    }
+			  } 
+			  exprs(Object)[, columnsbygroup[[j]]] <- dat
 		  }
-		  ret.Obj
+		  Object
 	  })
 
 setMethod("zeroImputation", signature=c("Dataset", "missing", "missing"),
 	  function(Object) {
-		  dat <- exprs(Object)
-		  dat[is.na(dat)] <- 0
-
-		  for(i in seq(nrow(dat))) {
-			  if(!all(dat[i,]!=0) && (sum(dat[i,]) !=0)) {
-				  dat[i,which(dat[i,]==0)] <- min(dat[i,which(dat[i,]!=0)])/2
-			  }
-		  }
-
-
-		  exprs(Object) <- dat
-		  Object
+	    dat <- exprs(Object)
+	    if(any(is.na(dat))) {
+	      message("One or more NAs found. They will be replaced by 0")
+	      dat[is.na(dat)] <- 0
+	    }
+	    
+	    rowhasanonzerovalue <- apply(dat, 1, function(x) any(x != 0))
+	    rowhasazerovalue <- apply(dat, 1, function(x) any(x == 0))
+	    whichisnonzeroinrow <- apply(dat, 1, function(x) which(x != 0))
+	    whichiszeroinrow <- apply(dat, 1, function(x) which(x == 0))
+	    
+	    if(!all(rowhasanonzerovalue)) {
+	      warning(paste("There are", length(which(!rowhasanonzerovalue)),
+	                    "rows with full of zeros.",
+	                    "They won't be imputed.",
+	                    "But, please consider zeroFiltering before zeroImputation"))
+	    }
+	    
+	    for(i in seq(nrow(dat))) {
+	      if(rowhasazerovalue[i] && rowhasanonzerovalue[i]) {
+	        halfmin <- min(dat[i, whichisnonzeroinrow[[i]]])/2
+	        errbnd <- min(dat[i, whichisnonzeroinrow[[i]]])/5
+	        noise <- runif(length(whichiszeroinrow[[i]]), min=halfmin-errbnd, max=halfmin+errbnd)
+	        dat[i, whichiszeroinrow[[i]]] <- halfmin + noise
+	      }
+	    }
+	    
+	    exprs(Object) <- dat
+	    Object
 })
 
 setMethod("zeroImputation", signature=c("Dataset", "missing", "character"),
-	  function(Object, covariate) {
-		  groups <- levels(factor(pData(Object)[,covariate]))
-		  for(j in seq(length(groups))) {
-			  datg <- get.array.subset(Object, covariate, groups[j])
-			  dat <- exprs(datg)
-			  dat[is.na(dat)] <- 0
-
-			  for(i in seq(nrow(dat))) {
-				  if(!all(dat[i,]!=0) && (sum(dat[i,]) !=0)) {
-					  dat[i,which(dat[i,]==0)] <- min(dat[i,which(dat[i,]!=0)])/2
-				  }
-			  }
-
-			  exprs(datg) <- dat
-			  if(j==1) {
-				  ret.Obj <- datg
-			  } else {
-				  ret.Obj <- combine(ret.Obj, datg)
-			  }
-		  }
-		  ret.Obj
+	  function(Object, covariate) {      
+	    
+	    if(any(is.na(exprs(Object)))) {
+	      message("One or more NAs found. They will be replaced by 0")
+	      exprs(Object)[is.na(exprs(Object))] <- 0
+	    }
+	    
+	    groups <- levels(factor(getSampleMetaData(Object, covariate)))
+	    columnsbygroup <- split(sampleNames(Object), factor(getSampleMetaData(Object, covariate)))
+	    
+	    for(j in seq(length(groups))) {
+	      dat <- exprs(Object)[,columnsbygroup[[j]]]
+	      
+	      rowhasanonzerovalue <- apply(dat, 1, function(x) any(x != 0))
+	      rowhasazerovalue <- apply(dat, 1, function(x) any(x == 0))
+	      whichisnonzeroinrow <- apply(dat, 1, function(x) which(x != 0))
+	      whichiszeroinrow <- apply(dat, 1, function(x) which(x == 0))
+	      
+	      if(!all(rowhasanonzerovalue)) {
+	        warning(paste("There are", length(which(!rowhasanonzerovalue)),
+	                      "rows with full of zeros.",
+	                      "They won't be imputed.",
+	                      "But, please consider zeroFiltering before zeroImputation"))
+	      }
+	      
+	      for(i in seq(nrow(dat))) {
+	        if(rowhasazerovalue[i] && rowhasanonzerovalue[i]) {
+	          halfmin <- min(dat[i, whichisnonzeroinrow[[i]]])/2
+	          errbnd <- min(dat[i, whichisnonzeroinrow[[i]]])/5
+	          noise <- runif(length(whichiszeroinrow[[i]]), min=halfmin-errbnd, max=halfmin+errbnd)
+	          dat[i, whichiszeroinrow[[i]]] <- halfmin + noise
+	        }
+	      }
+	      exprs(Object)[, columnsbygroup[[j]]] <- dat
+	    }
+      
+	    Object
 	  })
-

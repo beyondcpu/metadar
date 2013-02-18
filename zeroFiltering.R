@@ -30,42 +30,6 @@ setMethod("zeroFiltering", signature=c("Dataset", "missing", "numeric", "missing
             Object[which(include),]
           })
 
-#setMethod("zeroFiltering", signature=c("Dataset", "numeric", "missing", "character", "missing"),
-#          function(Object, minNfound, covariate) {
-#            include <- rep(TRUE, times=nrow(Object))
-            
-#            for(i in seq(nrow(Object))) {
-#              rowi <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
-#              yorn <- lapply(rowi,
-#                             function(x) {
-#                               nz <- length(which(x != 0))
-#                               ifelse(nz < numNfound, FALSE, TRUE)
-#                             })
-#              include[i] <- all(yorn)
-#            }
-            
-#            exprs(Object) <- exprs(Object)[which(include),]
-#            Object
-#          })
-
-#setMethod("zeroFiltering", signature=c("Dataset", "missing", "numeric", "character", "missing"),
-#          function(Object, pctNfound, covariate) {
-#            include <- rep(TRUE, times=nrow(Object))
-            
-#            for(i in seq(nrow(Object))) {
-#              rowi <- split(exprs(Object)[i,], factor(pData(Object)[,covariate]))
-#              yorn <- lapply(rowi,
-#                             function(x) {
-#                               nz <- length(which(x != 0))
-#                               ifelse((nz / length(x)) * 100 < pctNfound, FALSE, TRUE)
-#                             })
-#              include[i] <- all(yorn)
-#            }
-            
-#            exprs(Object) <- exprs(Object)[which(include),]
-#            Object
-#          })
-
 setMethod("zeroFiltering", signature=c("Dataset", "numeric", "missing", "character"),
           function(Object, minNfound, covariate) {
             include <- rep(TRUE, times=nrow(Object))
