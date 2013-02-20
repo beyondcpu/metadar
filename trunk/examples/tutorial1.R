@@ -1,9 +1,3 @@
-#### Here is an example of some simple data analysis of
-#### one data set which had 24 samples from
-#### two phenotypes measured under two time points
-#### we are interested in the difference between
-#### the case versus control phenotype at each time point
-
 ## load metadar library
 library("metadar")
 #### there are different ways to read the data
@@ -41,7 +35,7 @@ dat <- zeroFiltering(dat, pctNfound=70, covariate="Phenotype")
 ### zero imputation
 dat <- zeroImputation(dat)
 # OR
-tmp <- zeroImputation(dat, covariate="DiagnosticGroup")
+dat <- zeroImputation(dat, covariate="DiagnosticGroup")
 
 ### log transform the data
 dat <- log2(dat)
@@ -49,6 +43,15 @@ dat <- log2(dat)
 dat <- log10(dat)
 # OR
 dat <- log(dat, base=2)
+
+#### Here is an example of some simple data analysis of
+#### one data set which had 24 samples from
+#### two phenotypes measured under two time points
+#### we are interested in the difference between
+#### the case versus control phenotype at each time point
+#### I am assuming that the dataset is called 'dat'
+#### and that there are columns titled 'Phenotype'
+#### and 'Time' in sample meta data
 
 ### take a subset of the data (in this case we want to analyze each time point separately)
 dat.3d <- get.array.subset(dat, "Time", "3d")
@@ -96,5 +99,9 @@ aov1 <- oneWayAnova(dat, covariate="Class")
 
 ### two way anova
 aov2 <- twoWayAnova(dat, covariate1="Drug", covariate2="Time")
+
 ### draw a heatmap with the anova result
 ihm(aov2[["RatiosTable"]], aov2[["PvalsTable"]])
+
+### model based clustering is explained at
+### URL: http://code.google.com/p/metadar/wiki/Mclustering
