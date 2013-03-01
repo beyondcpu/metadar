@@ -2,4 +2,6 @@
 
 = Acknowledgements =
 
-The scripts in this package depend on many other R and R/Bioconductor packages: methods, ROCR, Biobase, gplots, beanplot, subselect, randomForest, glmnet, mclust, pROC, simpleaffy, plyr, MASS and of course many other packages that are part of the base R. A huge thanks to the R and R/Bioconductor package developers, to the community and to the mailing lists & discussion forums. Also thanks to vim-r-plugin and R-studio developers.
+The scripts in this package depend on many other [http://www.r-project.org/ R] and [http://www.bioconductor.org/ Bioconductor] packages: methods, ROCR, Biobase, gplots, beanplot, subselect, randomForest, glmnet, mclust, pROC, simpleaffy, plyr, MASS and of course many other packages that are part of the base R. A huge thanks to the R and R/Bioconductor package developers, to the community and to the mailing lists & discussion forums.
+
+For a long time in the beginning of writing of this package and for using R in general I used Jackson Aquino's [http://www.lepem.ufc.br/jaa/vim-r-plugin.html vim-r-plugin] ([http://www.vim.org/scripts/script.php?script_id=2628 vimscript#2628]). Later on I started using [http://www.rstudio.com/ R-studio IDE]. Both these tools are wonderful.
