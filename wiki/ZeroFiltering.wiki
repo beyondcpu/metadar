@@ -2,7 +2,7 @@
 
 = Introduction =
 
-Add your content here.
+Function zeroFiltering allows filtering of zero intensity peaks. One could filter the peaks of the data set by requiring a minimum number (or percentage) of samples in which the peak has a non-zero intensity value.
 
 
 = Details =
