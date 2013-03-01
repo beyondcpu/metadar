@@ -2,7 +2,7 @@
 
 = Introduction =
 
-Welcome! This package consists of many convenience functions to perform a variety of statistical analysis of metabolomics data. The methods are not limited to metabolomics data alone and should be applicable to any numerical data matrix, but the most important data that I have access to is metabolomics. The main purpose of writing this package is to make my own life easy in my daily routine of data analysis. This package wouldn't exist without R community. I am obviously indebted to the developers of R, Bioconductor and developers of the many R packages!
+Welcome! This package consists of many convenience functions to perform a variety of statistical analysis of metabolomics data. The methods are not limited to metabolomics data alone and should be applicable to any numerical data matrix, but the most important data that I have access to is metabolomics. The main purpose of writing this package is to make my own life easy in my daily routine of data analysis. This package wouldn't exist without R community. I am obviously [Thanks indebted] to the developers of R, Bioconductor and developers of the many R packages!
 
 Capabilities of this package are listed here.
 
