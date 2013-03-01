@@ -8,7 +8,7 @@ Capabilities of this package are listed here.
 
 ==Data import and processing==
   * [ReadingTheData Input of metabolomics data sets] (well, any numerical data set will work) and their meta data in Bioconductor {{{ExpressionSet}}} format.
-  * Filtering zero intensity peaks
+  * [ZeroFiltering Filtering] zero intensity peaks
   * Zero imputation
 ==Univariate statistics & statistical hypothesis tests==
   * One-way anova and post-hoc test (Tukey Honestly Significant Differences).
