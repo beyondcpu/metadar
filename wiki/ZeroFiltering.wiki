@@ -5,9 +5,11 @@
 Function zeroFiltering allows filtering of zero intensity peaks. One could filter the peaks of the data set by requiring a minimum number (or percentage) of samples in which the peak has a non-zero intensity value.
 
 
-= Details =
+= Function interface =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+zeroFiltering(Object, minNfound, pctNfound, covariate)
+
+= Available signatures =
+
+  # {{{zeroFiltering("Dataset", "numeric", "missing", "missing")}}}. i.e. the function can be called only using Object and minNfound as the arguments and other arguments can be missing. Object is an object of Dataset class and minNfound is the minimum number of samples in which you expect to see a peak (i.e. minimum number of non-zero values expected for a feature f) to keep the feature in the in Object. The features of Object that don't meet this criterion will be removed from Object.
+  # {{{zeroFiltering("Dataset", "missing", "numeric", "missing")}}}. i.e. the function can be called only using Object and pctNfound as the arguments and other arguments can be missing. Object is an object of Dataset class and minNfound is the minimum percentage of samples in which you expect to see a peak (i.e. minimum percentage of non-zero values expected for a feature f) to keep the feature in the in Object. The features of Object that don't meet this criterion will be removed from Object.
