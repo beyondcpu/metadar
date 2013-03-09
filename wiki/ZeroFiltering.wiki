@@ -2,14 +2,25 @@
 
 = Introduction =
 
-Function zeroFiltering allows filtering of zero intensity peaks. One could filter the peaks of the data set by requiring a minimum number (or percentage) of samples in which the peak has a non-zero intensity value.
+Function _zeroFiltering_ allows filtering of zero intensity peaks. One could filter the peaks of the data set by requiring a minimum number (or percentage) of samples in which the peak has a non-zero intensity value.
 
 
 = Function interface =
 
 zeroFiltering(Object, minNfound, pctNfound, covariate)
 
+  * _Object_ - an object of _Dataset_ class
+  * _minNfound_ - minimum number of samples in which you expect peak be found (i.e. minimum number of non-zero values required) to keep the peak in the filtered dataset. The peaks which don't pass this threshold will be filtered out (=removed).
+  * _pctNfound_ - minimum percentage of samples in which you expect peak be found (i.e. minimum percentage of non-zero values required) to keep the peak in the filtered dataset. The peaks which don't pass this threshold will be filtered out (=removed).
+  * _covariate_ - covariate based on which filtering should be performed. When provided, it should be the name of a column in the sample metadata whose values represent a group variable (i.e. a factor). If this argument is provided, the filtering is performed conditioned upon the group defined by the covariate i.e. only those peaks which satisfy the _minNfound_/_pctNfound_ cut-off in at least one of the groups is kept and the rest removed.
+
 = Available signatures =
 
   # {{{zeroFiltering("Dataset", "numeric", "missing", "missing")}}}. i.e. the function can be called only using Object and minNfound as the arguments and other arguments can be missing. Object is an object of Dataset class and minNfound is the minimum number of samples in which you expect to see a peak (i.e. minimum number of non-zero values expected for a feature f) to keep the feature in the in Object. The features of Object that don't meet this criterion will be removed from Object.
   # {{{zeroFiltering("Dataset", "missing", "numeric", "missing")}}}. i.e. the function can be called only using Object and pctNfound as the arguments and other arguments can be missing. Object is an object of Dataset class and minNfound is the minimum percentage of samples in which you expect to see a peak (i.e. minimum percentage of non-zero values expected for a feature f) to keep the feature in the in Object. The features of Object that don't meet this criterion will be removed from Object.
+  # {{{zeroFiltering("Dataset", "numeric", "missing", "character")}}}. i.e. the function can be called using _Object_, _minNfound_ and _covariate_. The _covariate_ is the name of a sample metadata column whose contents have to be a factor (i.e. define a sample group). The filtering criterion (i.e. _minNfound_) is checked so that at least one sample group passes the criterion. If a peak does not satisfy the criterion in none of the sample groups, then it will be removed.
+  # {{{zeroFiltering("Dataset", "missing", "numeric", "character")}}}. i.e. the function can be called using _Object_, _pctNfound_ and _covariate_. The _covariate_ is the name of a sample metadata column whose contents have to be a factor (i.e. define a sample group). The filtering criterion (i.e. _pctNfound_) is checked so that at least one sample group passes the criterion. If a peak does not satisfy the criterion in none of the sample groups, then it will be removed.
+
+= Note =
+
+The filtering cut-off is provided as either _minNfound_ or _pctNfound_, but not both.
