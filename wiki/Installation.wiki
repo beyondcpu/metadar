@@ -31,6 +31,7 @@ R CMD INSTALL metadar_<version>.zip
 }}}
 
 
-= Note =
+= Notes =
 
-I have tested the installation as well as functioning of the package in Linux (Ubuntu, Debian and Fedora). Please test the windows build if you use Windows. If you use some other OS (unix-like), please try the Linux version and let me know if there are problems. I expect the Linux version to work on Mac OS X.
+  * I have tested the installation as well as functioning of the package in Linux (Ubuntu, Debian and Fedora). Please test the windows build if you use Windows. If you use some other OS (unix-like), please try the Linux version and let me know if there are problems. I expect the Linux version to work on Mac OS X.
+  * On Windows 7 several people that I know had issues with installation of packages due the write permissions. When you want to install packages, please try to run R as administrator and then try the installation. This has worked on the computers I checked.
