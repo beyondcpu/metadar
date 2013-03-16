@@ -1,6 +1,7 @@
 #summary A summary of changes in each version of the package
 
 = Version 0.44 =
+  * In univariateOddsRatio() and allpairslogOdds() functions, the confidence interval calculation is now replaced by confint() function from MASS package.
   * selectVariables() and selectSamples() functions are removed. Please use _dataset[subset,]_ (or _dataset[,subset]_) to retrieve a _subset_ of samples (or features) from a _Dataset_ object _dataset_.
   * A new method "aroundmean" added to zero imputation.
   * PCA method has been removed. It is replaced by a PCA reference class.
