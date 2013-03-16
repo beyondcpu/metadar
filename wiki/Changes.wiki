@@ -1,0 +1,9 @@
+#summary A summary of changes in each version of the package
+
+= Version 0.44 =
+  * A new method "aroundmean" added to zero imputation.
+  * PCA method has been removed. It is replaced by a PCA reference class.
+
+= Version 0.43 =
+  * A new method "aroundhalfmin" added to the zero imputation. It is the default zero imputation method now. This method adds a little noise around half of the minimum of the non-zero values.
+  * Scaling of the PCA has been modified.
