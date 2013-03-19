@@ -2,12 +2,12 @@
 
 = Introduction =
 
-Class _Mclust2_ of _metadar_ package provides an interface for performing model based clustering (<a href="#mclustref">1</a>) on a _Dataset_ object.
+Class _Mclust2_ of _metadar_ package provides an interface for performing model based clustering ([Mclustering#References 1]) on a _Dataset_ object.
 
 
 =Usage=
 
-Let _dataset_ be an object of class _Dataset_ that you have created (<a href="#readingdataref">2</a>). There are two steps to applying mclust to _dataset_. The first step is to create an Mclust2 object.
+Let _dataset_ be an object of class _Dataset_ that you have created ([Mclustering#References 2]). There are two steps to applying mclust to _dataset_. The first step is to create an Mclust2 object.
 {{{
 mcl <- new("Mclust2", dataset)
 }}}
@@ -44,5 +44,5 @@ mcl$DrawCluster()
 }}}
 
 =References=
-  # <a href="http://www.stat.washington.edu/mclust/" id="mclustref">mclust package</a>
-  # <a href="https://code.google.com/p/metadar/w/edit/ReadingTheData" id="readingdataref">Instructions for creating Dataset objects</a>
+  # [http://www.stat.washington.edu/mclust/ mclust package]
+  # [https://code.google.com/p/metadar/w/edit/ReadingTheData Instructions for creating Dataset objects]
