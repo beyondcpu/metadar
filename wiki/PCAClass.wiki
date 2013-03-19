@@ -19,4 +19,29 @@ Please note that the argument _center_ is TRUE by default. So, dropping the _cen
 pc <- new("PCA", dataset, scale=TRUE)
 }}}
 Please check the help document of _prcomp_ method for more details about its arguments. If you want to create a loadings plot, note that you should not set the argument retx to FALSE. The default retx=TRUE would enable us to build loadings plot from the PCA object.
+= Results =
+Several methods of _PCA_ class allow you to examine the results of the PCA.
 
+== Screeplot ==
+The screeplot, the barplot which displays the variance explained by each principal component can be obtained by
+{{{
+pc$screeplot()
+}}}
+Note that additional arguments applicable to _plot_ function can be passed on to the _screeplot_ method.
+
+== Variance explained by each component ==
+Variance explained by each principal component can be queried by
+{{{
+pc$prop.var
+}}}
+Cumulative sum of variances explained by components can be obtained by using _cumsum_ R function
+{{{
+cumsum(pc$prop.var)
+}}}
+== Scores plot ==
+The scores plot can be created by _scoresplot_ function. The resulting two dimensional plot shows the projection of samples of the _dataset_ onto two principal components. This function accepts the following arguments:
+  * {{{annotation}}}: This is an optional argument. When present, it has to be the name of a column in the sample metadata (i.e. pData(dataset)) whose contents you want to display next to the points in the scores plot e.g. if annotation="SampleName", the sample names are displayed in the plot.
+  * {{{color}}}: This is a mandatory argument. It has to be the name of a column in the sample metadata (i.e. pData(dataset)) whose contents you want to use to colour the points. For example, 
+{{{
+pc$scoresplot()
+}}}
