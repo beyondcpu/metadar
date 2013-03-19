@@ -27,7 +27,7 @@ The screeplot, the barplot which displays the variance explained by each princip
 {{{
 pc$screeplot()
 }}}
-Note that additional arguments applicable to _plot_ function can be passed on to the _screeplot_ method.
+Note that additional arguments applicable to _plot_ function can be passed on to the _screeplot_ method (except the argument _main_).
 
 == Variance explained by each component ==
 Variance explained by each principal component can be queried by
