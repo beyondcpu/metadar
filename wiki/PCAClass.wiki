@@ -38,6 +38,7 @@ Cumulative sum of variances explained by components can be obtained by using _cu
 {{{
 cumsum(pc$prop.var)
 }}}
+
 == Scores plot ==
 The scores plot can be created by _scoresplot_ function. The resulting two dimensional plot shows the projection of samples of the _dataset_ onto two  specified principal components. This function accepts the following arguments:
   * {{{annotation}}}: This is an optional argument. When present, it has to be the name of a column in the sample metadata (i.e. pData(dataset)) whose contents you want to display next to the points in the scores plot e.g. if annotation="SampleName", the sample names are displayed in the plot.
@@ -89,4 +90,32 @@ pc$scoresplot(color="CompoundClass", pcs=1:2, labelpos=2)
 An example where an additional argument is passed to the _plot_ function to increase the size of points
 {{{
 pc$scoresplot(annotation="Name", color="CompoundClass", pcs=1:2, labelpos=2, cex=2)
+}}}
+
+== Biplot ==
+The biplot can be created using _biplot_ function. The minimal call for the function can be made as
+{{{
+pc$biplot()
+}}}
+Additional arguments for biplot.prcomp method can be passed.
+
+== Scores ==
+
+_scores_ function can be used to retrieve the scores with respect to the selected PC's (i.e. the co-ordinates of the samples in the rotated space spanned by the selected PC's). This function accepts one argument {{{pcs}}} which specifies the components for which the scores are required. The default value of {{{pcs}}} is c(1,2) meaning that the scores of PC1 and PC2 are returned by the call with no arguments as in
+{{{
+pc$scores()
+}}}
+The following call will retrieve the scores of first three principal components
+{{{
+pc$scores(pcs=1:3)
+}}}
+
+== Loadings ==
+_loadings_ function can be used to retrieve the loadings with respect to the selected PC's (i.e. the co-ordinates of the features in the rotated space spanned by the selected PC's). This function accepts one argument {{{pcs}}} which specifies the components for which the loadings are required. The default value of {{{pcs}}} is c(1,2) meaning that the loadings of PC1 and PC2 are returned by the call with no arguments as in
+{{{
+pc$loadings()
+}}}
+The following call will retrieve the loadings of first three principal components
+{{{
+pc$loadings(pcs=1:3)
 }}}
