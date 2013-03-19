@@ -1,15 +1,22 @@
 #summary Help for performing principal component analysis
 
-Class _PCA_ of metadar package provides an interface for performing principal component analysis (1) on a _Dataset_ object. It is implemented as a Reference class.
-
 = Introduction =
 
-Add your content here.
+Class _PCA_ of metadar package provides an interface for performing principal component analysis (1) on a _Dataset_ object. It is implemented as a Reference class.
 
+= Usage =
 
-= Details =
+Let _dataset_ be an object of class _Dataset_ that you have created ([PCAClass#References 1]). In order to perform PCA, the most minimal command that is required is the following:
+{{{
+pc <- new("PCA", dataset)
+}}}
+This minimal call would in turn call _prcomp_ function of _stats_ package with its default function arguments to compute the PCA on the _dataset_. The most typically recommended set of arguments to include in the PCA call, however, are _center_ and _scale_ arguments of _prcomp_ method. With these arguments included the creation of PCA class would go as follows:
+{{{
+pc <- new("PCA", dataset, center=TRUE, scale=TRUE)
+}}}
+Please note that the argument _center_ is TRUE by default. So, dropping the _center_ argument in the above call also gives an identical result. But it is explicitly included in the above call just for clarity. Thus the following call is equivalent to the above:
+{{{
+pc <- new("PCA", dataset, scale=TRUE)
+}}}
+Please check the help document of _prcomp_ method for more details about its arguments. If you want to create a loadings plot, note that you should not set the argument retx to FALSE. The default retx=TRUE would enable us to build loadings plot from the PCA object.
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
