@@ -24,3 +24,9 @@ zeroFiltering(Object, minNfound, pctNfound, covariate)
 = Note =
 
 The filtering cut-off is provided as either _minNfound_ or _pctNfound_, but not both.
+
+= CAUTION =
+
+As always with data analysis please take a good look at the data and try to figure out why there are zeros in the data or if there are too many more zeros than you would expect before applying this method. Applying this method would of course leave you with features that have as many non-zero values that you require, but if some unexpected error has introduced zeros in your data, it may even be possible that the whole data is wrong.
+
+As a specific example, I use this method often for GCxGC-Tof metabolomics data. In some cases too many zeros in GCxGC data maybe due to errors during the pre-processing (e.g. alignment of peaks across study samples).
