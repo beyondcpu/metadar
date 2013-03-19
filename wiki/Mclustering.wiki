@@ -44,5 +44,5 @@ mcl$DrawCluster()
 }}}
 
 =References=
-  # <a href="http://www.stat.washington.edu/mclust/" name="mclustref">mclust package</a>
-  # <a href="https://code.google.com/p/metadar/w/edit/ReadingTheData" name="readingdataref">Instructions for creating Dataset objects</a>
+  # <a href="http://www.stat.washington.edu/mclust/" id="mclustref">mclust package</a>
+  # <a href="https://code.google.com/p/metadar/w/edit/ReadingTheData" id="readingdataref">Instructions for creating Dataset objects</a>
