@@ -21,7 +21,7 @@ Capabilities of this package are listed here.
   * Correlation between variables in two data sets (i.e. every variable in data set 1 versus every variable in data set 2)
 ==Graphics==
   * Box plots, bean plots, and bar plots
-  * Principal component analysis
+  * [Principal component analysis PCA]
   * Hierarchical clustering dendrogram
 ==Classification & regression models==
   * A classification model using logistic regression
