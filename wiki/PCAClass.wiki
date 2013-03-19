@@ -2,11 +2,11 @@
 
 = Introduction =
 
-Class _PCA_ of metadar package provides an interface for performing principal component analysis (1) on a _Dataset_ object. It is implemented as a Reference class.
+Class _PCA_ of metadar package provides an interface for performing principal component analysis on a _Dataset_ object. It is implemented as a Reference class.
 
 = Usage =
 
-Let _dataset_ be an object of class _Dataset_ that you have created ([PCAClass#References 1]). In order to perform PCA, the most minimal command that is required is the following:
+Let _dataset_ be an object of class _Dataset_ that you have [ReadingTheData created]. In order to perform PCA, the most minimal command that is required is the following:
 {{{
 pc <- new("PCA", dataset)
 }}}
