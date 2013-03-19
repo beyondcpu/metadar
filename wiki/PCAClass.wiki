@@ -72,3 +72,21 @@ The loadings plot can be created using _loadingsplot_ function. The resulting tw
   * {{{pcs}}}: This is a mandatory argument. It has to be an integer vector of length 2 and should specify which components you want to plot. e.g. to plot PC1 and PC2, use pcs=c(1,2); to plot PC2 and PC3, use pcs=c(2,3).
   * {{{labelpos}}}: This is an optional argument. When provided, it specifies the position of the label next to the points in the plot. It should be one of 1, 2, 3, or 4 which correspond to the text display below, to the left of, above or to the right of each point. The default value is 3. Therefore, by default the labels are shown above the points. Its value is passed on as _pos_ argument for the R function _text_.
   * {{{...}}}: additional arguments for R function _plot_ can be passed. Please note that the _plot_ arguments _xlab, ylab, main, pch, col, xlim, and ylim_ can not be passed because they are already specified inside the scoresplot function definition.
+
+=== Examples ===
+A minimal syntax example for generating loadings plot is
+{{{
+pc$scoresplot(pcs=1:2)
+}}}
+An example with a non-default inline annotation of points in the loadings plot is
+{{{
+pc$scoresplot(annotation="Name", pcs=1:2)
+}}}
+An example with a custom position of the labels and compound classes coloured
+{{{
+pc$scoresplot(color="CompoundClass", pcs=1:2, labelpos=2)
+}}}
+An example where an additional argument is passed to the _plot_ function to increase the size of points
+{{{
+pc$scoresplot(annotation="Name", color="CompoundClass", pcs=1:2, labelpos=2, cex=2)
+}}}
