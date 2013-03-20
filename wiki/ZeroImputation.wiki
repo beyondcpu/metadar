@@ -2,14 +2,17 @@
 
 = Introduction =
 
-Some data analyses do not work well if the intensity value data, which is real valued, has too many zeros or NA's. The method _zeroImputation_ allows imputation of zeros.
-
+Some data analyses do not work well if the intensity value data, which is real valued, has too many zeros or NA's. The method _zeroImputation_ allows imputation of zeros. Also the NA's in the data set are replaced by zeros and hence are imputed like other zeros.
 
 = Function interface =
 
 zeroImputation(Object, method, covariate)
   * {{{Object}}}: an object of class _Dataset_ on which the zero imputation will be performed.
-  * {{{method}}}: one of "aroundhalfmin", "halfmin", "aroundmean". The default value is "aroundhalfmin".
-  * {{{covariate}}}
+  * {{{method}}}: one of "aroundhalfmin", "halfmin", "aroundmean". The default value is "aroundhalfmin". The method "aroundhalfmin" replaces zeros by half of the minimum non-zero value plus some noise. The "halfmin" method replaces zeros by half of the minimum non-zero value. The "aroundmean" method replaces zeros by the mean value plus noise. When {{{covariate}}} is not provided zero imputation of a peak is done based on non-zero values of the peak from all samples in the data set. When {{{covariate}}} is provided, sample groups defined by {{{covariate}}} are used independently i.e. a zero value of a peak in a sample is replaced by non-zero values of the peak from the rest of the samples in the same group.
+  * {{{covariate}}}: covariate conditioned upon which imputation should be performed. When provided, it should be the name of a column in the sample metadata whose values represent a group variable (i.e. a factor). If this argument is provided, the imputation is performed conditioned upon the group defined by the covariate i.e. non-zero values are imputed in each sample group is imputed independently of other sample groups.
 
 = Available signatures =
+  * {{{zeroImputation("Dataset", "missing", "missing")}}}:
+  * {{{zeroImputation("Dataset", "character", "missing")}}}:
+  * {{{zeroImputation("Dataset", "missing", "character")}}}:
+  * {{{zeroImputation("Dataset", "character", "character")}}}:
