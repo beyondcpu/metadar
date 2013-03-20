@@ -1,0 +1,15 @@
+#summary Imputation of zero or unknown intensity values of peaks.
+
+= Introduction =
+
+Some data analyses do not work well if the intensity value data, which is real valued, has too many zeros or NA's. The method _zeroImputation_ allows imputation of zeros.
+
+
+= Function interface =
+
+zeroImputation(Object, method, covariate)
+  * {{{Object}}}: an object of class _Dataset_ on which the zero imputation will be performed.
+  * {{{method}}}: one of "aroundhalfmin", "halfmin", "aroundmean". The default value is "aroundhalfmin".
+  * {{{covariate}}}
+
+= Available signatures =
