@@ -9,10 +9,10 @@ Function _zeroFiltering_ allows filtering of zero intensity peaks. One could fil
 
 zeroFiltering(Object, minNfound, pctNfound, covariate)
 
-  * _Object_ - an object of _Dataset_ class
-  * _minNfound_ - minimum number of samples in which you expect peak be found (i.e. minimum number of non-zero values required) to keep the peak in the filtered dataset. The peaks which don't pass this threshold will be filtered out (=removed).
-  * _pctNfound_ - minimum percentage of samples in which you expect peak be found (i.e. minimum percentage of non-zero values required) to keep the peak in the filtered dataset. The peaks which don't pass this threshold will be filtered out (=removed).
-  * _covariate_ - covariate based on which filtering should be performed. When provided, it should be the name of a column in the sample metadata whose values represent a group variable (i.e. a factor). If this argument is provided, the filtering is performed conditioned upon the group defined by the covariate i.e. only those peaks which satisfy the _minNfound_/_pctNfound_ cut-off in at least one of the groups is kept and the rest removed.
+  * {{{Object}}}: an object of _Dataset_ class
+  * {{{minNfound}}}: an {{{integer}}} indicating minimum number of samples in which you expect peak be found (i.e. minimum number of non-zero values required) to keep the peak in the filtered dataset. The peaks which don't pass this threshold will be filtered out (=removed). If the argument {{{covariate}}} is provided, then this can be an {{{integer}}} vector of length equal to the number of groups defined by the {{{covariate}}}.
+  * {{{pctNfound}}}: an {{{integer}}} specifying minimum percentage of samples in which you expect peak be found (i.e. minimum percentage of non-zero values required) to keep the peak in the filtered dataset. The peaks which don't pass this threshold will be filtered out (=removed).  If the argument {{{covariate}}} is provided, then this can be an {{{integer}}} vector of length equal to the number of groups defined by the {{{covariate}}}.
+  * {{{covariate}}}: covariate based on which filtering should be performed. When provided, it should be the name of a column in the sample metadata whose values represent a group variable (i.e. a factor). If this argument is provided, the filtering is performed conditioned upon the group defined by the covariate i.e. only those peaks which satisfy the {{{minNfound}}}/{{{pctNfound}}} cut-off in at least one of the groups is kept and the rest removed.
 
 = Available signatures =
 
