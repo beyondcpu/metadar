@@ -21,6 +21,10 @@ zeroFiltering(Object, minNfound, pctNfound, covariate)
   # {{{zeroFiltering("Dataset", "numeric", "missing", "character")}}}. i.e. the function can be called using _Object_, _minNfound_ and _covariate_. The _covariate_ is the name of a sample metadata column whose contents have to be a factor (i.e. define a sample group). The filtering criterion (i.e. _minNfound_) is checked so that at least one sample group passes the criterion. If a peak does not satisfy the criterion in none of the sample groups, then it will be removed.
   # {{{zeroFiltering("Dataset", "missing", "numeric", "character")}}}. i.e. the function can be called using _Object_, _pctNfound_ and _covariate_. The _covariate_ is the name of a sample metadata column whose contents have to be a factor (i.e. define a sample group). The filtering criterion (i.e. _pctNfound_) is checked so that at least one sample group passes the criterion. If a peak does not satisfy the criterion in none of the sample groups, then it will be removed.
 
+= Result =
+
+This function returns a _Dataset_ object that contains a subset of the features from the input _Dataset_ object i.e. only those features that pass the zero filtering criterion.
+
 = Note =
 
 The filtering cut-off is provided as either _minNfound_ or _pctNfound_, but not both.
