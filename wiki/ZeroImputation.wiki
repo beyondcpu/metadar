@@ -12,9 +12,14 @@ zeroImputation(Object, method, covariate)
   * {{{covariate}}}: covariate conditioned upon which imputation should be performed. When provided, it should be the name of a column in the sample metadata whose values represent a group variable (i.e. a factor). If this argument is provided, the imputation is performed conditioned upon the group defined by the covariate i.e. non-zero values are imputed in each sample group is imputed independently of other sample groups.
 
 = Available signatures =
-  * {{{zeroImputation("Dataset", "missing", "missing")}}}: the function can be called with one argument, {{{Object}}}, on which the zero imputation has to be performed. The default method, "aroundhalfmin" will be used.
-  * {{{zeroImputation("Dataset", "character", "missing")}}}: the function can be called with two arguments, {{{Object}}} and {{{method}}}. The specified method will be used for zero imputation of the data set object.
-  * {{{zeroImputation("Dataset", "missing", "character")}}}: the function can be called with two arguments, {{{Object}}} and {{{covariate}}}. The default zero imputation method will be applied using the sample groups defined by the {{{covariate}}}.
-  * {{{zeroImputation("Dataset", "character", "character")}}}: the function can be called with all three arguments. The imputation will be performed on the data set object using the specified method for each sample group defined by the {{{covariate}}}
+  # {{{zeroImputation("Dataset", "missing", "missing")}}}: the function can be called with one argument, {{{Object}}}, on which the zero imputation has to be performed. The default method, "aroundhalfmin" will be used.
+  # {{{zeroImputation("Dataset", "character", "missing")}}}: the function can be called with two arguments, {{{Object}}} and {{{method}}}. The specified method will be used for zero imputation of the data set object.
+  # {{{zeroImputation("Dataset", "missing", "character")}}}: the function can be called with two arguments, {{{Object}}} and {{{covariate}}}. The default zero imputation method will be applied using the sample groups defined by the {{{covariate}}}.
+  # {{{zeroImputation("Dataset", "character", "character")}}}: the function can be called with all three arguments. The imputation will be performed on the data set object using the specified method for each sample group defined by the {{{covariate}}}
 
 Note that when this function is called with two arguments, it is necessary to name the arguments for correct method dispatch to work.
+= Examples =
+The following example invocations are written in the same order as in the [ZeroImputation#Available_signatures] section
+{{{
+
+}}}
