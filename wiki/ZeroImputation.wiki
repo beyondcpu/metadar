@@ -19,7 +19,20 @@ zeroImputation(Object, method, covariate)
 
 Note that when this function is called with two arguments, it is necessary to name the arguments for correct method dispatch to work.
 = Examples =
-The following example invocations are written in the same order as in the [ZeroImputation#Available_signatures] section
+The following example invocations are written in the same order as in the [ZeroImputation#Available_signatures Available signatures] section. Also, it is assumed in these examples that a _Dataset_ object called dataset is created and that its sample metadata has a column titled "Class".
+  # Example with one argument (the default method, "aroundhalfmin" will be used)
 {{{
-
+zi <- zeroImputation(dataset)
+}}}
+  # Example with dataset and method arguments
+{{{
+zi <- zeroImputation(dataset, method="aroundmean")
+}}}
+  # Example with dataset and covariate arguments (the default method, "aroundhalfmin" will be used)
+{{{
+zi <- zeroImputation(dataset, covariate="Class")
+}}}
+  # Example with dataset, method and covariate arguments
+{{{
+zi <- zeroImputation(dataset, method="halfmin", covariate="Class")
 }}}
