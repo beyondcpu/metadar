@@ -22,13 +22,15 @@ setMethod("zeroImputation", signature=c("Dataset", "character", "missing"),
       
 		  for(i in seq(nrow(dat))) {
         if(rowhasazerovalue[i] && rowhasanonzerovalue[i]) {
-          halfmin <- min(dat[i, whichisnonzeroinrow[[i]]])/2
           if(method=="aroundhalfmin") {
-            errbnd <- min(dat[i, whichisnonzeroinrow[[i]]])/5
-            noise <- runif(length(whichiszeroinrow[[i]]), min=halfmin-errbnd, max=halfmin+errbnd)
-            dat[i, whichiszeroinrow[[i]]] <- halfmin + noise  
+            halfmin <- min(dat[i, whichisnonzeroinrow[[i]]])/2
+            dat[i, whichiszeroinrow[[i]]] <- jitter(rep(halfmin, length(whichiszeroinrow[[i]])))
           } else if(method=="halfmin") {
+            halfmin <- min(dat[i, whichisnonzeroinrow[[i]]])/2
             dat[i, whichiszeroinrow[[i]]] <- halfmin
+          } else if(method=="aroundmean") {
+            meanval <- mean(dat[i, whichisnonzeroinrow[[i]]])
+            dat[i, whichiszeroinrow[[i]]] <- jitter(rep(meanval, length(whichiszeroinrow[[i]])))
           }
           
         }
@@ -66,15 +68,16 @@ setMethod("zeroImputation", signature=c("Dataset", "character", "character"),
         
 			  for(i in seq(nrow(dat))) {
 			    if(rowhasazerovalue[i] && rowhasanonzerovalue[i]) {
-			      halfmin <- min(dat[i, whichisnonzeroinrow[[i]]])/2
 			      if(method=="aroundhalfmin") {
-			        errbnd <- min(dat[i, whichisnonzeroinrow[[i]]])/5
-			        noise <- runif(length(whichiszeroinrow[[i]]), min=halfmin-errbnd, max=halfmin+errbnd)
-			        dat[i, whichiszeroinrow[[i]]] <- halfmin + noise  
+			        halfmin <- min(dat[i, whichisnonzeroinrow[[i]]])/2
+			        dat[i, whichiszeroinrow[[i]]] <- jitter(rep(halfmin, length(whichiszeroinrow[[i]])))
 			      } else if(method=="halfmin") {
+			        halfmin <- min(dat[i, whichisnonzeroinrow[[i]]])/2
 			        dat[i, whichiszeroinrow[[i]]] <- halfmin
-			      }
-			      
+			      } else if(method=="aroundmean") {
+			        meanval <- mean(dat[i, whichisnonzeroinrow[[i]]])
+			        dat[i, whichiszeroinrow[[i]]] <- jitter(rep(meanval, length(whichiszeroinrow[[i]])))
+			      }			      
 			    }
 			  } 
 			  exprs(Object)[, columnsbygroup[[j]]] <- dat
@@ -105,9 +108,7 @@ setMethod("zeroImputation", signature=c("Dataset", "missing", "missing"),
 	    for(i in seq(nrow(dat))) {
 	      if(rowhasazerovalue[i] && rowhasanonzerovalue[i]) {
 	        halfmin <- min(dat[i, whichisnonzeroinrow[[i]]])/2
-	        errbnd <- min(dat[i, whichisnonzeroinrow[[i]]])/5
-	        noise <- runif(length(whichiszeroinrow[[i]]), min=halfmin-errbnd, max=halfmin+errbnd)
-	        dat[i, whichiszeroinrow[[i]]] <- halfmin + noise
+	        dat[i, whichiszeroinrow[[i]]] <- jitter(rep(halfmin, length(whichiszeroinrow[[i]])))
 	      }
 	    }
 	    
@@ -144,9 +145,7 @@ setMethod("zeroImputation", signature=c("Dataset", "missing", "character"),
 	      for(i in seq(nrow(dat))) {
 	        if(rowhasazerovalue[i] && rowhasanonzerovalue[i]) {
 	          halfmin <- min(dat[i, whichisnonzeroinrow[[i]]])/2
-	          errbnd <- min(dat[i, whichisnonzeroinrow[[i]]])/5
-	          noise <- runif(length(whichiszeroinrow[[i]]), min=halfmin-errbnd, max=halfmin+errbnd)
-	          dat[i, whichiszeroinrow[[i]]] <- halfmin + noise
+	          dat[i, whichiszeroinrow[[i]]] <- jitter(rep(halfmin, length(whichiszeroinrow[[i]])))
 	        }
 	      }
 	      exprs(Object)[, columnsbygroup[[j]]] <- dat
