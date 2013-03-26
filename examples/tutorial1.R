@@ -89,19 +89,32 @@ aucs <- univariateOddsRatio(dat, "Phenotype")
 ### The area under the ROC curve (AUC) of each variable
 aucs <- univariateAUC(dat, "Phenotype")
 
-### Principal components analysis (PCA)
-pca(dat, annotation="Phenotype", color="Phenotype", scale=TRUE, title="pca")
 ### Hierarchical clustering
-
 plot(colhclust(dat, labels="SampleName", color="Phenotype"))
-### one way anova
-aov1 <- oneWayAnova(dat, covariate="Class")
+
+### one way anova test
+aovres <- oneWayAnova(dataset, covariate="Class")
+
+#### generate a heatmap from one way anova result
+log2foldchanges <- log2(aovres[, grep("ratio", colnames(aovres))])
+rownames(log2foldchanges) <- rownames(aovres)
+pvalues <- aovres[, grep("p adj", colnames(aovres))]
+rownames(pvalues) <- rownames(aovres)
+take <- apply(pvalues, function(x) any(x < 0.05))
+
+ihm(log2foldchanges[take,], pvalues[take,], clusterColumns=TRUE, clusterRows=TRUE,
+    device="pdf", file="Heatmap_sig.pdf", cellnotesizeCorrection=2)
 
 ### two way anova
 aov2 <- twoWayAnova(dat, covariate1="Drug", covariate2="Time")
 
-### draw a heatmap with the anova result
-ihm(aov2[["RatiosTable"]], aov2[["PvalsTable"]])
+### draw a heatmap with the two way anova result
+ihm(aov2[["RatiosTable"]][, grep("ratio", aov2[["RatiosTable"]])], aov2[["PvalsTable"]])
 
 ### model based clustering is explained at
 ### URL: http://code.google.com/p/metadar/wiki/Mclustering
+
+## PCA
+pc <- new("PCA", dataset, center=TRUE, scale=FALSE)
+pc$scoresplot(annotation="Class", color="Class", pcs=1:2, cex=2, labelpos=2)
+pc$loadingsplot(pcs=1:2, labelpos=4, cex=2)
