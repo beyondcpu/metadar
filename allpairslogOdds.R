@@ -20,8 +20,7 @@ setMethod("allpairslogOdds", signature=c("Dataset", "Dataset", "missing"),
 
         tt[i,j] <- summary(glm1)[["coefficients"]]["x", "Estimate"]
         coef.p <- summary(glm1)[["coefficients"]]["x", "Pr(>|z|)"]
-        coef.ci <- summary(glm1)[["coefficients"]]["x", "Estimate"] +
-          c(-1,1) * qnorm(0.975) * summary(glm1)[["coefficients"]]["x", "Std. Error"]
+        coef.ci <- signif(confint(glm1, parm="x"), 4)
         if((min(coef.ci) < 0) && (max(coef.ci) > 0)) {
           p[i, j] <- 1 ## it could be anything between 0.05 and 1 though
         } else {
@@ -51,8 +50,7 @@ setMethod("allpairslogOdds", signature=c("Dataset", "Dataset", "logical"),
                 
                 tt[i,j] <- summary(glm1)[["coefficients"]]["x", "Estimate"]
                 coef.p <- summary(glm1)[["coefficients"]]["x", "Pr(>|z|)"]
-                coef.ci <- summary(glm1)[["coefficients"]]["x", "Estimate"] +
-                  c(-1,1) * qnorm(0.975) * summary(glm1)[["coefficients"]]["x", "Std. Error"]
+                coef.ci <- signif(confint(glm1, parm="x"), 4)
                 if((min(coef.ci) < 0) && (max(coef.ci) > 0)) {
                   p[i, j] <- 1 ## it could be anything between 0.05 and 1 though
                   keep[i, j] <- FALSE

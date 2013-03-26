@@ -4,10 +4,10 @@ setMethod("pca", signature=c("Dataset", "character", "character", "logical", "mi
     function(Object, annotation, color, scale) {
       expr <- exprs(Object)
       if(scale) {
-        exprs <- t(scale(t(expr)))
+        expr <- scale(expr)
       }
       pr <- prcomp(expr, center=FALSE, scale=FALSE)
-      prop.var <- signif((pr$sdev^2 / sum(pr$sdev^2)) * 100, 2)
+      prop.var <- round((pr$sdev^2 / sum(pr$sdev^2)) * 100, 2)
       plot(pr$rotation[,c(1,2)], xlab=paste("PC1:", prop.var[1], "% variance"),
            ylab=paste("PC2:", prop.var[2], "% variance"),
            type="n", main="Principal component analysis")
@@ -22,10 +22,10 @@ setMethod("pca", signature=c("Dataset", "character", "character", "logical", "ch
     function(Object, annotation, color, scale, title) {
       expr <- exprs(Object)
       if(scale) {
-        exprs <- t(scale(t(expr)))
+        expr <- scale(expr)
       }
       pr <- prcomp(expr, center=FALSE, scale=FALSE)
-      prop.var <- signif((pr$sdev^2 / sum(pr$sdev^2)) * 100, 2)
+      prop.var <- round((pr$sdev^2 / sum(pr$sdev^2)) * 100, 2)
       plot(pr$rotation[,c(1,2)], xlab=paste("PC1:", prop.var[1], "% variance"),
            ylab=paste("PC2:", prop.var[2], "% variance"),
            type="n", main=title)
@@ -42,10 +42,10 @@ setMethod("pca", signature=c("Dataset", "character", "character", "missing", "mi
       scale = TRUE
       expr <- exprs(Object)
       if(scale) {
-        exprs <- t(scale(t(expr)))
+        expr <- scale(expr)
       }
       pr <- prcomp(expr, center=FALSE, scale=FALSE)
-      prop.var <- signif((pr$sdev^2 / sum(pr$sdev^2)) * 100, 2)
+      prop.var <- round((pr$sdev^2 / sum(pr$sdev^2)) * 100, 2)
       plot(pr$rotation[,c(1,2)], xlab=paste("PC1:", prop.var[1], "% variance"),
            ylab=paste("PC2:", prop.var[2], "% variance"),
            type="n", main="Principal component analysis")
@@ -62,10 +62,10 @@ setMethod("pca", signature=c("Dataset", "character", "character", "missing", "ch
       scale = TRUE
       expr <- exprs(Object)
       if(scale) {
-        exprs <- t(scale(t(expr)))
+        expr <- scale(expr)
       }
       pr <- prcomp(expr, center=FALSE, scale=FALSE)
-      prop.var <- signif((pr$sdev^2 / sum(pr$sdev^2)) * 100, 2)
+      prop.var <- round((pr$sdev^2 / sum(pr$sdev^2)) * 100, 2)
       plot(pr$rotation[,c(1,2)], xlab=paste("PC1:", prop.var[1], "% variance"),
            ylab=paste("PC2:", prop.var[2], "% variance"),
            type="n", main=title)
