@@ -1,0 +1,16 @@
+#summary Index of the package
+
+= Classes =
+
+Classifier
+LogisticRegression
+RandomForest
+PCA
+Mclust2
+
+
+
+= Methods =
+
+getSampleMetaData
+getVariableMetaData
