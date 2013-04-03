@@ -5,7 +5,8 @@
   * A computer with R installed (http://www.r-project.org)
   * R packages from CRAN: randomForest, ROCR, gplots, beanplot, subselect, glmnet, mclust, pROC, plyr, MASS. Run the following command in R to install them:
 {{{
-install.packages(c("randomForest", "ROCR", "gplots", "beanplot", "subselect", "glmnet", "mclust", "pROC", "plyr", "MASS"), dep=TRUE)
+install.packages(c("randomForest", "ROCR", "gplots", "beanplot", "subselect",
+   "glmnet", "mclust", "pROC", "plyr", "MASS"), dep=TRUE)
 }}}
   * R packages from Bioconductor: Biobase and simpleaffy. Run the following commands in R to install them:
 {{{
