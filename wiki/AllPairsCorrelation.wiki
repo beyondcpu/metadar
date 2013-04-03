@@ -8,6 +8,32 @@ Function _allpairsCorrelation_ allows calculation of a correlation coefficient b
 = Function interface =
 
 allpairsCorrelation(Object1, Object2, method, ...)
-  * _Object1_:
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+  * {{{Object1}}}: A {{{Dataset}}} object or a numeric matrix containing variables along rows and samples along columns
+  * {{{Object2}}}: A {{{Dataset}}} object or a numeric matrix containing variables along rows and samples along columns
+  * {{{method}}}: A character string with value as "pearson" or "spearman". Check the method argument of cor.test for more details
+  * {{{...}}}: Additional arguments for _cor.test_ function of R _stats_ package
+
+= Available signatures =
+  # {{{allpairsCorrelation("Dataset", "missing", "character")}}} i.e. the function can be called with {{{Object1}}} (a {{{Dataset}}} object) and {{{method}}} arguments and {{{Object2}}} can be missing. In this case correlation between every pair of features in {{{Object1}}} is computed using the specified {{{method}}} ("pearson" or "spearman").
+  # {{{allpairsCorrelation("Dataset", "Dataset", "character")}}} i.e. the function can be called with {{{Object1}}} (a {{{Dataset}}} object), {{{Object2}}} (a {{{Dataset}}} object) and {{{method}}} arguments. In this case correlation between every feature in {{{Object1}}} and every feature in {{{Object2}}} is computed using the specified {{{method}}} ("pearson" or "spearman").
+  # {{{allpairsCorrelation("matrix", "missing", "character")}}} i.e. the function can be called with {{{Object1}}} (a numeric matrix with features in rows and samples in columns) and {{{method}}} arguments and {{{Object2}}} can be missing. In this case correlation between every pair of features in {{{Object1}}} is computed using the specified {{{method}}} ("pearson" or "spearman").
+  # {{{allpairsCorrelation("matrix", "missing", "character")}}} i.e. the function can be called with {{{Object1}}} (a numeric matrix with features in rows and samples in columns), {{{Object2}}} (a numeric matrix with features in rows and samples in columns) and {{{method}}} arguments. In this case correlation between every feature in {{{Object1}}} and every feature in {{{Object2}}} is computed using the specified {{{method}}} ("pearson" or "spearman").
+
+= Examples =
+The following example invocations of the {{{allpairsCorrelation}}} method are written in the same order as in the *Available signatures* section. It is assumed that {{{Dataset}}} objects {dataset1} and {dataset2} and numeric matrices {{{matr1}}} and {{{matr2}}} are defined.
+  # Pearson's correlation between every pair of features in a {{{Dataset}}} object
+{{{
+corr <- allpairsCorrelation(dataset1, method="pearson")
+}}}
+  # For every feature `f` in {{{dataset1}}} and every feature `g` in `dataset2`, compute Spearman's correlation `rho(f, g)`. In the following invocation one additional argument to _cor.test_ function is issued
+{{{
+corr <- allpairsCorrelation(dataset1, dataset2, method="spearman", exact=FALSE)
+}}}
+  # Spearman's rank correlation between every pair of rows in a numerical matrix
+{{{
+corr <- allpairsCorrelation(matr1, method="spearman")
+}}}
+  # Pearson's product moment correlation between every row in `matr1` and every row in `matr2`.
+{{{
+corr <- allpairsCorrelation(matr1, matr2, method="pearson")
+}}}
