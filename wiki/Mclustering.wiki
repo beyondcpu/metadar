@@ -43,6 +43,14 @@ You can draw the heatmaps showing clusters by
 mcl$DrawCluster()
 }}}
 
+You can get the cluster centroids (means) using the following command
+{{{
+mcl$getClusterMeans()
+}}}
+Cluster variances can be obtained by
+{{{
+mcl$getClusterVariances()
+}}}
 =References=
   # [http://www.stat.washington.edu/mclust/ mclust package]
   # [https://code.google.com/p/metadar/w/edit/ReadingTheData Instructions for creating Dataset objects]
