@@ -16,6 +16,7 @@ Capabilities of this package are listed here.
   * T-test for each variable in the data set.
   * Fold changes for each variable in the data set.
   * Area under the ROC curve for each variable in the data set.
+  * [AllPairsCorrelation All pairs correlation]
   * Correlation of each variable with a selected variable of interest.
   * Correlation between every pair of variables in a data set.
   * Correlation between variables in two data sets (i.e. every variable in data set 1 versus every variable in data set 2)
