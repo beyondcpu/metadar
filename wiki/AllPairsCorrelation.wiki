@@ -1,0 +1,13 @@
+#summary Calculation of correlation coefficient between every pair of variables.
+
+= Introduction =
+
+Function _allpairsCorrelation_ allows calculation of a correlation coefficient between every pair of variables of one dataset or between every variable in one dataset and every variable in a second dataset.
+
+
+= Function interface =
+
+allpairsCorrelation(Object1, Object2, method, ...)
+  * _Object1_:
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
