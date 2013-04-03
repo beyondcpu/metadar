@@ -24,10 +24,17 @@ mcl <- mcl$mclust2("samples", normalization=TRUE, G=2:10)
 
 =Results=
 
-Several methods of _Mclust2_ class allow you to examine the results of clustering. For example, you can get the number of clusters by
+Several methods of _Mclust2_ class allow you to examine the results of clustering.
+
+==Number of clusters==
+
+You can get the number of clusters by
 {{{
 mcl$getNumberOfClusters()
 }}}
+
+==List the elements of clusters==
+
 You can get the number and list of elements in each cluster by
 {{{
 mcl$getClusterInfo()
@@ -38,11 +45,23 @@ mcl$getClusterMembers(clusters=1)
 }}}
 The {{{getClusterMembers}}} function has two arguments, namely, variableNames and clusters. Both are optional. If no argument is issued, then it returns elements of all clusters as a list, with the default variable names. If the argument clusters is provided, it should be the number(s) of cluster(s) whose elements you want listed. The variableNames argument can be used to supply variable names to be shown. This argument has been made available for the following reasons. If the clustering of variables (i.e. features in the dataset) was performed, then _Mclust2_ class takes the featureNames(dataset) as the variable names. They may often be some ID such as just a number, which is not as informative as a name could be. In such case, variableNames argument allows you to provide a list of informative names (of the same length as there are variables). If the clustering was performed on samples of the dataset, then sampleNames(dataset) become the default variableNames. But often, showing the diagnostic class (or the like) of the sample maybe more informative than its name.
 
-You can draw the heatmaps showing clusters by
+==Heatmap visualization of clusters==
+
+You can draw the heatmap visualization of clusters by using the method
 {{{
-mcl$DrawCluster()
+mcl$drawClusterHeatmaps()
 }}}
 
+Note that the above command writes the heatmaps to PDF files rather than showing them in X11() window. It creates the following three heatmaps:
+  # The heatmap of variables in their original order (i.e. in the order they appear in the data set with no reordering). The name of the file to which this heatmap written to is {{{ihm_orig.pdf}}} by default.
+  # The heatmap of variables with hierarchical clustering. The name of the file to which this heatmap is written to is {{{ihm_hclust.pdf}}} by default.
+  # The heatmap of variables with the model based clusters marked in it. The name of the file to which this heatmap is written to is {{{ihm_mclust.pdf}}} by default.
+
+The {{{drawClusterHeatmaps}}} function accepts an argument {{{filenames}}} to specify alternative file names if preferred. It has to be a character vector specifying three pdf file names corresponding to the three heatmaps described above. The default value is {{{filenames=c("ihm_orig.pdf", "ihm_hclust.pdf", "ihm_mclust.pdf")}}}.
+
+The function {{{drawClusterHeatmaps}}} uses [ihm http://code.google.com/p/ihm] to draw each heatmap. It is possible to pass additional arguments for the customization of heatmap via {{{drawClusterHeatmaps}}} to {{{ihm}}} function.
+
+==Cluster means and variances==
 You can get the cluster centroids (means) using the following command
 {{{
 mcl$getClusterMeans()
