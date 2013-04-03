@@ -37,3 +37,14 @@ corr <- allpairsCorrelation(matr1, method="spearman")
 {{{
 corr <- allpairsCorrelation(matr1, matr2, method="pearson")
 }}}
+
+= Results =
+
+The resulting object `corr` in above examples is a list of two matrices. The first element of this list, namely, `corr[["r"]]` contains the correlation coefficients and the second element, `corr[["p"]]` contains the respective p-values associated with the null hypothesis that there is no correlation (i.e. correlation coefficient = 0).
+
+= Note =
+
+One very useful way to look at the resulting object `corr` is using a heatmap. Using [ihm http://code.google.com/p/ihm], it can be constructed as follows
+{{{
+ihm(corr[["r"]], corr[["p"]], clusterRows=TRUE, clusterColumns=TRUE, device="pdf", file="corr_heatmap.pdf")
+}}}
