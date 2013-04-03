@@ -33,7 +33,7 @@ You can get the number of clusters by
 mcl$getNumberOfClusters()
 }}}
 
-==List the elements of clusters==
+==Members of clusters==
 
 You can get the number and list of elements in each cluster by
 {{{
