@@ -11,7 +11,7 @@ Capabilities of this package are listed here.
   * [ZeroFiltering Filtering] zero intensity peaks
   * [ZeroImputation Zero imputation]
 ==Univariate statistics & statistical hypothesis tests==
-  * One-way anova and post-hoc test (Tukey Honestly Significant Differences).
+  * [OneWayAnova One-way anova and post-hoc test] (Tukey Honestly Significant Differences).
   * Two-way anova and post-hoc test (Tukey Honestly Significant Differences).
   * T-test for each variable in the data set.
   * Fold changes for each variable in the data set.
