@@ -12,7 +12,7 @@ Capabilities of this package are listed here.
   * [ZeroImputation Zero imputation]
 ==Univariate statistics & statistical hypothesis tests==
   * [OneWayAnova One-way anova and post-hoc test] (Tukey Honestly Significant Differences).
-  * Two-way anova and post-hoc test (Tukey Honestly Significant Differences).
+  * [TwoWayAnova Two-way anova and post-hoc test] (Tukey Honestly Significant Differences).
   * T-test for each variable in the data set.
   * Fold changes for each variable in the data set.
   * Area under the ROC curve for each variable in the data set.
