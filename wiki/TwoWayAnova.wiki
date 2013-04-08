@@ -31,7 +31,7 @@ The result of the `twoWayAnova` (`aovresult` in the example above) is a list of 
 
 == Presenting the results ==
 
-A heatmap can be drawn as follows:
+A heatmap of the significant results in `aovresult` (example above) can be drawn using [http://code.google.com/p/ihm ihm] as follows:
 {{{
 log2fc <- log2(aovresult[["RatiosTable"]][, grep("ratio", aovresult[["RatiosTable"]])])
 pvals <- aovresult[["PvalsTable"]]
