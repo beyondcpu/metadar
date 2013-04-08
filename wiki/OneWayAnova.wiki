@@ -31,13 +31,15 @@ The `oneWayAnova` function returns a data.frame object that contains the test re
   * ratio of mean values between every pair of `covariate` groups (i.e. fold changes)
   * adjusted p-value derived from Tukey HSD test indicating the significance of difference between means of every pair of groups.
 
+== Presenting the results ==
+
 It is often useful to write the results to a file to study them. The `aovresult` from the example above can be written to a file as follows
 
 {{{
 write.csv(aovresult, file="aovresult.csv")
 }}}
 
-Also, it maybe useful to graphically display the anova result. A heatmap showing significant results in `aovresult` can be drawn using [ihm http://code.google.com/p/ihm] as follows:
+Also, it maybe useful to graphically display the anova result. A heatmap showing significant results in `aovresult` can be drawn using [http://code.google.com/p/ihm ihm] as follows:
 {{{
 log2foldchanges <- log2(aovres[, grep("ratio", colnames(aovres))])
 rownames(log2foldchanges) <- rownames(aovres)
