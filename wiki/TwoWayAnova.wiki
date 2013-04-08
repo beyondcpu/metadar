@@ -36,6 +36,7 @@ A heatmap can be drawn as follows:
 log2fc <- log2(aovresult[["RatiosTable"]][, grep("ratio", aovresult[["RatiosTable"]])])
 pvals <- aovresult[["PvalsTable"]]
 take <- apply(pvals, function(x) any(x < 0.05))
+
 ihm(log2fc[take,], pvals[take,], clusterColumns=TRUE, clusterRows=TRUE,
-device="pdf", file="Heatmap_sig.pdf", cellnotesizeCorrection=2)
+   device="pdf", file="Heatmap_sig.pdf", cellnotesizeCorrection=2)
 }}}
