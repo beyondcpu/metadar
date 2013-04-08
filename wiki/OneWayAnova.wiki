@@ -42,9 +42,7 @@ write.csv(aovresult, file="aovresult.csv")
 Also, it maybe useful to graphically display the anova result. A heatmap showing significant results in `aovresult` can be drawn using [http://code.google.com/p/ihm ihm] as follows:
 {{{
 log2foldchanges <- log2(aovresult[, grep("ratio", colnames(aovresult))])
-rownames(log2foldchanges) <- rownames(aovresult)
 pvalues <- aovresult[, grep("p adj", colnames(aovresult))]
-rownames(pvalues) <- rownames(aovresult)
 take <- apply(pvalues, function(x) any(x < 0.05))
 
 ihm(log2foldchanges[take,], pvalues[take,], clusterColumns=TRUE, clusterRows=TRUE,
