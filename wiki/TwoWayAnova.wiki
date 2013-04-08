@@ -28,3 +28,10 @@ The result of the `twoWayAnova` (`aovresult` in the example above) is a list of 
   * `BigResultTable`: contains all results i.e. all items in the other two data frames explained below. In the example above, this can be accessed with the command {{{aovresult[["BigResultTable"]]}}}.
   * `RatiosTable`: mean values for all groups and fold changes corresponding to the main effects and corresponding to every pair of groups. In the example above, this can be accessed with the command {{{aovresult[["RatiosTable"]]}}}.
   * `PvalsTable`:  p-values corresponding to each main effect, interaction effect and the post-hoc comparison of pairs of groups. In the example above, this can be accessed with the command {{{aovresult[["PvalsTable"]]}}}.
+
+== Presenting the results ==
+
+A heatmap can be drawn as follows:
+{{{
+ihm(aovresult[["RatiosTable"]][, grep("ratio", aovresult[["RatiosTable"]])], aovresult[["PvalsTable"]])
+}}}
