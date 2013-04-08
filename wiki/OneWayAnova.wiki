@@ -46,5 +46,5 @@ pvalues <- aovresult[, grep("p adj", colnames(aovresult))]
 take <- apply(pvalues, function(x) any(x < 0.05))
 
 ihm(log2foldchanges[take,], pvalues[take,], clusterColumns=TRUE, clusterRows=TRUE,
-device="pdf", file="Heatmap_sig.pdf", cellnotesizeCorrection=2)
+   device="pdf", file="Heatmap_sig.pdf", cellnotesizeCorrection=2)
 }}}
