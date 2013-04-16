@@ -17,4 +17,8 @@ Object <- get.array.subset(Object.orig, "Phenotype", c("WT", "KO1"))
 ttestresult <- univariateTTest(Object, "Phenotype")
 }}}
 
-  # For a paired t-test (i.e. when the samples in the two groups have one-to-one correspondence), the `Dataset` object is assumed to have the samples of both the groups in the same order. As an example, let us assume that a `Dataset` object `dataset` has measurements from 15 subjects before and after the treatment with a drug and the object is to compare the mean value of each feature of `dataset` between `before` and `after` the treatment
+  # For a paired t-test (i.e. when the samples in the two groups have a one-to-one correspondence), the `Dataset` object is assumed to have the samples of both the groups in the same order. As an example, let us assume that a `Dataset` object `dataset` has measurements from _n_ subjects before and after the treatment with a drug and the object is to compare the mean value of each feature of `dataset` between `before` and `after` the treatment. In such case a paired t-test would be used as follows
+{{{
+ttestresult <- univariateTTest(dataset, covariate="Time", paired=TRUE)
+}}}
+But it must be taken care so that the dataset object has samples in the correct matching order.
