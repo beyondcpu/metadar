@@ -1,0 +1,20 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+The function `univariateTTest` allows performing [http://en.wikipedia.org/wiki/Student%27s_t-test Student's t-test] for each feature in a `Dataset`object for the comparison of means between a pair of sample groups.
+
+= Function interface =
+
+univariateTTest(Object, covariate, paired=FALSE, is.logged=FALSE, log.base=2, ...)
+  * `Object`: an object of class `Dataset`. A t-test will be performed on each feature of this data set
+  * `covariate`: a string specifying the name of the sample metadata column that has the group variable. Note that the specified column should have a factor with exactly two levels.
+
+= Notes =
+  # The column specified by the `covariate` must define exactly two groups (i.e. it entries should have exactly two distinct values). If this column divides the samples into more than two groups, please consider subsetting the `Dataset` object using e.g. `get.array.subset` function of `simpleaffy` package. As an example, if you have a `Dataset` object called `Object.orig` with a sample metadata column `Phenotype` with more than two levels (say, "WT", "KO1", "KO2", and "KO4") and you want to compare "KO1" group with "WT" group of samples, then do the following:
+{{{
+Object <- get.array.subset(Object.orig, "Phenotype", c("WT", "KO1"))
+ttestresult <- univariateTTest(Object, "Phenotype")
+}}}
+
+  # For a paired t-test (i.e. when the samples in the two groups have one-to-one correspondence), the `Dataset` object is assumed to have the samples of both the groups in the same order. As an example, let us assume that a `Dataset` object `dataset` has measurements from 15 subjects before and after the treatment with a drug and the object is to compare the mean value of each feature of `dataset` between `before` and `after` the treatment
