@@ -7,8 +7,25 @@ The function `univariateTTest` allows performing [http://en.wikipedia.org/wiki/S
 = Function interface =
 
 univariateTTest(Object, covariate, paired=FALSE, is.logged=FALSE, log.base=2, ...)
-  * `Object`: an object of class `Dataset`. A t-test will be performed on each feature of this data set
-  * `covariate`: a string specifying the name of the sample metadata column that has the group variable. Note that the specified column should have a factor with exactly two levels.
+  * `Object`: an object of class `Dataset`. A t-test will be performed on each feature of this data set. This is a required argument.
+  * `covariate`: a string specifying the name of the sample metadata column that has the group variable. Note that the specified column should have a factor with exactly two levels. This is a required argument.
+  * `paired`: a logical value specifying whether test should be performed by assuming that there is a pairing of samples between groups defined by `covariate`. This can be missing and the default value is FALSE.
+  * `is.logged`: a logical value specifying if the `Object` has the measurements in log-scale. The default value is FALSE, meaning that they are not in log-scale.
+  * `log.base`: if the data was in log-scale, the base of the logarithm. The default value is 2.
+  * `...`: optional additional arguments to be passed to `t.test` function of the `stats` package in R.
+
+= Available signatures =
+
+`univariateTTest(Object="Dataset", covariate="character", paired=FALSE, is.logged=FALSE, log.base=2, ...)`: i.e. `Object` and `covariate` are required arguments and they should be of classes `Dataset` and `character` respectively. The the rest of the arguments could be missing. When missing, the arguments `paired`, `is.logged` and `log.base` assume the default values specified in the signature and in practice do not have any influence. Additional arguments can be passed to `t.test` function (please check the help document of the `t.test` function).
+
+= Results =
+
+The result of the function `univariateTTest` is a data frame with a row for each feature in the input `Dataset` object. It contains the following columns.
+
+  * `Mean` columns: two columns providing the mean values of both the `covariate` groups. These column names start with "Mean" but depend on the names of the `covariate` groups.
+  * `SEM` columns: two columns providing the standard error of mean for both the `covariate` groups. These column names start with "SEM" but depend on the names of the `covariate` groups.
+  * `t.statistic`: a column titled "t.statistic" providing the t-statistic.
+  * `p.value`: a column titled "p.value" providing the p-value (i.e. the probability of the observing the "t.statistic" value if the null hypothesis that _no difference in means exists_ were true)
 
 = Notes =
   # The column specified by the `covariate` must define exactly two groups (i.e. it entries should have exactly two distinct values). If this column divides the samples into more than two groups, please consider subsetting the `Dataset` object using e.g. `get.array.subset` function of `simpleaffy` package. As an example, if you have a `Dataset` object called `Object.orig` with a sample metadata column `Phenotype` with more than two levels (say, "WT", "KO1", "KO2", and "KO4") and you want to compare "KO1" group with "WT" group of samples, then do the following:
