@@ -39,3 +39,5 @@ ttestresult <- univariateTTest(Object, "Phenotype")
 {{{
 ttestresult <- univariateTTest(dataset, covariate="Time", paired=TRUE)
 }}}
+
+  * Calculation of mean and SEM is done by another function [MeanSem meanSem]
