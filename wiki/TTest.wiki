@@ -26,6 +26,7 @@ The result of the function `univariateTTest` is a data frame with a row for each
   * `SEM` columns: two columns providing the standard error of mean for both the `covariate` groups. These column names start with "SEM" but depend on the names of the `covariate` groups. When `is.logged = TRUE` the SEM values are scaled back to absolute values using the `log.base`.
   * `t.statistic`: a column titled "t.statistic" providing the t-statistic.
   * `p.value`: a column titled "p.value" providing the p-value (i.e. the probability of the observing the "t.statistic" value if the null hypothesis that _no difference in means exists_ were true)
+  * `q.value`: an adjusted p-value considering the multiple hypotheses testing. They are computed using `p.adjust` function of `stats` package using Benjamini-Hochberg method.
 
 = Notes =
   # The column specified by the `covariate` must define exactly two groups (i.e. it entries should have exactly two distinct values). If this column divides the samples into more than two groups, please consider subsetting the `Dataset` object using e.g. `get.array.subset` function of `simpleaffy` package. As an example, if you have a `Dataset` object called `Object.orig` with a sample metadata column `Phenotype` with more than two levels (say, "WT", "KO1", "KO2", and "KO4") and you want to compare "KO1" group with "WT" group of samples, then do the following:
