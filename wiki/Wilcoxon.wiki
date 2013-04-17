@@ -11,3 +11,7 @@ The function `univariateWilcox` allows performing Wilcoxon's [http://en.wikipedi
   * `covariate`: a string specifying the name of the sample metadata column that has the group variable. Note that the specified column should have a factor with exactly two levels. `covariate` is a required argument.
   * `paired`: a logical value specifying whether test should be performed by assuming that there is a pairing of samples between groups defined by `covariate`. This can be missing and the default value is FALSE.
   * `...`: optional additional arguments to be passed to `wilcox.test` function of the `stats` package in R.
+
+= Available signatures =
+
+{{{univariateTTest(Object="Dataset", covariate="character", paired=FALSE, ...)}}}: i.e. `Object` and `covariate` are required arguments and they should be of classes `Dataset` and `character` respectively. The argument `paired` could be missing. When missing, the default value of `paired = FALSE` is assumed. Additional arguments can be passed to `wilcox.test` function (please check the help document of the `wilcox.test` function).
