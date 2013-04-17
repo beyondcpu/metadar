@@ -1,0 +1,13 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+The function `univariateWilcox` allows performing Wilcoxon's [http://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test signed rank test] (when samples are paired) or [http://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U rank sum test] (when samples are not paired) for each feature in a `Dataset` object for a non-parametric comparison between a pair of sample groups.
+
+= Function interface =
+
+{{{univariateWilcox(Object, covariate, paired=FALSE, ...)}}}
+  * `Object`: an object of class `Dataset`. A Wilcoxon rank sum test or signed rank test will be performed on each feature of this data set. `Object` is a required argument.
+  * `covariate`: a string specifying the name of the sample metadata column that has the group variable. Note that the specified column should have a factor with exactly two levels. `covariate` is a required argument.
+  * `paired`: a logical value specifying whether test should be performed by assuming that there is a pairing of samples between groups defined by `covariate`. This can be missing and the default value is FALSE.
+  * `...`: optional additional arguments to be passed to `wilcox.test` function of the `stats` package in R.
