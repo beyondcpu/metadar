@@ -29,7 +29,7 @@ The result of the function `univariateTTest` is a data frame with a row for each
   * `q.value`: an adjusted p-value considering the multiple hypotheses testing. They are computed using `p.adjust` function of `stats` package using Benjamini-Hochberg method.
 
 = Notes =
-  # The column specified by the `covariate` must define exactly two groups (i.e. it entries should have exactly two distinct values). If this column divides the samples into more than two groups, please consider subsetting the `Dataset` object using e.g. `get.array.subset` function of `simpleaffy` package. As an example, if you have a `Dataset` object called `Object.orig` with a sample metadata column `Phenotype` with more than two levels (say, "WT", "KO1", "KO2", and "KO4") and you want to compare "KO1" group with "WT" group of samples, then do the following:
+  # The column specified by the `covariate` must define exactly two groups (i.e. its entries should have exactly two distinct values). If this column divides the samples into more than two groups, please consider subsetting the `Dataset` object using e.g. `get.array.subset` function of `simpleaffy` package. As an example, if you have a `Dataset` object called `Object.orig` with a sample metadata column `Phenotype` with more than two levels (say, "WT", "KO1", "KO2", and "KO4") and you want to compare "KO1" group with "WT" group of samples, then do the following:
 {{{
 Object <- get.array.subset(Object.orig, "Phenotype", c("WT", "KO1"))
 ttestresult <- univariateTTest(Object, "Phenotype")
