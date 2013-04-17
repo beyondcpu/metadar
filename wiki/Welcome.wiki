@@ -13,7 +13,7 @@ Capabilities of this package are listed here.
 ==Univariate statistics & statistical hypothesis tests==
   * [OneWayAnova One-way anova and post-hoc test] (Tukey Honestly Significant Differences).
   * [TwoWayAnova Two-way anova and post-hoc test] (Tukey Honestly Significant Differences).
-  * [TTest Student's T-test] and [Wilcoxon Wilcoxon's rank sum test] for each variable in the data set.
+  * [TTest Student's T-test] and [Wilcoxon Wilcoxon's rank sum or signed rank test] for each variable in the data set.
   * Fold changes for each variable in the data set.
   * Area under the ROC curve for each variable in the data set.
   * Correlation of each variable with a selected variable of interest.
