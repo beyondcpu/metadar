@@ -22,8 +22,8 @@ univariateTTest(Object, covariate, paired=FALSE, is.logged=FALSE, log.base=2, ..
 
 The result of the function `univariateTTest` is a data frame with a row for each feature in the input `Dataset` object. It contains the following columns.
 
-  * `Mean` columns: two columns providing the mean values of both the `covariate` groups. These column names start with "Mean" but depend on the names of the `covariate` groups.
-  * `SEM` columns: two columns providing the standard error of mean for both the `covariate` groups. These column names start with "SEM" but depend on the names of the `covariate` groups.
+  * `Mean` columns: two columns providing the mean values of both the `covariate` groups. These column names start with "Mean" but depend on the names of the `covariate` groups. When `is.logged = TRUE` the mean values are scaled back to absolute values using the `log.base`. Thus, when `is.logged = TRUE`, effectively, geometric means are computed instead arithmetic means.
+  * `SEM` columns: two columns providing the standard error of mean for both the `covariate` groups. These column names start with "SEM" but depend on the names of the `covariate` groups. When `is.logged = TRUE` the SEM values are scaled back to absolute values using the `log.base`.
   * `t.statistic`: a column titled "t.statistic" providing the t-statistic.
   * `p.value`: a column titled "p.value" providing the p-value (i.e. the probability of the observing the "t.statistic" value if the null hypothesis that _no difference in means exists_ were true)
 
