@@ -15,3 +15,13 @@ The function `univariateWilcox` allows performing Wilcoxon's [http://en.wikipedi
 = Available signatures =
 
 {{{univariateTTest(Object="Dataset", covariate="character", paired=FALSE, ...)}}}: i.e. `Object` and `covariate` are required arguments and they should be of classes `Dataset` and `character` respectively. The argument `paired` could be missing. When missing, the default value of `paired = FALSE` is assumed. Additional arguments can be passed to `wilcox.test` function (please check the help document of the `wilcox.test` function).
+
+= Results =
+
+The result of the function univariateWilcox is a data frame with a row for each feature in the input `Dataset` object. It contains the following columns.
+
+  * `Median` columns: two columns providing the median values of both the `covariate` groups. These column names start with "Median" but depend on the names of the `covariate` groups.
+
+  * 95% confidence intervals of medians: two columns providing the lower and upper bound of 95% CI for median for each `covariate` group. The names of the columns containing the lower bound of the 95% CI start with "95% CIL", but depend on the names of the `covariate` groups.  The names of the columns containing the upper bound of the 95% CI start with "95% CIU", but depend on the names of the `covariate` groups.
+  * `p.value`: a column titled "p.value" providing the p-value (i.e. the probability of the observing the test statistic value if the null hypothesis that _no difference between the groups exist_ were true)
+  * `q.value`: an adjusted p-value considering the multiple hypotheses testing. They are computed using `p.adjust` function of `stats` package using Benjamini-Hochberg method.
