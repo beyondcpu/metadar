@@ -37,3 +37,5 @@ wilcresult <- univariateWilcox(Object, "Phenotype")
 {{{
 wilcresult <- univariateWilcoxon(dataset, covariate="Time", paired=TRUE)
 }}}
+
+  * Calculation of median and 95% CI of median is done by another function [MedianCI medianCI].
