@@ -14,6 +14,8 @@ Capabilities of this package are listed here.
   * [OneWayAnova One-way anova and post-hoc test] (Tukey Honestly Significant Differences).
   * [TwoWayAnova Two-way anova and post-hoc test] (Tukey Honestly Significant Differences).
   * [TTest Student's T-test] and [Wilcoxon Wilcoxon rank sum or signed rank test] for each variable in the data set.
+  * [MeanSem Mean values and standard errors of mean] for each variable in two or more sample groups.
+  * [MedianCI Median values and 95% CI of median] for each variable in two or more sample groups.
   * Fold changes for each variable in the data set.
   * Area under the ROC curve for each variable in the data set.
   * Correlation of each variable with a selected variable of interest.
