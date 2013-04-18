@@ -1,5 +1,13 @@
 #summary A summary of changes in each version of the package
 
+= Version 0.45 =
+
+  * The function medianQuartile() is now renamed to medianCI() and as the name suggests, it now calculates 95% confidence interval of the median instead of first and third quartiles.
+  * univariateTTest() now returns mean values and standard errors of mean besides the p-value and q-value.
+  * univariateTTest() now accepts additional optional arguments (is.logged and log.base) to get the mean values in the right scale.
+  * univariateWilcox() now returns median values and 95% CI of median besides the p-value and q-value.
+  * In the result of univariateTTest() and univariateWilcox() the title of the p-value column is now "p.value" and that of q-value is "q.value".
+
 = Version 0.44 =
   * In univariateOddsRatio() and allpairslogOdds() functions, the confidence interval calculation is now replaced by confint() function from MASS package.
   * selectVariables() and selectSamples() functions are removed. Please use _dataset[subset,]_ (or _dataset[,subset]_) to retrieve a _subset_ of samples (or features) from a _Dataset_ object _dataset_.
