@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary Known errors and fixes if known
 
   * ERROR: {{{Error in if (stderr < 10 * .Machine$double.eps * max(abs(mx), abs(my))) stop("data are essentially constant"): missing value where TRUE/FALSE needed}}} when running {{{univariateTTest()}}}
 
