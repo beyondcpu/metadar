@@ -11,3 +11,7 @@ The function `meanSem` allows to calculate mean value and standard error of mean
   * `covariate`: a string specifying the name of the sample metadata column that has the group variable. The specified column should have a factor with two or more levels. This is a required argument.
   * is.logged: a logical value specifying if the `Object` has the measurements in log-scale. When missing, the default value of this argument is FALSE, meaning that data are not in log-scale. If the data are  in log-scale, the mean values are provided in the absolute scale (i.e. transformed back from log using the log.base). Thus, when `is.logged = TRUE`, effectively, geometric means of absolute values are calculated.
   * log.base: if the data was in log-scale, the base of the logarithm. The default value is 2.
+
+= Note =
+
+When the data is in log-scale, the interpretation of SEM is quite different from usual. The limits should then expressed not as mean &plusmn; SEM, but as mean */ SEM. Therefore, when data is in log-scale, presenting mean and confidence interval for mean is more appropriate.
