@@ -14,4 +14,4 @@ The function `meanSem` allows to calculate mean value and standard error of mean
 
 = Note =
 
-When the data is in log-scale, the interpretation of SEM is quite different from usual. The limits should then expressed not as mean \u+00B1 SEM, but as mean `*/` SEM. Therefore, when data is in log-scale, presenting mean and confidence interval for mean is more appropriate.
+When the data is in log-scale, the interpretation of SEM is quite different from usual. The limits should then expressed not as mean &#177; SEM, but as mean `*/` SEM. Therefore, when data is in log-scale, presenting mean and confidence interval for mean is more appropriate.
