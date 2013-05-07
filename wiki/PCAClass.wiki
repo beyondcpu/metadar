@@ -77,19 +77,19 @@ The loadings plot can be created using _loadingsplot_ function. The resulting tw
 === Examples ===
 A minimal syntax example for generating loadings plot is
 {{{
-pc$scoresplot(pcs=1:2)
+pc$loadingsplot(pcs=1:2)
 }}}
 An example with a non-default inline annotation of points in the loadings plot is
 {{{
-pc$scoresplot(annotation="Name", pcs=1:2)
+pc$loadingsplot(annotation="Name", pcs=1:2)
 }}}
 An example with a custom position of the labels and compound classes coloured
 {{{
-pc$scoresplot(color="CompoundClass", pcs=1:2, labelpos=2)
+pc$loadingsplot(color="CompoundClass", pcs=1:2, labelpos=2)
 }}}
 An example where an additional argument is passed to the _plot_ function to increase the size of points
 {{{
-pc$scoresplot(annotation="Name", color="CompoundClass", pcs=1:2, labelpos=2, cex=2)
+pc$loadingsplot(annotation="Name", color="CompoundClass", pcs=1:2, labelpos=2, cex=2)
 }}}
 
 == Biplot ==
