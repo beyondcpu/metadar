@@ -17,4 +17,4 @@ The function `meanSem` allows to calculate mean value and standard error of mean
 When the data is in log-scale, the interpretation of SEM is different from usual`***`. Therefore, when data is in log-scale, presenting mean and confidence interval for mean is more convenient, than presenting mean and SEM. Therefore, please consider using the function [MeanCI meanCI].
 
 
-`***:` When the data is not in log-scale, mean and SEM are often presented as the limits expressed by {{{mean ± SEM}}}. When the data is in log-scale however, it would be more sensible to present those limits as `mean */ SEM`.
+`***:` When the data is not in log-scale, mean and SEM are often presented as the limits expressed by {{{mean ± SEM}}}. When the data is in log-scale however, it would be more sensible to present those limits as `mean */ SEM` (where `mean` and `SEM` are calculated with the log-scale values and properly anti-logged afterwards).
