@@ -1,5 +1,10 @@
 #summary A summary of changes in each version of the package
 
+= Version 0.46 =
+
+  * When is.logged=TRUE, meanSem() function antilogs the data before computing mean and SEM.
+  * Added a function meanCI(). This is recommended over meanSem() when is.logged=TRUE
+
 = Version 0.45 =
 
   * The function medianQuartile() is now renamed to medianCI() and as the name suggests, it now calculates 95% confidence interval of the median instead of first and third quartiles.
