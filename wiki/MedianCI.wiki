@@ -2,7 +2,7 @@
 
 = Introduction =
 
-The function `medianCI` allows to calculate median value and 95% CI of median for each feature in a `Dataset` object for two or more groups of samples.
+The function `medianCI` allows to calculate median value and 95% CI of median for every feature in a `Dataset` object for two or more groups of samples.
 
 = Function interface =
 
