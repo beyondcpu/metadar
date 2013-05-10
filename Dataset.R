@@ -205,6 +205,32 @@ setMethod("getVariableMetaData", signature=c("Dataset", "character", "character"
             retval
           })
 
+setGeneric("setVariableMetaData", def=function(Object, newData)
+  standardGeneric("setVariableMetaData"))
+
+setMethod("setVariableMetaData", signature=c("Dataset", "data.frame"),
+          definition=function(Object, newData) {
+            if(!("ID" %in% colnames(newData))) {
+              stop("newData must have an ID column with same id's as in the Dataset object")
+            }
+            
+            if(ncol(newData) <= 1) {
+              stop("newData does not have any other column than ID. Nothing to set!")
+            }
+            
+            oldData <- getVariableMetaData(Object)
+            if(ncol(oldData) ==0) {
+              oldData <- data.frame("ID"=featureNames(Object))
+            }
+            newData2 <- merge(oldData, newData, by="ID", all.x=TRUE)
+            rownames(newData2) <- as.character(newData2[,"ID"])
+            newData2 <- newData2[featureNames(Object),] ## just to ensure the order in case merge changed it.
+            
+            Object@featureData = new("AnnotatedDataFrame", data=newData2)
+            
+            Object
+          })
+
 setGeneric("getSampleMetaData", def=function(Object, metaDataColumns, selectedSamples)
   standardGeneric("getSampleMetaData"))
 
@@ -276,7 +302,7 @@ setMethod("univariateCorrelation",  signature=c(Object="Dataset", covariate="num
             }
             qvals <- p.adjust(pvals, method="BH")
             return(data.frame(row.names=featureNames(assayData(Object)),
-                              "Cor"=cors, "p-value"=pvals, "q-value"=qvals))
+                              "Cor"=cors, "p.value"=pvals, "q.value"=qvals))
           })
 
 setGeneric("univariateAUC", def=function(Object, covariate) standardGeneric("univariateAUC"))
@@ -286,59 +312,36 @@ setMethod("univariateAUC",  signature=c(Object="Dataset", covariate="character")
             return(rowpAUCs(Object, fac=pData(Object)[,covariate])@AUC)
           })
 
-setGeneric("univariateTTest", def=function(Object, covariate, paired)
+setGeneric("univariateTTest", signature=c("Object", "covariate"),
+           def=function(Object, covariate, paired=FALSE, is.logged=FALSE, log.base=2, ...)
   standardGeneric("univariateTTest"))
 
-setMethod("univariateTTest",  signature=c(Object="Dataset", covariate="character",
-                                          paired="missing"),
-          valueClass="data.frame", definition=function(Object, covariate) {
-            res <- t(apply(exprs(Object), 1, function(x) {
-              tt <- t.test(x ~ factor(pData(Object)[,covariate]), alternative="two.sided")
-              c(tt$estimate, "T statistic"=tt$statistic, "P value"=tt$p.value)
-            }))
-            qvals <- p.adjust(res[,"P value"], method="BH")
-            return(data.frame(res, "BH95 FDR Q value"=qvals))
-          })
+setMethod("univariateTTest",  signature=c(Object="Dataset", covariate="character"),
+  valueClass="data.frame",
+  definition=function(Object, covariate, paired=FALSE, is.logged=FALSE, log.base=2, ...) {
+    res <- t(apply(exprs(Object), 1, function(x) {
+      tt <- t.test(x ~ factor(getSampleMetaData(Object,covariate)),
+        alternative="two.sided", paired=paired, ...)
+      c("t.statistic"=as.numeric(tt$statistic), "p.value"=tt$p.value)
+    }))
+    qvals <- p.adjust(res[,"p.value"], method="BH")
+    means <- meanSem(Object, covariate, is.logged, log.base)
+    return(data.frame(means, res, "q.value"=qvals))
+  })
 
-setMethod("univariateTTest",  signature=c(Object="Dataset", covariate="character",
-                                          paired="logical"),
-          valueClass="data.frame", definition=function(Object, covariate, paired) {
-            res <- t(apply(exprs(Object), 1, function(x) {
-              tt <- t.test(x ~ factor(pData(Object)[,covariate]), alternative="two.sided", paired=paired)
-              c(tt$estimate, "T statistic"=tt$statistic, "P value"=tt$p.value)
-            }))
-            qvals <- p.adjust(res[,"P value"], method="BH")
-            return(data.frame(res, "BH95 FDR Q value"=qvals))
-          })
+setGeneric("univariateWilcox", signature=c("Object", "covariate"),
+  def=function(Object, covariate, paired=FALSE, ...) standardGeneric("univariateWilcox"))
 
-setGeneric("univariateWilcox", def=function(Object, covariate, paired, ...) standardGeneric("univariateWilcox"))
-
-setMethod("univariateWilcox",  signature=c(Object="Dataset", covariate="character", paired="missing"),
-          valueClass="data.frame", definition=function(Object, covariate, ...) {
+setMethod("univariateWilcox",  signature=c(Object="Dataset", covariate="character"),
+          valueClass="data.frame", definition=function(Object, covariate, paired=FALSE, ...) {
             pvals <- apply(exprs(Object), 1, function(x) {
-              wil <- wilcox.test(x ~ factor(pData(Object)[,covariate]), alternative="two.sided", ...)
+              wil <- wilcox.test(x ~ factor(pData(Object)[,covariate]),
+                alternative="two.sided", paired=paired, ...)
               wil$p.value
             })
             qvals <- p.adjust(pvals, method="BH")
-            medians <- t(apply(exprs(Object), 1, function(x) {
-              unlist(lapply(split(x, factor(pData(Object)[,covariate])), function(z) median(z, na.rm=TRUE)))
-            }))
-            colnames(medians) <- paste("Median",colnames(medians))
-            return(data.frame(medians, "p.value"=pvals, "BH95.FDR.Q.value"=qvals))
-          })
-
-setMethod("univariateWilcox",  signature=c(Object="Dataset", covariate="character", paired="logical"),
-          valueClass="data.frame", definition=function(Object, covariate, paired, ...) {
-            pvals <- apply(exprs(Object), 1, function(x) {
-              wil <- wilcox.test(x ~ factor(pData(Object)[,covariate]), alternative="two.sided", paired=paired, ...)
-              wil$p.value
-            })
-            qvals <- p.adjust(pvals, method="BH")
-            medians <- t(apply(exprs(Object), 1, function(x) {
-              unlist(lapply(split(x, factor(pData(Object)[,covariate])), function(z) median(z, na.rm=TRUE)))
-            }))
-            colnames(medians) <- paste("Median",colnames(medians))
-            return(data.frame(medians, "p.value"=pvals, "BH95.FDR.Q.value"=qvals))
+            medians <- medianCI(Object, covariate)
+            return(data.frame(medians, "p.value"=pvals, "q.value"=qvals))
           })
 
 setGeneric("univariateChisq", def=function(Object, covariate) standardGeneric("univariateChisq"))
@@ -365,36 +368,91 @@ setMethod("univariateChisq", signature=c(Object="Dataset", covariate="character"
             res
           })
 
-setGeneric("meanSem", def=function(Object, covariate) standardGeneric("meanSem"))
+setGeneric("meanSem", signature=c("Object", "covariate"),
+           def=function(Object, covariate, is.logged=FALSE, log.base=2)
+             standardGeneric("meanSem"))
 
 setMethod("meanSem", signature=c(Object="Dataset", covariate="character"),
-          definition=function(Object, covariate) {
-            covfac <- factor(getSampleMetaData(Object, covariate))
-            res <- t(apply(exprs(Object), 1, function(x) {
-              valsbygrp <- split(x, covfac)
-              mns <- unlist(lapply(valsbygrp, function(x) mean(x, na.rm=TRUE)))
-              sems <- unlist(lapply(valsbygrp, function(x) {
-                sd(x, na.rm=TRUE)/sqrt(length(which(!is.na(x))))
-              }))
-              c(mns, sems)
-            }))
-            colnames(res) <- c(paste("Mean", levels(covfac)),
-                               paste("SEM", levels(covfac)))
-            #rownames(res) <- featureNames(Object)
-            res
-          })
+  definition=function(Object, covariate, is.logged=FALSE, log.base=2) {
+    if(is.logged) {
+      warning(paste("SEM interpretation is very different when data is logged.\n",
+        "Use 95% CI instead (function: meanCI).\n",
+        "To prevent misinterpretation of the data, here, the mean and SEM are calculated",
+        "after antilogging the data."))
+      exprs(Object) <- log.base^exprs(Object)
+    }
+    covfac <- factor(getSampleMetaData(Object, covariate))
+    res <- t(apply(exprs(Object), 1, function(x) {
+      valsbygrp <- split(x, covfac)
+      mns <- unlist(lapply(valsbygrp, function(x) mean(x, na.rm=TRUE)))
+      sems <- unlist(lapply(valsbygrp, function(x) {
+        sd(x, na.rm=TRUE)/sqrt(length(which(!is.na(x))))
+      }))
+      c(mns, sems)
+    }))
 
-setGeneric("medianQuartile", def=function(Object, covariate) standardGeneric("medianQuartile"))
+    colnames(res) <- c(paste("Mean", levels(covfac)),
+      paste("SEM", levels(covfac)))
+    res[,paste(rep(c("Mean", "SEM"), nlevels(covfac)), rep(levels(covfac), each=2))]
+})
 
-setMethod("medianQuartile", signature=c(Object="Dataset", covariate="character"),
+setGeneric("meanCI", signature=c("Object", "covariate"),
+  def=function(Object, covariate, is.logged=FALSE, log.base=2)
+    standardGeneric("meanCI"))
+
+setMethod("meanCI", signature=c(Object="Dataset", covariate="character"),
+  definition=function(Object, covariate, is.logged=FALSE, log.base=2) {
+    covfac <- factor(getSampleMetaData(Object, covariate))
+    res <- t(apply(exprs(Object), 1, function(x) {
+      valsbygrp <- split(x, covfac)
+      mns <- unlist(lapply(valsbygrp, function(x) mean(x, na.rm=TRUE)))
+      errors <- unlist(lapply(valsbygrp, function(x) {
+        sem <- sd(x, na.rm=TRUE)/sqrt(length(which(!is.na(x))))
+        qt(0.975, df=length(which(!is.na(x)))-1)*sem
+      }))
+      if(is.logged) {
+        retval <- c(log.base^mns, log.base^(mns - errors), log.base^(mns + errors))
+      } else {
+        retval <- c(mns, mns - errors, mns + errors)
+      }
+      retval
+    }))
+    colnames(res) <- c(paste("Mean", levels(covfac)),
+      paste(rep(c("CIL", "CIU"), each=nlevels(covfac)), levels(covfac)))
+    res[,paste(rep(c("Mean", "CIL", "CIU"), nlevels(covfac)), rep(levels(covfac), each=3))]
+  })
+
+
+setGeneric("medianCI", def=function(Object, covariate) standardGeneric("medianCI"))
+# 95% CI: http://stats.stackexchange.com/questions/21103/confidence-interval-for-median
+setMethod("medianCI", signature=c(Object="Dataset", covariate="character"),
           definition=function(Object, covariate) {
+            #browser()
             myfac <- factor(getSampleMetaData(Object,covariate))
             res <- t(apply(exprs(Object), 1, function(x) {
               valsbygrp <- split(x, myfac)
-              mns <- do.call("c", lapply(valsbygrp, function(x)
-                quantile(x, probs=c(0.5, 0.25, 0.75), na.rm=TRUE)))
+              mns <- do.call("c", lapply(valsbygrp, function(x) {
+                x <- x[!is.na(x)]
+                ## first try to calculate the CI of median using binomial distribution.
+                ## It is very fast and elegant
+                ci <- tryCatch(sort(x)[qbinom(c(.025,.975), length(x), 0.5)],
+                  error = function(e) { NA })
+                ## But sometimes the binomial method didn't work. It returned either
+                ## the upper limit only or lower limit only etc (I think this
+                ## happens when the sample size is too small or the intervals
+                ## are too wide). So, if it failed,
+                ## caculate the CI using bootstrapping. I am using this bootstrap
+                ## only when required because otherwise it can slow down too much
+                ## as we have many features
+                if(is.na(ci) || (length(ci) < 2)) {
+                  ci <- quantile(
+                    apply(matrix(sample(x,rep=TRUE,10^4*length(x)),nrow=10^4),1,median),
+                    c(.025,0.975))
+                }                  
+                c(median(x), ci)
+              }))
             }))
-            colnames(res) <- paste(rep(c("Median", "Q1", "Q3"), nlevels(myfac)),
+            colnames(res) <- paste(rep(c("Median", "CIL", "CIU"), nlevels(myfac)),
                                    rep(levels(myfac), each=3))
             res
           })
