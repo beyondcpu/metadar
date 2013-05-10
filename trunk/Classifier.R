@@ -147,7 +147,7 @@ setMethod("createClassifier", signature=c("Classifier", "missing", "missing", "m
 setMethod("createClassifier", signature=c("Classifier", "Dataset", "character", "missing", "missing", "character"),          
           function(object, x, y, selectedVariables) {
             object$x <- data.frame(exprs(x)[selectedVariables,], check.names=F)
-            object$y <- factor(pData(x)[,y])
+            object$y <- factor(getSampleMetaData(x,y))
             names(object$y) <- sampleNames(x)
             object
           })
@@ -155,10 +155,10 @@ setMethod("createClassifier", signature=c("Classifier", "Dataset", "character", 
 setMethod("createClassifier", signature=c("Classifier", "Dataset", "character", "Dataset", "character", "character"),          
           function(object, x, y, x.test, y.test, selectedVariables) {
             object$x <- data.frame(exprs(x)[selectedVariables,], check.names=F)
-            object$y <- factor(pData(x)[,y])
+            object$y <- factor(getSampleMetaData(x,y))
             names(object$y) <- sampleNames(x)
             object$x.test <- data.frame(exprs(x.test)[selectedVariables,], check.names=F)
-            object$y.test <- factor(pData(x.test)[,y.test])
+            object$y.test <- factor(getSampleMetaData(x.test,y.test))
             names(object$y.test) <- sampleNames(x.test)
             object
           })
