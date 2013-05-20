@@ -1,16 +1,26 @@
 #summary Index of the package
 
+Lists are in alphabetical order.
+
 = Classes =
 
   * Classifier
   * LogisticRegression
-  * RandomForest
-  * [PCAClass PCA]
   * [Mclustering Mclust2]
-
-
+  * [PCAClass PCA]
+  * RandomForest
 
 = Methods =
 
-getSampleMetaData
-getVariableMetaData
+  * getSampleMetaData
+  * getVariableMetaData
+  * [MeanCI meanCI]
+  * [MeanSem meanSem]
+  * [MedianCI medianCI]
+  * setVariableMetaData
+  * univariateAUC
+  * univariateChisq
+  * univariateCorrelation
+  * [TTest univariateTTest]
+  * [Wilcoxon univariateWilcox]
+
