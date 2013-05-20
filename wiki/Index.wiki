@@ -2,11 +2,11 @@
 
 = Classes =
 
-Classifier
-LogisticRegression
-RandomForest
-PCA
-Mclust2
+  * Classifier
+  * LogisticRegression
+  * RandomForest
+  * [PCAClass PCA]
+  * [Mclustering Mclust2]
 
 
 
