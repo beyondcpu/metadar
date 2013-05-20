@@ -14,19 +14,29 @@ Lists are in alphabetical order.
   * [AllPairsCorrelation allpairsCorrelation]
   * allpairsCovariance
   * allpairslogOdds
+  * allpairsTTest
+  * beanPlot
+  * boxPlot
+  * colhclust
   * concatenate
   * foldChange
   * getSampleMetaData
   * getVariableMetaData
+  * kruskalWallis
   * log
   * log2
   * log10
   * [MeanCI meanCI]
   * [MeanSem meanSem]
   * [MedianCI medianCI]
+  * mybarplot
+  * mybarplot2
   * na.omit
+  * [OneWayAnova oneWayAnova]
   * printDataset
   * setVariableMetaData
+  * tgAnalysis
+  * [TwoWayAnova twoWayAnova]
   * univariateAUC
   * univariateChisq
   * univariateCorrelation
