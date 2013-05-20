@@ -11,16 +11,27 @@ Lists are in alphabetical order.
   * RandomForest
 
 = Methods =
-
+  * [AllPairsCorrelation allpairsCorrelation]
+  * allpairsCovariance
+  * allpairslogOdds
+  * concatenate
+  * foldChange
   * getSampleMetaData
   * getVariableMetaData
+  * log
+  * log2
+  * log10
   * [MeanCI meanCI]
   * [MeanSem meanSem]
   * [MedianCI medianCI]
+  * na.omit
+  * printDataset
   * setVariableMetaData
   * univariateAUC
   * univariateChisq
   * univariateCorrelation
+  * univariateOddsRatio
   * [TTest univariateTTest]
   * [Wilcoxon univariateWilcox]
-
+  * [ZeroFiltering zeroFiltering]
+  * [ZeroImputation zeroImputation]
