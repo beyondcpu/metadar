@@ -25,4 +25,4 @@ This function returns a `data.frame` object that contains the following columns
   * `FC`: Fold change value.
   * `FC 95CI.LL`: Lower limit of the 95% confidence interval of the fold change.
   * `FC 95CI.UL`: Upper limit of the 95% confidence interval of the fold change.
-  * `FC 95% CI`: The confidence interval presented in the format "(LL, UL)".
+  * `FC 95% CI`: The confidence interval presented in the format "(LL, UL)". In this column the limits are rounded to two digits.
