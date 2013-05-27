@@ -14,3 +14,8 @@ The function `univariateAUC` computes area under the ROC curve (AUC) for each fe
 = Results =
 
 A vector of AUC values of all features in the `Dataset` object.
+
+= Examples =
+{{{
+univariateAUC(dataset, "Class")
+}}}
