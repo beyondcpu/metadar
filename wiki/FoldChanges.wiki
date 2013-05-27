@@ -19,3 +19,10 @@ foldChange(Object, covariate, paired=FALSE, is.logged=FALSE, log.base=FALSE)
   # {{{foldChange(Object="Dataset", covariate="character", paired=FALSE, is.logged=FALSE, log.base=2)}}}: i.e. `Object` and `covariate` are required. The rest of the arguments could be missing. When missing, the arguments `paired`, `is.logged` and `log.base` assume the default values specified in the signature.
 
 = Results =
+
+This function returns a `data.frame` object that contains the following columns
+
+  * `FC`: Fold change value.
+  * `FC 95CI.LL`: Lower limit of the 95% confidence interval of the fold change.
+  * `FC 95CI.UL`: Upper limit of the 95% confidence interval of the fold change.
+  * `FC 95% CI`: The confidence interval presented in the format "(LL, UL)".
