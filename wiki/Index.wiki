@@ -19,7 +19,7 @@ Lists are in alphabetical order.
   * boxPlot
   * colhclust
   * concatenate
-  * foldChange
+  * [FoldChanges foldChange]
   * getSampleMetaData
   * getVariableMetaData
   * kruskalWallis
