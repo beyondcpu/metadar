@@ -1,0 +1,15 @@
+#summary Calculation of fold change of each variable with respect to a group variable
+
+= Introduction =
+
+The function `foldChange` computes the fold change for each feature in a `Dataset` object with respect to a phenotype grouping variable.
+
+
+= Function interface =
+
+foldChange(Object, covariate, paired, is.logged, log.base)
+  * `Object`: an object of class `Dataset`
+  * `covariate`: a character string specifying the title of sample metadata column that contains the groups. The specified column should define two groups.
+  * `paired`: a logical object. When TRUE, the samples are considered to be paired, and it is assumed that the samples in each group are ordered by pairing.
+  * `is.logged`: a logical value indicating whether or not the `Dataset` object contains log-values.
+  * `log.base`: numeric specifying the base of the logarithm in case `is.logged=TRUE`.
