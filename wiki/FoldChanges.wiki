@@ -35,3 +35,6 @@ fc <- foldChange(Object=dataset, covariate="Class")
 {{{
 fc <- foldChange(Object=dataset, covariate="Class", paired=TRUE)
 }}}
+{{{
+fc <- foldChange(Object=dataset, covariate="Class", is.logged=TRUE) # log.base=2 is assumed
+}}}
