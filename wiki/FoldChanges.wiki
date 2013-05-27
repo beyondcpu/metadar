@@ -7,9 +7,15 @@ The function `foldChange` computes the fold change for each feature in a `Datase
 
 = Function interface =
 
-foldChange(Object, covariate, paired, is.logged, log.base)
+foldChange(Object, covariate, paired=FALSE, is.logged=FALSE, log.base=FALSE)
   * `Object`: an object of class `Dataset`
   * `covariate`: a character string specifying the title of sample metadata column that contains the groups. The specified column should define two groups.
   * `paired`: a logical object. When TRUE, the samples are considered to be paired, and it is assumed that the samples in each group are ordered by pairing.
   * `is.logged`: a logical value indicating whether or not the `Dataset` object contains log-values.
   * `log.base`: numeric specifying the base of the logarithm in case `is.logged=TRUE`.
+
+= Available signatures =
+
+  # {{{foldChange(Object="Dataset", covariate="character", paired=FALSE, is.logged=FALSE, log.base=2)}}}: i.e. `Object` and `covariate` are required. The rest of the arguments could be missing. When missing, the arguments `paired`, `is.logged` and `log.base` assume the default values specified in the signature.
+
+= Results =
