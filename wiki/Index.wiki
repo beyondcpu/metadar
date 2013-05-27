@@ -37,7 +37,7 @@ Lists are in alphabetical order.
   * setVariableMetaData
   * tgAnalysis
   * [TwoWayAnova twoWayAnova]
-  * univariateAUC
+  * [UnivariateAUC univariateAUC]
   * univariateChisq
   * univariateCorrelation
   * univariateOddsRatio
