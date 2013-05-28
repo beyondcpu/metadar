@@ -12,3 +12,5 @@ The function `univariateCorrelation` allows us to compute correlation coefficien
   * `...`: additional arguments for cor.test function. Please check the help document of cor.test function. All additional arguments except `alternative` can be passed (this function always uses `alternative="two.sided"`).
 
 = Available signatures =
+  # {{{univariateCorrelation(Object="Dataset", covariate="character")}}}: `covariate` is a character string providing the name of a column of sample metadata that typically has a real valued data.
+  # {{{univariateCorrelation(Object="Dataset", covariate="numeric")}}}: `covariate` is a numeric vector containing the target phenotype against which the features should be correlated.
