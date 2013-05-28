@@ -1,0 +1,14 @@
+#summary Computes correlation coefficient of every feature in Dataset with a phenotype variable
+
+= Introduction =
+
+The function `univariateCorrelation` allows us to compute correlation coefficient of each feature in the `Dataset` object with a target phenotype variable of interest.
+
+= Function interface =
+
+{{{univariateCorrelation(Object, covariate, ...)}}}
+  * `Object`: an object of class `Dataset`.
+  * `covariate`: a character indicating the name of a column of sample metadata or a numeric vector containing the target phenotype variable of interest.
+  * `...`: additional arguments for cor.test function. Please check the help document of cor.test function. All additional arguments except `alternative` can be passed (this function always uses `alternative="two.sided"`)
+
+= Available signatures =
