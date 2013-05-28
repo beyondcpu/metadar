@@ -39,7 +39,7 @@ Lists are in alphabetical order.
   * [TwoWayAnova twoWayAnova]
   * [UnivariateAUC univariateAUC]
   * univariateChisq
-  * univariateCorrelation
+  * [UnivariateCorrelation univariateCorrelation]
   * univariateOddsRatio
   * [TTest univariateTTest]
   * [Wilcoxon univariateWilcox]
