@@ -1,0 +1,16 @@
+#summary Draw a box-and-whisker plot for every feature in the dataset
+
+= Introduction =
+
+The function `boxPlot` allows you to create box-and-whisker plots for all features in a given `Dataset` object.
+
+= Function interface =
+boxPlot(Object, covariate1, covariate2, file="boxplots.pdf")
+  * `Object`: an object of class `Dataset`.
+  * `covariate1`: a character string giving the column name of sample metadata that divides the samples into two or more groups.
+  * `covariate2`: a character string giving the column name of sample metadata that divides the samples into further groups (as a second factor on top of `covariate1`).
+  * `file`: an optional file name argument into which the box plots will be written. If not supplied, the default value "boxplots.pdf" will be assumed. File name maybe provided as a fully qualified path. If the file name provided is not a full path, then it will be written into the working directory.
+
+= Available signatures =
+  # {{{boxPlot(Object="Dataset", covariate1="character", covariate2="missing", file="boxplots.pdf")}}} i.e. `covariate2` can be missing, `Object` and `covariate1` are supplied, and `file` is optional with default value when missing.
+  # {{{boxPlot(Object="Dataset", covariate1="character", covariate2="character", file="boxplots.pdf")}}} i.e. `Object`, `covariate1`, and `covariate2` are supplied, and `file` is optional with default value when missing.
