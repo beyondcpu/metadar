@@ -20,8 +20,11 @@ boxPlot(Object, covariate1, covariate2, file="boxplots.pdf")
 = Examples =
 
 Let `dataset` be an object of class `Dataset` with sample metadata columns `"Drug"` and `"Time"`. Then the following function calls can be used
-  # to look at the differences in the abundances of compounds with respect to `"Drug"`
+  # to look at the differences in the abundances of compounds with respect to `"Drug"` (the resulting box plots will be created in the file boxplots.pdf to be found in the current working directory as the `file` argument is omitted from this call)
 {{{
 boxPlot(dataset, "Drug")
 }}}
-The resulting box plots will be created in the file boxplots.pdf to be found in the current working directory.
+  # to look at the differences in the abundances of compounds with respect to drug and time
+{{{
+boxPlot(dataset, "Drug", "Time", file="/home/xxx/boxplots.pdf")
+}}}
