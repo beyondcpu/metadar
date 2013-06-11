@@ -20,7 +20,7 @@ allpairsCorrelation(Object1, Object2, method, ...)
   # {{{allpairsCorrelation("matrix", "missing", "character")}}} i.e. the function can be called with {{{Object1}}} (a numeric matrix with features in rows and samples in columns), {{{Object2}}} (a numeric matrix with features in rows and samples in columns) and {{{method}}} arguments. In this case correlation between every feature in {{{Object1}}} and every feature in {{{Object2}}} is computed using the specified {{{method}}} ("pearson" or "spearman").
 
 = Examples =
-The following example invocations of the {{{allpairsCorrelation}}} method are written in the same order as in the *Available signatures* section. It is assumed that {{{Dataset}}} objects {dataset1} and {dataset2} and numeric matrices {{{matr1}}} and {{{matr2}}} are defined.
+The following example invocations of the {{{allpairsCorrelation}}} method are written in the same order as in the *Available signatures* section. It is assumed that {{{Dataset}}} objects {{{dataset1}}} and {{{dataset2}}} and numeric matrices {{{matr1}}} and {{{matr2}}} are defined.
   # Pearson's correlation between every pair of features in a {{{Dataset}}} object
 {{{
 corr <- allpairsCorrelation(dataset1, method="pearson")
