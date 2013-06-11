@@ -23,7 +23,7 @@ If `dataset` is an object of `Dataset` class with columns `"SampleLabels"` and `
 hc <- colhclust(dataset, "SampleLabels", "DiseaseGroup")
 plot(hc)
 }}}
-  # to draw a hierarchical clustering dendrogram with default labels to leaf nodes (i.e. `sampleNames(dataset)`) and coloring based on the `"DiseaseGroup"`
+  # to draw a hierarchical clustering dendrogram with default labels to leaf nodes, i.e. `sampleNames(dataset)`, and coloring based on the `"DiseaseGroup"`
 {{{
 hc <- colhclust(dataset, "DiseaseGroup")
 plot(hc)
