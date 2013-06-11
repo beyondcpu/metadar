@@ -18,11 +18,13 @@ The function `colhclust` allows calculation of hierarchical clustering. The resu
 
 = Examples =
 If `dataset` is an object of `Dataset` class with columns "SampleLabels" and "DiseaseGroup" among the columns of sample metadata, the following code examples can be used
-  # {{{
+  #
+{{{
 hc <- colhclust(dataset, "SampleLabels", "DiseaseGroup")
 plot(hc)
 }}}
-  # {{{
+  #
+{{{
 hc <- colhclust(dataset, "DiseaseGroup")
 plot(hc)
 }}}
