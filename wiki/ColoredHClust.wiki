@@ -17,13 +17,13 @@ The function `colhclust` allows calculation of hierarchical clustering. The resu
   # {{{colhclust("Dataset", "missing", "character")}}} i.e. the argument `labels` can be missing while `Object` and `color` are present. In this case, the sample names are used as labels.
 
 = Examples =
-If `dataset` is an object of `Dataset` class with columns "SampleLabels" and "DiseaseGroup" among the columns of sample metadata, the following code examples can be used
-  #
+If `dataset` is an object of `Dataset` class with columns `"SampleLabels"` and `"DiseaseGroup"` among the columns of sample metadata, the following code examples can be used
+  # to draw a hierarchical clustering dendrogram with custom labels to leaf nodes and coloring based on the `"DiseaseGroup"`
 {{{
 hc <- colhclust(dataset, "SampleLabels", "DiseaseGroup")
 plot(hc)
 }}}
-  #
+  # to draw a hierarchical clustering dendrogram with default labels to leaf nodes (i.e. `sampleNames(dataset)`) and coloring based on the `"DiseaseGroup"`
 {{{
 hc <- colhclust(dataset, "DiseaseGroup")
 plot(hc)
