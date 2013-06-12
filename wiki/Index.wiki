@@ -15,9 +15,9 @@ Lists are in alphabetical order.
   * allpairsCovariance
   * allpairslogOdds
   * allpairsTTest
-  * beanPlot
-  * boxPlot
-  * colhclust
+  * [BeanPlots beanPlot]
+  * [BoxPlots boxPlot]
+  * [ColoredHClust colhclust]
   * concatenate
   * [FoldChanges foldChange]
   * getSampleMetaData
