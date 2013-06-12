@@ -1,0 +1,13 @@
+#summary T-test for every continuous variable in a dataset with respect to every binary variable in another dataset.
+
+= Introduction =
+
+Function `allpairsTTest` allows calculation of a t-test between every variable in one dataset and every variable in a second dataset when the dataset has real-valued variables and the second dataset has binary variables.
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
