@@ -22,7 +22,7 @@ Capabilities of this package are listed here.
   * [UnivariateCorrelation Correlation coefficient] of each variable with a selected variable of interest.
   * [AllPairsCorrelation All pairs correlation]: correlation between every pair of variables in a data set & correlation between variables in two data sets (i.e. every variable in data set 1 versus every variable in data set 2)
 ==Graphics==
-  * [BoxPlots Box plots], [BeanPlots bean plots], and [BarPlots bar plots]
+  * [BoxPlots Box plots] and [BeanPlots bean plots]
   * [PCAClass Principal component analysis]
   * [ColoredHClust Hierarchical clustering dendrogram]
 ==Classification & regression models==
