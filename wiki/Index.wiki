@@ -29,8 +29,6 @@ Lists are in alphabetical order.
   * [MeanCI meanCI]
   * [MeanSem meanSem]
   * [MedianCI medianCI]
-  * mybarplot
-  * mybarplot2
   * na.omit
   * [OneWayAnova oneWayAnova]
   * printDataset
