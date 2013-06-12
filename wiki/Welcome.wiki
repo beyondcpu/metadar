@@ -20,7 +20,8 @@ Capabilities of this package are listed here.
   * [FoldChanges Fold changes] for each variable in the data set.
   * [UnivariateAUC Area under the ROC curve] for each variable in the data set.
   * [UnivariateCorrelation Correlation coefficient] of each variable with a selected variable of interest.
-  * [AllPairsCorrelation All pairs correlation]: correlation between every pair of variables in a data set & correlation between variables in two data sets (i.e. every variable in data set 1 versus every variable in data set 2)
+  * [AllPairsCorrelation All pairs correlation]: correlation between every pair of variables in a data set & correlation between variables in two data sets (i.e. every variable in data set 1 versus every variable in data set 2).
+  * [AllPairsTTest All pairs t-test]: Students t-test for every variable in a data set with respect to every variable in another data set containing binary variables.
 ==Graphics==
   * [BoxPlots Box plots] and [BeanPlots bean plots]
   * [ColoredHClust Hierarchical clustering dendrogram]
