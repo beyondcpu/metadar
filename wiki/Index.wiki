@@ -23,9 +23,9 @@ Lists are in alphabetical order.
   * getSampleMetaData
   * getVariableMetaData
   * kruskalWallis
-  * [LogTransformation log]
-  * [LogTransformation log2]
-  * [LogTransformation log10]
+  * [LogTransform log]
+  * [LogTransform log2]
+  * [LogTransform log10]
   * [MeanCI meanCI]
   * [MeanSem meanSem]
   * [MedianCI medianCI]
