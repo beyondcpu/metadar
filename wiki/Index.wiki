@@ -20,7 +20,7 @@ Lists are in alphabetical order.
   * [ColoredHClust colhclust]
   * concatenate
   * [FoldChanges foldChange]
-  * getSampleMetaData
+  * [GetSampleMetaData getSampleMetaData]
   * getVariableMetaData
   * kruskalWallis
   * [LogTransform log]
