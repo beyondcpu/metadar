@@ -14,7 +14,7 @@ Lists are in alphabetical order.
   * [AllPairsCorrelation allpairsCorrelation]
   * allpairsCovariance
   * allpairslogOdds
-  * allpairsTTest
+  * [AllPairsTTest allpairsTTest]
   * [BeanPlots beanPlot]
   * [BoxPlots boxPlot]
   * [ColoredHClust colhclust]
