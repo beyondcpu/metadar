@@ -35,7 +35,7 @@ A heatmap of the significant results in `aovresult` (example above) can be drawn
 {{{
 log2fc <- log2(aovresult[["RatiosTable"]][, grep("ratio", colnames(aovresult[["RatiosTable"]]))])
 pvals <- aovresult[["PvalsTable"]]
-take <- apply(pvals, function(x) any(x < 0.05))
+take <- apply(pvals, 1, function(x) any(x < 0.05))
 
 ihm(log2fc[take,], pvals[take,], clusterColumns=TRUE, clusterRows=TRUE,
    device="pdf", file="Heatmap_sig.pdf", cellnotesizeCorrection=2)
