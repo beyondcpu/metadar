@@ -95,55 +95,6 @@ setMethod("createClassifier", signature=c("Classifier", "missing", "missing", "m
             object
           })
 
-# setMethod("createClassifier", signature=c("Classifier", "data.frame", "factor", "missing", "missing"),
-#     function(object, x, y) {
-# 		  object$x <- x
-# 		  object$y <- y
-# 		  object
-# 	  })
-# 
-# setMethod("createClassifier", signature=c("Classifier", "data.frame", "factor", "data.frame", "factor"),
-# 	  function(object, x, y, x.test, y.test) {
-# 		  object$x <- x
-# 		  object$y <- y
-# 		  object$x.test <- x.test
-# 		  object$y.test <- y.test
-# 		  object
-# 	  })
-# 
-# setMethod("createClassifier", signature=c("Classifier", "character", "missing", "missing", "missing"),
-# 	  function(object, x) {
-# 		  inputData <- read.csv(x,check.names=F)
-# 		  dat <- inputData[-1, -1] ### if you have cluster column, excluse also that column: e.g. -c(1,2)
-# 		  rownames(dat) <- inputData[-1,"Id"]
-# 		  object$x.train <- t(apply(dat,2,as.numeric))
-# 		  colnames(object$x.train) <- rownames(dat)
-# 		  rownames(object$x.train) <- colnames(dat)
-# 		  object$y.train <- factor(unlist(inputData[1,2:ncol(inputData)])) ### if you have cluster column, use 3:ncol(inputData) instead
-# 		  object
-# 	  })
-# 
-# setMethod("createClassifier", signature=c("Classifier", "character", "missing", "character", "missing"),
-# 	  function(object, x, x.test) {
-# 		  inputData1 <- read.csv(x,check.names=F)
-# 		  dat1 <- inputData1[-1, -1] ### if you have cluster column, excluse also that column: e.g. -c(1,2)
-# 		  rownames(dat1) <- inputData1[-1,"Id"]
-# 		  object$x <- t(apply(dat1,2,as.numeric))
-# 		  colnames(object$x) <- rownames(dat1)
-# 		  rownames(object$x) <- colnames(dat1)
-# 		  object$y <- factor(unlist(inputData1[1,2:ncol(inputData1)])) ### if you have cluster column, use 3:ncol(inputData) instead
-# 
-# 		  inputData2 <- read.csv(x.test,check.names=F)
-# 		  dat2 <- inputData2[-1, -1] ### if you have cluster column, excluse also that column: e.g. -c(1,2)
-# 		  rownames(dat2) <- inputData2[-1,"Id"]
-# 		  object$x.test <- t(apply(dat2,2,as.numeric))
-# 		  colnames(object$x.test) <- rownames(dat2)
-# 		  rownames(object$x.test) <- colnames(dat2)
-# 		  object$y.test <- factor(unlist(inputData2[1,2:ncol(inputData2)])) ### if you have cluster column, use 3:ncol(inputData) instead
-# 
-# 		  object
-# 	  })
-
 setMethod("createClassifier", signature=c("Classifier", "Dataset", "character", "missing", "missing", "character"),          
           function(object, x, y, selectedVariables) {
             object$x <- data.frame(exprs(x)[selectedVariables,], check.names=F)

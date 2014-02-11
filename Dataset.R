@@ -27,7 +27,12 @@ setMethod("readDataset", signature=c("Dataset", "character", "character", "missi
                                          as.character(phenoDataFrame[,"SampleName"])]
             rownames(dat) <- metabolomicsDataFrame[,"ID"]
             phenoData <- new("AnnotatedDataFrame", data=phenoDataFrame)
-            Object@assayData <- assayDataNew(exprs=apply(dat,2,as.numeric))
+            if(nrow(dat)==1) {
+              Object@assayData <- assayDataNew(exprs=matrix(apply(dat,2,as.numeric), nrow=1))
+            } else {
+              Object@assayData <- assayDataNew(exprs=apply(dat,2,as.numeric))  
+            }
+            
             featureNames(assayData(Object)) <- rownames(dat)
             Object@phenoData=phenoData
             vdatCols <- setdiff(colnames(metabolomicsDataFrame), rownames(phenoDataFrame))
@@ -54,7 +59,11 @@ setMethod("readDataset", signature=c("Dataset", "character", "character", "chara
                                          as.character(phenoDataFrame[,"SampleName"])]
             rownames(dat) <- metabolomicsDataFrame[,"ID"]
             phenoData <- new("AnnotatedDataFrame", data=phenoDataFrame)
-            Object@assayData=assayDataNew(exprs=apply(dat,2,as.numeric))
+            if(nrow(dat)==1) {
+              Object@assayData <- assayDataNew(exprs=matrix(apply(dat,2,as.numeric), nrow=1))
+            } else {
+              Object@assayData <- assayDataNew(exprs=apply(dat,2,as.numeric))  
+            }
             featureNames(assayData(Object)) <- rownames(dat)
             Object@phenoData=phenoData
             vdat <- read.csv(variableMetaDataSource, check.names=FALSE, ...)
@@ -75,7 +84,11 @@ setMethod("readDataset", signature=c("Dataset", "character", "missing", "missing
             colnames(phenoDataFrame) <- c("SampleName", as.character(unlist(inputData[1,1])))
             rownames(phenoDataFrame) <- colnames(inputData)[2:ncol(inputData)]
             phenoData <- new("AnnotatedDataFrame", data=phenoDataFrame)
-            Object@assayData=assayDataNew(exprs=apply(dat,2,as.numeric))
+            if(nrow(dat)==1) {
+              Object@assayData <- assayDataNew(exprs=matrix(apply(dat,2,as.numeric), nrow=1))
+            } else {
+              Object@assayData <- assayDataNew(exprs=apply(dat,2,as.numeric))  
+            }
             featureNames(assayData(Object)) <- rownames(dat)
             Object@phenoData=phenoData
             Object@featureData=annotatedDataFrameFrom(Object@assayData, byrow=TRUE)
@@ -90,7 +103,11 @@ setMethod("readDataset", signature=c("Dataset", "data.frame", "data.frame", "mis
                                         as.character(sampleMetaDataSource[,"SampleName"])]
             rownames(dat) <- metabolomicsDataSource[which(!is.na(metabolomicsDataSource[,"ID"])),"ID"]
             phenoData <- new("AnnotatedDataFrame", data=sampleMetaDataSource)
-            Object@assayData=assayDataNew(exprs=apply(dat,2,as.numeric))
+            if(nrow(dat)==1) {
+              Object@assayData <- assayDataNew(exprs=matrix(apply(dat,2,as.numeric), nrow=1))
+            } else {
+              Object@assayData <- assayDataNew(exprs=apply(dat,2,as.numeric))  
+            }
             featureNames(assayData(Object)) <- rownames(dat)
             Object@phenoData <- phenoData
             vdatCols <- setdiff(colnames(metabolomicsDataSource), rownames(sampleMetaDataSource))
@@ -114,7 +131,11 @@ setMethod("readDataset", signature=c("Dataset", "data.frame", "data.frame", "dat
                                           as.character(sampleMetaDataSource[,"SampleName"])]
             rownames(dat) <- metabolomicsDataSource[which(!is.na(metabolomicsDataSource[,"ID"])),"ID"]
             phenoData <- new("AnnotatedDataFrame", data=sampleMetaDataSource)
-            Object@assayData=assayDataNew(exprs=apply(dat,2,as.numeric))
+            if(nrow(dat)==1) {
+              Object@assayData <- assayDataNew(exprs=matrix(apply(dat,2,as.numeric), nrow=1))
+            } else {
+              Object@assayData <- assayDataNew(exprs=apply(dat,2,as.numeric))  
+            }
             featureNames(assayData(Object)) <- rownames(dat)
             Object@phenoData=phenoData
             rownames(variableMetaDataSource) <- variableMetaDataSource[,"ID"]
@@ -132,7 +153,11 @@ setMethod("readDataset", signature=c("Dataset", "data.frame", "missing", "missin
             colnames(phenoDataFrame) <- c("SampleName", as.character(unlist(metabolomicsDataSource[1,1])))
             rownames(phenoDataFrame) <- colnames(metabolomicsDataSource)[2:ncol(metabolomicsDataSource)]
             phenoData <- new("AnnotatedDataFrame", data=phenoDataFrame)
-            Object@assayData=assayDataNew(exprs=apply(dat,2,as.numeric))
+            if(nrow(dat)==1) {
+              Object@assayData <- assayDataNew(exprs=matrix(apply(dat,2,as.numeric), nrow=1))
+            } else {
+              Object@assayData <- assayDataNew(exprs=apply(dat,2,as.numeric))  
+            }
             featureNames(assayData(Object)) <- rownames(dat)
             Object@phenoData=phenoData
             Object@featureData=annotatedDataFrameFrom(Object@assayData, byrow=TRUE)
@@ -268,6 +293,11 @@ setMethod("getSampleMetaData", signature=c("Dataset", "character", "character"),
             retval
           })
 
+setMethod("getSampleMetaData", signature=c("Dataset", "missing", "character"),
+  definition=function(Object, selectedSamples) {    
+    pData(phenoData(Object))[selectedSamples, ]
+  })
+
 setGeneric("univariateCorrelation", def=function(Object, covariate, ...)
   standardGeneric("univariateCorrelation"))
 
@@ -310,62 +340,6 @@ setGeneric("univariateAUC", def=function(Object, covariate) standardGeneric("uni
 setMethod("univariateAUC",  signature=c(Object="Dataset", covariate="character"),
           valueClass="numeric", definition=function(Object, covariate) {
             return(rowpAUCs(Object, fac=pData(Object)[,covariate])@AUC)
-          })
-
-setGeneric("univariateTTest", signature=c("Object", "covariate"),
-           def=function(Object, covariate, paired=FALSE, is.logged=FALSE, log.base=2, ...)
-  standardGeneric("univariateTTest"))
-
-setMethod("univariateTTest",  signature=c(Object="Dataset", covariate="character"),
-  valueClass="data.frame",
-  definition=function(Object, covariate, paired=FALSE, is.logged=FALSE, log.base=2, ...) {
-    res <- t(apply(exprs(Object), 1, function(x) {
-      tt <- t.test(x ~ factor(getSampleMetaData(Object,covariate)),
-        alternative="two.sided", paired=paired, ...)
-      c("t.statistic"=as.numeric(tt$statistic), "p.value"=tt$p.value)
-    }))
-    qvals <- p.adjust(res[,"p.value"], method="BH")
-    means <- meanSem(Object, covariate, is.logged, log.base)
-    return(data.frame(means, res, "q.value"=qvals))
-  })
-
-setGeneric("univariateWilcox", signature=c("Object", "covariate"),
-  def=function(Object, covariate, paired=FALSE, ...) standardGeneric("univariateWilcox"))
-
-setMethod("univariateWilcox",  signature=c(Object="Dataset", covariate="character"),
-          valueClass="data.frame", definition=function(Object, covariate, paired=FALSE, ...) {
-            pvals <- apply(exprs(Object), 1, function(x) {
-              wil <- wilcox.test(x ~ factor(pData(Object)[,covariate]),
-                alternative="two.sided", paired=paired, ...)
-              wil$p.value
-            })
-            qvals <- p.adjust(pvals, method="BH")
-            medians <- medianCI(Object, covariate)
-            return(data.frame(medians, "p.value"=pvals, "q.value"=qvals))
-          })
-
-setGeneric("univariateChisq", def=function(Object, covariate) standardGeneric("univariateChisq"))
-
-setMethod("univariateChisq", signature=c(Object="Dataset", covariate="character"),
-          definition=function(Object, covariate) {
-            covfac <- factor(getSampleMetaData(Object, covariate))
-            res <- vector("list", nrow(Object))
-            for(i in seq(nrow(Object))) {
-              varfac <- factor(exprs(Object)[i,])
-              ftab <- table(covfac, varfac)
-              tmp <- expand.grid(levels(covfac), levels(varfac))
-              fnames <- paste(tmp[,1], "x", tmp[,2])
-              res[[i]] <- c(paste(c(rbind(
-                fnames,
-                rep("=", length(fnames)),
-                paste(c(ftab), rep(".", length(fnames)), sep=""))),
-                                  collapse = " "), signif(chisq.test(ftab)$p.value, 2))
-            }
-            res <- do.call("rbind", res)
-            res <- cbind(res, signif(p.adjust(res[,2], method="BH"),2))
-            colnames(res) <- c(paste("Count (", covariate, " x Variable = n)", sep=""), "P value", "Q value")
-            rownames(res) <- featureNames(Object)
-            res
           })
 
 setGeneric("meanSem", signature=c("Object", "covariate"),
@@ -536,8 +510,7 @@ setMethod("printDataset", signature=c("Dataset", "character"),
 #### the following is an implementation for the generic stats/na.omit
 setMethod("na.omit", signature=c("Dataset"),
           function(object) {
-            exprs(object) <- exprs(object)[-na.action(na.omit(exprs(object))),]
-            object
+            object[-na.action(na.omit(exprs(object))),]
           })
 
 ### This is for taking an intersection of samples between two data sets

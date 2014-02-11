@@ -8,9 +8,9 @@ lr$methods(list(
 		},
 
 		buildClassifier = function() {
-			yx <- data.frame("y"=factor(.self$y), t(.self$x))
-			colnames(yx)[2:ncol(yx)] <- rownames(.self$x)
-			.self$model <- glm(y~., family=binomial, data=yx, maxit=50)
+			.self$model <- glm(y~., family=binomial,
+        data=data.frame("y"=factor(.self$y), t(.self$x), check.names=FALSE),
+        maxit=50)
 		},
     
     subselect = function(method="stepAIC") {
@@ -32,6 +32,10 @@ lr$methods(list(
     reduce.lasso = function() {
       .self$model <- glmnet(t(.self$x), .self$y, family="binomial", alpha=1)
     },
+  
+  reduce.mclust.stepaic = function() {
+    mcl$new()
+  },
 
 		trainingPrediction = function() {
 			.self$predicted.value <- predict.glm(.self$model, newdata=data.frame(t(.self$x),check.names=F), type="response")

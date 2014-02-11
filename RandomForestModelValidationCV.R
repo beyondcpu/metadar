@@ -4,6 +4,7 @@ rfmv <- setRefClass("RandomForestModelValidationCV",
 rfmv$methods(list(
 	initialize = function(...) {
 		callSuper(...)
+    .self
 	},
 
 	buildCV = function() { # public

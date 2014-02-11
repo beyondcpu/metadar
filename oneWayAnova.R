@@ -13,8 +13,8 @@ setMethod("oneWayAnova", signature=c("Dataset", "character"),
                    summary(fit)[[1]]["f","Pr(>F)"],
                    tuk$means,
                    tuk$f[,c(5,4)])
-			  names(res.i) <- c(paste("One way Anova (", covariate, ") F-value"),
-                          paste("One way Anova (", covariate, ")P-value"),
+			  names(res.i) <- c(paste(covariate, "F-value"),
+                          paste(covariate, "p.value"),
                           names(tuk$means),
                           paste(rownames(tuk$f), colnames(tuk$f)[5]),
                           paste(rownames(tuk$f), colnames(tuk$f)[4]))
@@ -25,7 +25,7 @@ setMethod("oneWayAnova", signature=c("Dataset", "character"),
 		  rownames(res) <- featureNames(Object)
       qvals <- p.adjust(pvals, method="BH")
       res <- data.frame(res, qvals, check.names=F)
-      colnames(res)[ncol(res)] <- paste("One way Anova (", covariate, ") FDR-BH95 Q value")
+      colnames(res)[ncol(res)] <- paste(covariate, "q.value")
 		  return(res)
 	  })
 
