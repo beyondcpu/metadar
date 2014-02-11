@@ -1,5 +1,5 @@
-setGeneric("allpairslogOdds", def=function(RealValuedDataset, BinaryDataset, removeNonSigOR)
-  standardGeneric("allpairslogOdds"))
+setGeneric("allpairslogOdds", def=function(RealValuedDataset,
+  BinaryDataset, removeNonSigOR) standardGeneric("allpairslogOdds"))
 ### the stars are drawn if the coefficient is significantly different from zero (p < 0.05)
 ### AND the logOR doesn't have zero in its confidence interval
 setMethod("allpairslogOdds", signature=c("Dataset", "Dataset", "missing"),
@@ -13,11 +13,11 @@ setMethod("allpairslogOdds", signature=c("Dataset", "Dataset", "missing"),
     rownames(p) <- featureNames(RealValuedDataset)
     colnames(tt) <- featureNames(BinaryDataset)
     colnames(p) <- featureNames(BinaryDataset)
-
+    
     for(j in seq(nrow(BinaryDataset))) {
       for(i in seq(nrow(RealValuedDataset))) {
         glm1 <- glm(y ~ ., data=data.frame(x = exprs(RealValuedDataset)[i,], y = factor(exprs(BinaryDataset)[j,])), family="binomial")
-
+        
         tt[i,j] <- summary(glm1)[["coefficients"]]["x", "Estimate"]
         coef.p <- summary(glm1)[["coefficients"]]["x", "Pr(>|z|)"]
         coef.ci <- signif(confint(glm1, parm="x"), 4)
