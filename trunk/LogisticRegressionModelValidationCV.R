@@ -4,6 +4,7 @@ lrmv <- setRefClass("LogisticRegressionModelValidationCV",
 lrmv$methods(list(
 	initialize = function(...) {
     callSuper(...)
+    .self
 	},
   
   full.training.model = function(y, x, ...)

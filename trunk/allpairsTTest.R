@@ -1,7 +1,8 @@
-setGeneric("allpairsTTest", def=function(RealValuedDataset, BinaryDataset) standardGeneric("allpairsTTest"))
+setGeneric("allpairsTTest", def=function(RealValuedDataset, BinaryDataset, ...)
+  standardGeneric("allpairsTTest"))
 
 setMethod("allpairsTTest", signature=c("Dataset", "Dataset"),
-  function(RealValuedDataset, BinaryDataset) {
+  function(RealValuedDataset, BinaryDataset, ...) {
     if(!identical(sampleNames(RealValuedDataset), sampleNames(RealValuedDataset))) {
       stop("Sample names of RealValuedDataset and BinaryDataset are not identical")
     }
@@ -11,13 +12,14 @@ setMethod("allpairsTTest", signature=c("Dataset", "Dataset"),
     rownames(p) <- featureNames(RealValuedDataset)
     colnames(tt) <- featureNames(BinaryDataset)
     colnames(p) <- featureNames(BinaryDataset)
-
+    
     for(j in seq(nrow(BinaryDataset))) {
       for(i in seq(nrow(RealValuedDataset))) {
-        ct <- t.test(x ~ f, data=data.frame(x = exprs(RealValuedDataset)[i,], f = factor(exprs(BinaryDataset)[j,])), alternative="t")
+        ct <- t.test(x ~ f, data=data.frame(x = exprs(RealValuedDataset)[i,],
+          f = factor(exprs(BinaryDataset)[j,])), alternative="t", ...)
         tt[i,j] <- ct$statistic
         p[i,j] <- ct$p.value
       }
     }
-    list("tstat"=tt, "p"=p)
+    list("t.statistic"=tt, "p.value"=p)
   })

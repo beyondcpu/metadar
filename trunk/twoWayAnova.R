@@ -7,7 +7,9 @@ setMethod("twoWayAnova", signature=c("Dataset", "character", "character"),
 		  res.p <- vector("list", nrow(Object))
 		  for(i in seq(nrow(Object))) {
 			  x <- exprs(Object)[i,]
-			  fit <- aov(x~f1*f2, data=data.frame("x"=x, "f1"=factor(pData(Object)[,covariate1]), "f2"=factor(pData(Object)[,covariate2])))
+			  fit <- aov(x~f1*f2, data=data.frame("x"=x,
+          "f1"=factor(getSampleMetaData(Object, covariate1)),
+          "f2"=factor(getSampleMetaData(Object,covariate2))))
 			  tuk <- TukeyHSD(fit)
 
 			  res.i <- c(summary(fit)[[1]][1,"F value"],
@@ -21,11 +23,11 @@ setMethod("twoWayAnova", signature=c("Dataset", "character", "character"),
 				     tuk$f2[,c(5,4)],
 				     tuk$"f1:f2"[,c(5,4)])
 			  names(res.i) <- c(paste(covariate1, "F-value"), 
-					    paste(covariate1, "P-value"),
+					    paste(covariate1, "p.value"),
 					    paste(covariate2, "F-value"),
-					    paste(covariate2, "P-value"),
+					    paste(covariate2, "p.value"),
 					    paste(covariate1, ":", covariate2, "F-value"),
-					    paste(covariate1, ":", covariate2, "P-value"),
+					    paste(covariate1, ":", covariate2, "p.value"),
               names(tuk$means),
 					    paste(rownames(tuk$f1), colnames(tuk$f1)[5]),
 					    paste(rownames(tuk$f1), colnames(tuk$f1)[4]),
@@ -51,8 +53,17 @@ setMethod("twoWayAnova", signature=c("Dataset", "character", "character"),
 
       res <- do.call("rbind", res)
 		  rownames(res) <- featureNames(Object)
+      qcov1 <- p.adjust(res[,2], method="BH")
+      qcov2 <- p.adjust(res[,4], method="BH")
+      qcov12 <- p.adjust(res[,6], method="BH")
+      newcolnames <- c(colnames(res)[1:2], paste(covariate1, "q.value"),
+        colnames(res)[3:4], paste(covariate2, "q.value"),
+        colnames(res)[5:6], paste(covariate1, ":", covariate2, "q.value"),
+        colnames(res)[7:ncol(res)])
+      res <- data.frame(res[,1:2], qcov1, res[,3:4], qcov2, res[,5:6], qcov12, res[,7:ncol(res)])
+      colnames(res) <- newcolnames
       
-      ## differences/ratios of means
+      ## ratios of means
 		  res.diff <- do.call("rbind", res.diff)
 		  rownames(res.diff) <- featureNames(Object)
       ## p values

@@ -1,4 +1,4 @@
-mv <- setRefClass("ModelValidationCV", fields=list(
+mvcv <- setRefClass("ModelValidationCV", fields=list(
 		x = "data.frame",
 		y = "factor",
 		x.test = "data.frame",
@@ -23,7 +23,8 @@ mv <- setRefClass("ModelValidationCV", fields=list(
 		cutoff.mean = "numeric",
 		sens.mean = "numeric",
 		spec.mean = "numeric"))
-mv$methods(list(
+
+mvcv$methods(list(
 	initialize = function(...) {
 		createMV(.self, ...)
 	},
