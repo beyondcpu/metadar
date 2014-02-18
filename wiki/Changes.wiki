@@ -1,5 +1,8 @@
 #summary A summary of changes in each version of the package
 
+= Version 0.48 =
+  * Added "validation" methods to univariateTTest and univariateWilcox functions. The argument _validate_ accepts "bootstrap", "random.subsets", or "none" and "none" is the default. The argument _niter_ specifies the number of iterations for the validation, with a default value of 1000.
+
 = Version 0.46 =
   * `q.value`s are added to `twoWayAnova` result.
   * `oneWayAnova` return object column headers updated.
