@@ -1,6 +1,7 @@
 #summary A summary of changes in each version of the package
 
 = Version 0.48 =
+  * Two additional arguments _statistic_ and _p.value_ are added to tgAnalysis method so that a custom statistic and p-value could be passed. The example use case that led to this is adjusting for BMI and AGE, in which case the statistic is odds ratio and it was computed from univariateOddsRatio.
   * Added "validation" methods to univariateTTest and univariateWilcox functions.
 
 = Version 0.46 =
