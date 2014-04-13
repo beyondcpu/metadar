@@ -3,6 +3,7 @@
 = Version 0.48 =
   * Two additional arguments _statistic_ and _p.value_ are added to tgAnalysis method so that a custom statistic and p-value could be passed. The example use case that led to this is adjusting for BMI and AGE, in which case the statistic is odds ratio and it was computed from univariateOddsRatio.
   * Added "validation" methods to univariateTTest and univariateWilcox functions.
+  * Added a new method called `hilo` that transforms the data into two (high or low) or three levels (high, medium or low) based on mean or median.
 
 = Version 0.46 =
   * `q.value`s are added to `twoWayAnova` result.
