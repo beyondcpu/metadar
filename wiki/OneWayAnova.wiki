@@ -43,7 +43,7 @@ Also, it maybe useful to graphically display the anova result. A heatmap showing
 {{{
 log2foldchanges <- log2(aovresult[, grep("ratio", colnames(aovresult))])
 pvalues <- aovresult[, grep("p adj", colnames(aovresult))]
-take <- apply(pvalues, function(x) any(x < 0.05))
+take <- apply(pvalues, 1, function(x) any(x < 0.05))
 
 ihm(log2foldchanges[take,], pvalues[take,], clusterColumns=TRUE, clusterRows=TRUE,
    device="pdf", file="Heatmap_sig.pdf", cellnotesizeCorrection=2)
