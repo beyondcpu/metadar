@@ -17,7 +17,7 @@ biocLite(c("Biobase", "simpleaffy"), dep=TRUE)
 
 = Downloading the package =
 
-The package builds are [http://code.google.com/p/metadar/downloads/list here]. There are binary versions available for Linux and Windows. Choose the latest version appropriate for your platform. I built the Linux binary on my computer. The windows build was then created using the excellent site, http://win-builder.r-project.org/. Many thanks to Uwe Liggis (and others, if any) for maintaining it. I think the Linux version is suitable for all non-Windows operating systems (please test and correct me if I am wrong).
+The links for downloading the latest version of the package are on [https://code.google.com/p/metadar the home page]. There are binary versions available for Linux and Windows. Choose the latest version appropriate for your platform. I built the Linux binary on my computer. The windows build was then created using the excellent site, http://win-builder.r-project.org/. Many thanks to Uwe Liggis (and others, if any) for maintaining it. I think the Linux version is suitable for all non-Windows operating systems (please test and correct me if I am wrong).
 
 = Installation =
 
