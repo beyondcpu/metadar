@@ -25,6 +25,6 @@ plot(hc)
 }}}
   # to draw a hierarchical clustering dendrogram with default labels to leaf nodes, i.e. `sampleNames(dataset)`, and coloring based on the `"DiseaseGroup"`
 {{{
-hc <- colhclust(dataset, "DiseaseGroup")
+hc <- colhclust(dataset, color="DiseaseGroup")
 plot(hc)
 }}}
